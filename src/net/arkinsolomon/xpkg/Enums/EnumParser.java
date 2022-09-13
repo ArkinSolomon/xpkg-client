@@ -1,4 +1,7 @@
-package net.arkinsolomon.xpkg;
+package net.arkinsolomon.xpkg.Enums;
+
+import net.arkinsolomon.xpkg.Commands.CommandName;
+import net.arkinsolomon.xpkg.Exceptions.InvalidScriptException;
 
 //This class contains static methods for parsing different enums
 public class EnumParser {
@@ -46,6 +49,20 @@ public class EnumParser {
 			return PackageType.LIVERY;
 		default:
 			throw new InvalidScriptException("Invalid package_type: '" + packageType + "' is not a valid script type");
+		}
+	}
+	
+	// Get a Command enumeration from a string
+	public static CommandName getCommand(String command) throws InvalidScriptException {
+		switch (command.toUpperCase()) {
+		case "QUICK":
+			return CommandName.QUICK;
+		case "GET":
+			return CommandName.GET;
+		case "PRINT":
+			return CommandName.PRINT;
+		default:
+			throw new InvalidScriptException("Invalid command: '" + command + "' is not a valid command");
 		}
 	}
 }

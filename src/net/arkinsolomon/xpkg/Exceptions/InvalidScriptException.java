@@ -1,4 +1,4 @@
-package net.arkinsolomon.xpkg;
+package net.arkinsolomon.xpkg.Exceptions;
 
 public class InvalidScriptException extends Exception {
 

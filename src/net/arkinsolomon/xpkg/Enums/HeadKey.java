@@ -1,4 +1,4 @@
-package net.arkinsolomon.xpkg;
+package net.arkinsolomon.xpkg.Enums;
 
 //This class contains all of the possible keys used in a script head
 public enum HeadKey {

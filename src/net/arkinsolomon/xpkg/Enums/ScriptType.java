@@ -1,4 +1,4 @@
-package net.arkinsolomon.xpkg;
+package net.arkinsolomon.xpkg.Enums;
 
 //The different types of scripts that can be executed
 public enum ScriptType {
