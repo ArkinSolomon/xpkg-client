@@ -5,11 +5,12 @@ import java.util.Arrays;
 import net.arkinsolomon.xpkg.ExecutionContext;
 import net.arkinsolomon.xpkg.ParseHelper;
 import net.arkinsolomon.xpkg.Exceptions.InvalidScriptException;
+import net.arkinsolomon.xpkg.Exceptions.ScriptExecutionException;
 import net.arkinsolomon.xpkg.Vars.XPkgString;
 
 //This command just sets the value of a variable to a string
 public class SetstrCommand extends Command {
-	public static void execute(String[] args, ExecutionContext context) throws InvalidScriptException {
+	public static void execute(String[] args, ExecutionContext context) throws InvalidScriptException, ScriptExecutionException {
 
 		// Make sure there are arguments
 		if (args.length <= 1)

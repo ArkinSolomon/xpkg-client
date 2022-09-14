@@ -7,8 +7,6 @@ import net.arkinsolomon.xpkg.Commands.Command;
 import net.arkinsolomon.xpkg.Commands.CommandName;
 import net.arkinsolomon.xpkg.Enums.EnumParser;
 import net.arkinsolomon.xpkg.Enums.HeadKey;
-import net.arkinsolomon.xpkg.Enums.PackageType;
-import net.arkinsolomon.xpkg.Enums.ScriptType;
 import net.arkinsolomon.xpkg.Exceptions.InvalidScriptException;
 import net.arkinsolomon.xpkg.Exceptions.ProgrammerError;
 import net.arkinsolomon.xpkg.Exceptions.ScriptExecutionException;
@@ -115,13 +113,7 @@ public class ScriptExecutor {
 
 				// Handle branching
 				if (cmd == CommandName.IF) {
-
-					// Make sure we don't pick up on any extra ENDIF's
-					int branchDepth = 0;
-
-					// Get the code for the if branch
-					String branchCode = "";
-
+					
 					// If the top level if statement is true, get the code and execute it it,
 					// otherwise jump to the next flow control statement that we can execute
 					if (ParseHelper.isTrue(args, context)) {

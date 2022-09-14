@@ -68,7 +68,7 @@ Strings are the only values in XPKGS which can have spaces in them. Strings are 
 
 #### Environment variables
 
-Your script by default has variables built in for determining things such as X-Plane version, selected optional dependencies and other prompts given to the user, as well as operating system information. All environment variables and types can be seen in the reference. Take care while handling these as they are not protected and can be overwritten.
+Your script by default has variables built in for determining things such as X-Plane version, selected optional dependencies and other prompts given to the user, as well as operating system information. All environment variables and types can be seen in the reference. These variables can not be overwritten.
 
 ### XPKGS Reference
 
