@@ -8,4 +8,7 @@ public abstract class XPkgVar {
 		
 	//Get a string representation of the variable
 	public abstract String toString();
+	
+	//Create a copy of this variable
+	public abstract XPkgVar copy();
 }	

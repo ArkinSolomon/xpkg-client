@@ -4,6 +4,10 @@ This project is an addon manager for X-Plane 11 and 12, which allows developers 
 
 This project was largely inspired by CKAN for Kerbal Space Program.
 
+## Project setup
+
+This project uses Eclipse as well as the [Apache Commons Lang](https://commons.apache.org/proper/commons-lang/).
+
 ## Developer Documentation
 
 All scripting files are written in .xpkg format.
@@ -61,15 +65,19 @@ The body consists of commands and arguments. The first word of a line in the bod
 
 Commands are **NOT** case-sensitive.
 
-##### get [$FILE] [FILE_ID]
+##### get [$VAR] [RESOURCE_ID]
 
-Get a file and store it in a variable with type `File`.
+Get a resource and store it in a new variable.
+
+##### if [$BOOL or BOOL]
+
+Execute code between this if and the next branch control command if the provided variable or statement evaluates to true. If statments **DO NOT** support parenthetical execution, and are instead evaluated NOT first, then AND, then OR.
 
 ##### print [$VAR or ...STRING]
 
 Print a variable or a string.
 
-##### quick [$FILE or FILE_ID]
+##### quick [$RESOURCE or RESOURCE_ID]
 
 This command is largely dependent on the metadata in the head (largely on `script_type` and `package_type`). Different metadata will produce different results. If `OTHER` is selected for either `script_type` or `package_type`. The executor will throw an error.
 
@@ -78,3 +86,11 @@ Possibilities:
 - UNINSTALL + SCENERY: TODO
 - UPGRADE + SCENERY: TODO
 - gotta do everything else here too lol
+
+##### set [$VAR] [$VAR or BOOL]
+
+Set the value a variable with another variable or a boolean expression.
+
+##### setstr [$VAR] [...STRING]
+
+Set the value of a variable with a string

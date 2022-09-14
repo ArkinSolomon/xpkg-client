@@ -1,6 +1,7 @@
 package net.arkinsolomon.xpkg;
 
 import java.util.HashMap;
+import org.apache.commons.lang3.SystemUtils;
 
 import net.arkinsolomon.xpkg.Enums.PackageType;
 import net.arkinsolomon.xpkg.Enums.ScriptType;
@@ -25,9 +26,12 @@ public class ExecutionContext {
 
 	public ExecutionContext() {
 		vars = new HashMap<String, XPkgVar>();
-		
-		//TODO Set flags for machine
-		
+
+		//Set flags for machine
+		isMacOS = SystemUtils.IS_OS_MAC;
+		isWindows = SystemUtils.IS_OS_WINDOWS;
+		isLinux = SystemUtils.IS_OS_LINUX;
+		isOtherOS = !isMacOS && !isWindows && !isLinux;
 	}
 
 	// PackageType getter and setter
@@ -64,12 +68,12 @@ public class ExecutionContext {
 	}
 
 	// Get a variable
-	public Object getVar(String name) {
+	public XPkgVar getVar(String name) {
 		return vars.get(name);
 	}
-	
+
 	// Check if a variable exists
-	public boolean checkVar(String name) {
+	public boolean hasVar(String name) {
 		return vars.containsKey(name);
 	}
 

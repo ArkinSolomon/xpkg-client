@@ -40,17 +40,20 @@ public abstract class Command {
 			throws ScriptExecutionException, ProgrammerError {
 		Method m = cmds.get(n);
 		if (m == null) {
-			throw new ProgrammerError(
-					"As a user, you shouldn't see this error... " + "there was a command that hasn't been registered");
+			throw new ProgrammerError("If you are a user this error is a bug and not your fault please submit a bug report, the command '" + n
+					+ "' hasn't been registered or is an improperly handled flow control statement");
 		}
+
+		// TODO Pass these exceptions up
 		try {
 			m.invoke("execute", args, context);
 		} catch (IllegalAccessException e) {
-			throw new ScriptExecutionException("Could not execute command'" + n + "': illegal access");
+			throw new ScriptExecutionException("Could not execute command '" + n + "': illegal access");
 		} catch (IllegalArgumentException e) {
-			throw new ScriptExecutionException("Could not execute command'" + n + "': illegal arguments");
+			throw new ScriptExecutionException("Could not execute command '" + n + "': illegal arguments");
 		} catch (InvocationTargetException e) {
-			throw new ScriptExecutionException("Could not execute command'" + n + "': invalid invocation");
+			e.printStackTrace();
+			throw new ScriptExecutionException("Could not execute command '" + n + "': invalid invocation");
 		}
 	}
 }

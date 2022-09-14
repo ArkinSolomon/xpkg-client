@@ -19,6 +19,11 @@ public class XPkgString extends XPkgVar {
 	public String toString() {
 		return data;
 	}
+	
+	@Override
+	public XPkgString copy() {
+		return new XPkgString(getValue());
+	}
 
 	// Get or set the string
 	public void setValue(String newValue) {

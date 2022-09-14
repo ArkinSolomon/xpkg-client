@@ -61,6 +61,18 @@ public class EnumParser {
 			return CommandName.GET;
 		case "PRINT":
 			return CommandName.PRINT;
+		case "IF":
+			return CommandName.IF;
+		case "ELIF":
+			return CommandName.ELIF;
+		case "ELSE":
+			return CommandName.ELSE;
+		case "ENDIF":
+			return CommandName.ENDIF;
+		case "SET":
+			return CommandName.SET;
+		case "SETSTR":
+			return CommandName.SETSTR;
 		default:
 			throw new InvalidScriptException("Invalid command: '" + command + "' is not a valid command");
 		}
