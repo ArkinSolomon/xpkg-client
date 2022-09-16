@@ -3,7 +3,7 @@ package net.arkinsolomon.xpkg.Enums;
 import net.arkinsolomon.xpkg.Commands.CommandName;
 import net.arkinsolomon.xpkg.Exceptions.InvalidScriptException;
 
-//This class contains static methods for parsing different enums
+//This class contains static methods for parsing different enumerations
 public class EnumParser {
 	
 	// Get a HeadKey enumeration from a string
@@ -73,6 +73,12 @@ public class EnumParser {
 			return CommandName.SET;
 		case "SETSTR":
 			return CommandName.SETSTR;
+		case "MKDIR":
+			return CommandName.MKDIR;
+		case "MKDIRS":
+			return CommandName.MKDIRS;
+		case "ISPL":
+			return CommandName.ISPL;
 		default:
 			throw new InvalidScriptException("Invalid command: '" + command + "' is not a valid command");
 		}

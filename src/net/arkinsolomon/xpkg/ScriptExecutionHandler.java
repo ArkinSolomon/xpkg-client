@@ -1,7 +1,7 @@
 package net.arkinsolomon.xpkg;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 
 import net.arkinsolomon.xpkg.Exceptions.InvalidScriptException;
@@ -27,8 +27,8 @@ public class ScriptExecutionHandler {
 			// Execute the file
 			ScriptExecutor file = new ScriptExecutor(s);
 			file.execute();
-		} catch (FileNotFoundException | ScriptParseException | InvalidScriptException | ScriptExecutionException
-				| ProgrammerError e) {
+		} catch (ScriptParseException | InvalidScriptException | ScriptExecutionException | ProgrammerError
+				| IOException e) {
 			e.printStackTrace();
 		} finally {
 			if (reader != null)

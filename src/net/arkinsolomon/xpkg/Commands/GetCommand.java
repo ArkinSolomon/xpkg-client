@@ -3,6 +3,7 @@ package net.arkinsolomon.xpkg.Commands;
 import net.arkinsolomon.xpkg.ExecutionContext;
 import net.arkinsolomon.xpkg.ParseHelper;
 import net.arkinsolomon.xpkg.Exceptions.InvalidScriptException;
+import net.arkinsolomon.xpkg.Exceptions.ProgrammerError;
 import net.arkinsolomon.xpkg.Exceptions.ScriptExecutionException;
 import net.arkinsolomon.xpkg.Vars.XPkgString;
 
@@ -10,7 +11,7 @@ import net.arkinsolomon.xpkg.Vars.XPkgString;
 public class GetCommand extends Command {
 
 	public static void execute(String[] args, ExecutionContext context)
-			throws InvalidScriptException, ScriptExecutionException {
+			throws InvalidScriptException, ScriptExecutionException, ProgrammerError {
 		System.out.println("GET COMMAND EXECUTION: " + args[0] + ", " + args[1]);
 		
 		//Make sure args[0] is a valid variable

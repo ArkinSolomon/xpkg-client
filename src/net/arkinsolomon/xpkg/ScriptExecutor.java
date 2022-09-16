@@ -1,5 +1,6 @@
 package net.arkinsolomon.xpkg;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -23,12 +24,16 @@ public class ScriptExecutor {
 	private String head;
 	private String code;
 
+	// True if we made the execution context
+	private boolean didMakeContext = false;
+
 	// When we last got code for a flow control statement, was it an ENDIF at the
 	// end?
 	private boolean wasLastEndIf = false;
 
 	// Parse the entire file
-	public ScriptExecutor(String contents) throws ScriptParseException, InvalidScriptException, ProgrammerError {
+	public ScriptExecutor(String contents)
+			throws ScriptParseException, InvalidScriptException, ProgrammerError, IOException, ScriptExecutionException {
 		this.contents = contents.trim();
 		context = new ExecutionContext();
 
@@ -40,6 +45,7 @@ public class ScriptExecutor {
 		code = parts[1];
 
 		readMeta();
+		didMakeContext = true;
 	}
 
 	// Execute a subscript by passing in context and code
@@ -113,7 +119,7 @@ public class ScriptExecutor {
 
 				// Handle branching
 				if (cmd == CommandName.IF) {
-					
+
 					// If the top level if statement is true, get the code and execute it it,
 					// otherwise jump to the next flow control statement that we can execute
 					if (ParseHelper.isTrue(args, context)) {
@@ -154,18 +160,20 @@ public class ScriptExecutor {
 //			context.printContext();
 			if (scanner != null)
 				scanner.close();
+			if (didMakeContext)
+				context.close();
 		}
 	}
 
 	// Jump to the next flow control statement that's executable, returns true if it
 	// reaches an executable statement, and false if it reaches the end of the flow
 	// control
-	private boolean gotoNextFlowControl(Scanner scanner) throws InvalidScriptException, ScriptExecutionException {
+	private boolean gotoNextFlowControl(Scanner scanner) throws InvalidScriptException, ScriptExecutionException, ProgrammerError {
 		return gotoNextFlowControl(scanner, false);
 	}
 
 	private boolean gotoNextFlowControl(Scanner scanner, boolean jumpToEnd)
-			throws InvalidScriptException, ScriptExecutionException {
+			throws InvalidScriptException, ScriptExecutionException, ProgrammerError {
 		int branchDepth = 0;
 		while (scanner.hasNext()) {
 

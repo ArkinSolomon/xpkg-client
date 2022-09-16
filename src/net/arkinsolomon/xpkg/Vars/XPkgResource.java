@@ -1,15 +1,15 @@
 package net.arkinsolomon.xpkg.Vars;
 
-import java.nio.file.Path;
+import java.io.File;
 
 //This class represents a resource 
 public class XPkgResource extends XPkgVar {
 
-	// Path of the resource
-	private Path resourcePath = null;
+	// The resource file
+	private File resourcePath = null;
 
-	// Create a new resource variable pointing to the path
-	public XPkgResource(Path path) {
+	// Create a new resource variable pointing to the file
+	public XPkgResource(File path) {
 		resourcePath = path;
 	}
 
@@ -29,11 +29,11 @@ public class XPkgResource extends XPkgVar {
 	}
 
 	// Getter and setter for the path
-	public void setValue(Path path) {
+	public void setValue(File path) {
 		resourcePath = path;
 	}
 
-	public Path getValue() {
+	public File getValue() {
 		return resourcePath;
 	}
 }

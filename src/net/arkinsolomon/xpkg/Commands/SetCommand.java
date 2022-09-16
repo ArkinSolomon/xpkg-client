@@ -5,6 +5,7 @@ import java.util.Arrays;
 import net.arkinsolomon.xpkg.ExecutionContext;
 import net.arkinsolomon.xpkg.ParseHelper;
 import net.arkinsolomon.xpkg.Exceptions.InvalidScriptException;
+import net.arkinsolomon.xpkg.Exceptions.ProgrammerError;
 import net.arkinsolomon.xpkg.Exceptions.ScriptExecutionException;
 import net.arkinsolomon.xpkg.Vars.XPkgBool;
 import net.arkinsolomon.xpkg.Vars.XPkgVar;
@@ -13,7 +14,7 @@ import net.arkinsolomon.xpkg.Vars.XPkgVar;
 public class SetCommand extends Command {
 
 	public static void execute(String[] args, ExecutionContext context)
-			throws ScriptExecutionException, InvalidScriptException {
+			throws ScriptExecutionException, InvalidScriptException, ProgrammerError {
 
 		// Make sure there are enough arguments
 		if (args.length <= 1)

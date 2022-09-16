@@ -64,20 +64,49 @@ If statements **DO NOT** support parenthetical execution, and are instead evalua
 
 #### Strings
 
-Strings are the only values in XPKGS which can have spaces in them. Strings are denoted in the reference as `...STRING`. Strings are always the last argument in any command. There is no quotes or wrappers around the string just type it out as normal.
+Strings are denoted in the reference as `...STRING`. Strings are always the last argument in any command. There is no quotes or wrappers around the string just type it out as normal (even if it has spaces).
+
+#### Pathlike
+
+Pathlike variables are just formatted strings. They always start with a slash, and can not contain characters such as `..`, `~`, or `%`.
+
+#### Resources
+
+Resources are essentially paths to immutable folders. Items of resources can be accessed using pathlike strings.
+
+#### MutableResources
+
+A mutable resource is similar to a resource, however they are able to be modified.
 
 #### Environment variables
 
 Your script by default has variables built in for determining things such as X-Plane version, selected optional dependencies and other prompts given to the user, as well as operating system information. All environment variables and types can be seen in the reference. These variables can not be overwritten.
 
+##### *BOOL* `$IS_MAC_OS`
+
+True if the operating system is MacOS.
+
+##### *BOOL* `$IS_WINDOWS`
+
+True if the operating system is Windows.
+
+##### *BOOL* `$IS_LINUX`
+
+True if the operating system is Linux.
+
+##### *BOOL* `$IS_OTHER_OS`
+
+True if the operating system is a different operating system.
+
+##### *STRING* `$XP_DIR` **NEEDS TO BE MUTABLERESOURCE**
+
+The path to the currently working X-Plane directory.
+
+##### *STRING* `$TMP` **NEEDS TO BE MUTABLERESOURCE**
+
+The path to the temporary directory.
+
 ### XPKGS Reference
-
----
-
-i have to move this somewhere
-`/` refers to the root directory of X-Plane. I.E. `/resources/plugins` refers to `X-Plane 12/resources/plugins`.
-
----
 
 #### Head keys
 
@@ -116,11 +145,33 @@ Get a resource and store it in a new variable.
 
 Execute code between this if and the next branch control command if the provided variable or statement evaluates to true.
 
+##### ispl [$BOOL] [$PATHLIKE or ...PATHLIKE]
+
+Determine if a variable or path is a valid path.
+
+##### join [$STRING] [$STRING or ...STRING]
+
+Join the second string onto the end of the first one (stored in the first string). Note that you can only use variables, although it can be used for paths, it's not recommended, use `joinp` instead.
+
+##### joinp [$PATHLIKE] [$PATHLIKE or ...PATHLIKE]
+
+Join and format the two paths together. Don't use for strings, use `join` for strings instead.
+
+##### mkdir [$PATHLIKE or ...PATHLIKE] **NEED TO MKDIR IN MUTABLERESOURCE**
+
+Create a directory at the path within the X-Plane directory.
+
+##### mkdirs [$PATHLIKE ...PATHLIKE] **NEED TO MKDIR IN MUTABLERESOURCE**
+
+Create a directory at the path within the X-Plane directory as well as all directory in between.
+
 ##### print [$VAR or ...STRING]
 
 Print a variable or a string.
 
 ##### quick [$RESOURCE or RESOURCE_ID]
+
+**TODO**
 
 This command is largely dependent on the metadata in the head (largely on `script_type` and `package_type`). Different metadata will produce different results. If `OTHER` is selected for either `script_type` or `package_type`. The executor will throw an error. See wiki for more details.
 
