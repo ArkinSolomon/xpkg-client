@@ -1,25 +1,27 @@
 package net.arkinsolomon.xpkg.Enums;
 
 import net.arkinsolomon.xpkg.Commands.CommandName;
-import net.arkinsolomon.xpkg.Exceptions.InvalidScriptException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgInvalidHeadKeyException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgInvalidHeadValException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgParseException;
 
 //This class contains static methods for parsing different enumerations
 public class EnumParser {
-	
+
 	// Get a HeadKey enumeration from a string
-	public static HeadKey getHeadKey(String headKey) throws InvalidScriptException {
+	public static HeadKey getHeadKey(String headKey) throws XPkgInvalidHeadKeyException {
 		switch (headKey.toUpperCase()) {
 		case "SCRIPT_TYPE":
 			return HeadKey.SCRIPT_TYPE;
 		case "PACKAGE_TYPE":
 			return HeadKey.PACKAGE_TYPE;
 		default:
-			throw new InvalidScriptException("Invalid key in head: '" + headKey + "'");
+			throw new XPkgInvalidHeadKeyException(headKey);
 		}
 	}
 
 	// Get a ScriptType enumeration from a string
-	public static ScriptType getScriptType(String scriptType) throws InvalidScriptException {
+	public static ScriptType getScriptType(String scriptType) throws XPkgInvalidHeadValException {
 		switch (scriptType.toUpperCase()) {
 		case "OTHER":
 			return ScriptType.OTHER;
@@ -30,12 +32,12 @@ public class EnumParser {
 		case "UPGRADE":
 			return ScriptType.UPGRADE;
 		default:
-			throw new InvalidScriptException("Invalid script_type: '" + scriptType + "' is not a valid script type");
+			throw new XPkgInvalidHeadValException(HeadKey.SCRIPT_TYPE, scriptType);
 		}
 	}
 
 	// Get a PackageType enumeration from a string
-	public static PackageType getPackageType(String packageType) throws InvalidScriptException {
+	public static PackageType getPackageType(String packageType) throws XPkgInvalidHeadValException {
 		switch (packageType.toUpperCase()) {
 		case "OTHER":
 			return PackageType.OTHER;
@@ -48,12 +50,12 @@ public class EnumParser {
 		case "LIVERY":
 			return PackageType.LIVERY;
 		default:
-			throw new InvalidScriptException("Invalid package_type: '" + packageType + "' is not a valid script type");
+			throw new XPkgInvalidHeadValException(HeadKey.PACKAGE_TYPE, packageType);
 		}
 	}
-	
+
 	// Get a Command enumeration from a string
-	public static CommandName getCommand(String command) throws InvalidScriptException {
+	public static CommandName getCommand(String command) throws XPkgParseException {
 		switch (command.toUpperCase()) {
 		case "QUICK":
 			return CommandName.QUICK;
@@ -79,8 +81,14 @@ public class EnumParser {
 			return CommandName.MKDIRS;
 		case "ISPL":
 			return CommandName.ISPL;
+		case "JOIN":
+			return CommandName.JOIN;
+		case "JOINP":
+			return CommandName.JOINP;
+		case "CONTEXT":
+			return CommandName.CONTEXT;
 		default:
-			throw new InvalidScriptException("Invalid command: '" + command + "' is not a valid command");
+			throw new XPkgParseException("Invalid command: '" + command + "' is not a valid command");
 		}
 	}
 }

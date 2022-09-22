@@ -11,8 +11,11 @@ import org.apache.commons.lang3.SystemUtils;
 
 import net.arkinsolomon.xpkg.Enums.PackageType;
 import net.arkinsolomon.xpkg.Enums.ScriptType;
-import net.arkinsolomon.xpkg.Exceptions.ProgrammerError;
-import net.arkinsolomon.xpkg.Exceptions.ScriptExecutionException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgAlreadySetException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgClosedExecutionContextException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgImmutableVarException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgInvalidCallException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgNotYetSetException;
 import net.arkinsolomon.xpkg.Vars.XPkgBool;
 import net.arkinsolomon.xpkg.Vars.XPkgResource;
 import net.arkinsolomon.xpkg.Vars.XPkgString;
@@ -41,11 +44,14 @@ public class ExecutionContext {
 	private XPkgString xp = new XPkgString(Configuration.getXpPath().toString());
 	private XPkgResource tmp;
 
+	// The currently executing line
+	private int currentLine = 0;
+
 	// All environment variable names
 	private static String[] envVarNames = new String[] { "$IS_MAC_OS", "$IS_WINDOWS", "$IS_LINUX", "$IS_OTHER_OS",
-			"$XP_DIR", "$TMP" };
+			"$XP_DIR", "$TMP", "$SPACE" };
 
-	public ExecutionContext() throws IOException, ScriptExecutionException {
+	public ExecutionContext() throws IOException {
 		isActive = true;
 		vars = new HashMap<String, XPkgVar>();
 
@@ -70,9 +76,25 @@ public class ExecutionContext {
 			setInternalVar("$IS_OTHER_OS", new XPkgBool(isOtherOS));
 			setInternalVar("$XP_DIR", xp);
 			setInternalVar("$TMP", tmp);
-		} catch (ProgrammerError e) {
-			throw new ScriptExecutionException("Could not set environment variables when creating script execution context");
+			setInternalVar("$SPACE", new XPkgString(" "));
+		} catch (Exception e) {
+			//Should be no reason this is reached
 		}
+	}
+
+	// Increment the line counter
+	public void incCounter() {
+		++currentLine;
+	}
+
+	// Set the line counter
+	public void setCounter(int newCount) {
+//		currentLine = newCount;
+	}
+
+	// Get the line counter
+	public int getLineCounter() {
+		return currentLine;
 	}
 
 	// Close and destroy the context
@@ -82,72 +104,68 @@ public class ExecutionContext {
 	}
 
 	// PackageType getter and setter
-	public void setPackageType(PackageType type) throws ProgrammerError {
+	public void setPackageType(PackageType type) throws XPkgInvalidCallException {
 		if (!isActive)
-			throw new ProgrammerError("Called 'setPackageType' on inactive execution context");
+			throw new XPkgClosedExecutionContextException();
 		if (packageType != null)
-			throw new ProgrammerError(
-					"Whatever programmer made this accidentally set packageType in the execution context more than once");
+			throw new XPkgInvalidCallException("Execution context already has set packageType");
 		packageType = type;
 	}
 
-	public PackageType getPackageType() throws ProgrammerError {
+	public PackageType getPackageType() throws XPkgInvalidCallException {
 		if (!isActive)
-			throw new ProgrammerError("Called 'getPackageType' on inactive execution context");
+			throw new XPkgClosedExecutionContextException();
 		if (packageType == null)
-			throw new ProgrammerError("packageType has not yet been set");
+			throw new XPkgNotYetSetException("package_type");
 		return packageType;
 	}
 
 	// ScriptType getter and setter
-	public void setScriptType(ScriptType type) throws ProgrammerError {
+	public void setScriptType(ScriptType type) throws XPkgInvalidCallException {
 		if (!isActive)
-			throw new ProgrammerError("Called 'setScriptType' on inactive execution context");
+			throw new XPkgClosedExecutionContextException();
 		if (scriptType != null)
-			throw new ProgrammerError(
-					"Whatever programmer made this accidentally set scriptType in the execution context more than once");
+			throw new XPkgAlreadySetException("script_type");
 		scriptType = type;
 	}
 
-	public ScriptType getScriptType() throws ProgrammerError {
+	public ScriptType getScriptType() throws XPkgInvalidCallException {
 		if (!isActive)
-			throw new ProgrammerError("Called 'getScriptType' on inactive execution context");
+			throw new XPkgClosedExecutionContextException();
 		if (scriptType == null)
-			throw new ProgrammerError("scriptType has not yet been set");
+			throw new XPkgNotYetSetException("script_type");
 		return scriptType;
 	}
-	
+
 	public File getTmpDir() {
 		return tmp.getValue();
 	}
 
 	// Set a variable
-	public void setVar(String name, XPkgVar value) throws ScriptExecutionException, ProgrammerError {
+	public void setVar(String name, XPkgVar value) throws XPkgInvalidCallException, XPkgImmutableVarException {
 		if (!isActive)
-			throw new ProgrammerError("Called 'setVar' on inactive execution context");
+			throw new XPkgClosedExecutionContextException();
 		if (isEnvVarName(name))
-			throw new ScriptExecutionException("Error: attempted to set value of immutable environment variable");
+			throw new XPkgImmutableVarException("Error: attempted to set value of immutable environment variable");
 		setInternalVar(name, value);
 	}
 
 	// Set a variable without safety checks
-	private void setInternalVar(String name, XPkgVar value) throws ProgrammerError {
-		if (!isActive)
-			throw new ProgrammerError("Called 'setInternalVar' on inactive execution context");
+	private void setInternalVar(String name, XPkgVar value) throws XPkgInvalidCallException {
 		vars.put(name, value);
 	}
 
 	// Get a variable
-	public XPkgVar getVar(String name) throws ProgrammerError {
+	public XPkgVar getVar(String name) throws XPkgInvalidCallException {
 		if (!isActive)
-			throw new ProgrammerError("Called 'getVar' on inactive execution context");
+			throw new XPkgClosedExecutionContextException();
 		return vars.get(name);
 	}
 
 	// Check if a variable exists
-	public boolean hasVar(String name) throws ProgrammerError {
+	public boolean hasVar(String name) throws XPkgInvalidCallException {
 		if (!isActive)
-			throw new ProgrammerError("Called 'hasVar' on inactive execution context");
+			throw new XPkgClosedExecutionContextException();
 		return vars.containsKey(name);
 	}
 

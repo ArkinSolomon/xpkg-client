@@ -2,17 +2,18 @@ package net.arkinsolomon.xpkg.Commands;
 
 import net.arkinsolomon.xpkg.ExecutionContext;
 import net.arkinsolomon.xpkg.ParseHelper;
-import net.arkinsolomon.xpkg.Exceptions.InvalidScriptException;
-import net.arkinsolomon.xpkg.Exceptions.ProgrammerError;
+import net.arkinsolomon.xpkg.Exceptions.XPkgArgLenException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgInvalidCallException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgUndefinedVarException;
 
 //This class simply prints something
 public class PrintCommand extends Command {
 
-	public static void execute(String[] args, ExecutionContext context) throws InvalidScriptException, ProgrammerError {
+	public static void execute(String[] args, ExecutionContext context) throws XPkgArgLenException, XPkgInvalidCallException, XPkgUndefinedVarException {
 
 		// Make sure there is at least one argument
 		if (args.length == 0)
-			throw new InvalidScriptException("Print command requires more than one argument");
+			throw new XPkgArgLenException(CommandName.PRINT, 1, 0);
 
 		// If the first argument is a variable and that's all there is print it,
 		// otherwise print all arguments
@@ -20,11 +21,10 @@ public class PrintCommand extends Command {
 
 			// Do some more checks
 			if (args.length != 1)
-				throw new InvalidScriptException(
-						"Invalid amount of arguments to print command, first argument is a variable, but contains more than one item in argument list");
+				throw new XPkgArgLenException(CommandName.PRINT, 2, "a variable is the first argument");
 
 			if (!context.hasVar(args[0]))
-				throw new InvalidScriptException("Error: variable '" + args[0] + "' does not exist");
+				throw new XPkgUndefinedVarException(args[0]);
 
 			System.out.println(context.getVar(args[0]));
 			return;

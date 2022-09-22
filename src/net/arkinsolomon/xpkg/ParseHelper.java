@@ -2,9 +2,11 @@ package net.arkinsolomon.xpkg;
 
 import java.util.Arrays;
 
-import net.arkinsolomon.xpkg.Exceptions.InvalidScriptException;
-import net.arkinsolomon.xpkg.Exceptions.ProgrammerError;
-import net.arkinsolomon.xpkg.Exceptions.ScriptExecutionException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgInternalException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgInvalidBoolStatement;
+import net.arkinsolomon.xpkg.Exceptions.XPkgInvalidCallException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgTypeMismatchException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgUndefinedVarException;
 import net.arkinsolomon.xpkg.Vars.VarType;
 import net.arkinsolomon.xpkg.Vars.XPkgBool;
 import net.arkinsolomon.xpkg.Vars.XPkgString;
@@ -24,10 +26,10 @@ public class ParseHelper {
 	// Determine if a string is a valid path
 	public static boolean isValidPath(String path) {
 
-		//If a path is empty it's valid
+		// If a path is empty it's valid
 		if (path.isEmpty())
 			return true;
-		
+
 		if (!path.startsWith("/") || path.contains("\\") || stringContains(path, "~%")
 				|| path.matches(".+/\\.\\./?.+")) {
 			return false;
@@ -36,8 +38,8 @@ public class ParseHelper {
 	}
 
 	// Determine if a set of arguments evaluates to true
-	public static boolean isTrue(String[] args, ExecutionContext context)
-			throws ScriptExecutionException, InvalidScriptException, ProgrammerError {
+	public static boolean isTrue(String[] args, ExecutionContext context) throws XPkgInvalidBoolStatement,
+			XPkgUndefinedVarException, XPkgInvalidCallException, XPkgTypeMismatchException{
 
 		// First separate all OR's from AND's
 		String[] ands = String.join(" ", args).split("\\|");
@@ -68,18 +70,17 @@ public class ParseHelper {
 
 				// Check if it's a variable
 				if (!isValidVarName(part))
-					throw new InvalidScriptException("Invalid item in boolean statement");
+					throw new XPkgInvalidBoolStatement(part);
 
 				// Check if the variable exists
-				if (!context.hasVar(part)) {
-					throw new ScriptExecutionException("Invalid variable in script: '" + part + "' does not exist");
-				}
+				if (!context.hasVar(part))
+					throw new XPkgUndefinedVarException(part);
 
 				// Check for type
 				XPkgVar unknownTypeVar = context.getVar(part);
-				if (unknownTypeVar.getVarType() != VarType.BOOL)
-					throw new ScriptExecutionException(
-							"Type mismatch: '" + part + "' is a " + unknownTypeVar.getVarType() + " expected BOOL");
+				VarType uTVType = unknownTypeVar.getVarType();
+				if (uTVType != VarType.BOOL)
+					throw new XPkgTypeMismatchException(part, VarType.BOOL, uTVType);
 
 				XPkgBool var = (XPkgBool) unknownTypeVar;
 				isThisStatementTrue = var.getValue();
@@ -93,29 +94,29 @@ public class ParseHelper {
 
 	// Get a string or the value of a string variable
 	public static String getStr(String[] args, ExecutionContext context)
-			throws InvalidScriptException, ProgrammerError {
+			throws XPkgUndefinedVarException, XPkgInternalException, XPkgInvalidCallException {
 		String retStr;
 
 		// Make sure the variable name is valid and exist
 		if (isValidVarName(args[0])) {
 			if (!context.hasVar(args[0]))
-				throw new InvalidScriptException("Tried to pass in non-existent variable: '" + args[0] + "'");
+				throw new XPkgUndefinedVarException(args[0]);
 
 			// Get the variable and check the type
 			XPkgVar var = context.getVar(args[0]);
-
-			if (var.getVarType() == VarType.STRING) {
+			VarType vType = var.getVarType();
+			
+			if (vType == VarType.STRING) {
 				retStr = ((XPkgString) var).getValue();
 
 				// Make sure there's no other argument
 				if (args.length > 1)
-					throw new InvalidScriptException("Passed in variable but also more than one argument");
+					throw new XPkgInternalException("arg");
 			} else
-				throw new InvalidScriptException(
-						"Tried to pass in non-string variable instead of a string: '" + args[0] + "'");
+				throw new XPkgInternalException("mismatch", vType);
 		} else
 
-			// If there is no variable just join all the argumentss and return it
+			// If there is no variable just join all the arguments and return it
 			retStr = String.join(" ", args);
 		return retStr;
 	}

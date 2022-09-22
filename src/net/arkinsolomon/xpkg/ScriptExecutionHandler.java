@@ -4,11 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
-import net.arkinsolomon.xpkg.Exceptions.InvalidScriptException;
-import net.arkinsolomon.xpkg.Exceptions.ProgrammerError;
-import net.arkinsolomon.xpkg.Exceptions.ScriptExecutionException;
-import net.arkinsolomon.xpkg.Exceptions.ScriptParseException;
-
 //This file provides an interface for executing scripts
 public class ScriptExecutionHandler {
 
@@ -27,8 +22,7 @@ public class ScriptExecutionHandler {
 			// Execute the file
 			ScriptExecutor file = new ScriptExecutor(s);
 			file.execute();
-		} catch (ScriptParseException | InvalidScriptException | ScriptExecutionException | ProgrammerError
-				| IOException e) {
+		}catch (Throwable e) {
 			e.printStackTrace();
 		} finally {
 			if (reader != null)

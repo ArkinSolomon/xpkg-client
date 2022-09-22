@@ -8,10 +8,14 @@ import net.arkinsolomon.xpkg.Commands.Command;
 import net.arkinsolomon.xpkg.Commands.CommandName;
 import net.arkinsolomon.xpkg.Enums.EnumParser;
 import net.arkinsolomon.xpkg.Enums.HeadKey;
-import net.arkinsolomon.xpkg.Exceptions.InvalidScriptException;
-import net.arkinsolomon.xpkg.Exceptions.ProgrammerError;
-import net.arkinsolomon.xpkg.Exceptions.ScriptExecutionException;
-import net.arkinsolomon.xpkg.Exceptions.ScriptParseException;
+import net.arkinsolomon.xpkg.Exceptions.ILineException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgFlowControlException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgInvalidCallException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgParseException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgTypeMismatchException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgUndefinedVarException;
+import net.arkinsolomon.xpkg.Exceptions.XPkgUnimplementedException;
 
 //This class parses and executes scripts
 public class ScriptExecutor {
@@ -32,15 +36,14 @@ public class ScriptExecutor {
 	private boolean wasLastEndIf = false;
 
 	// Parse the entire file
-	public ScriptExecutor(String contents)
-			throws ScriptParseException, InvalidScriptException, ProgrammerError, IOException, ScriptExecutionException {
+	public ScriptExecutor(String contents) throws IOException, XPkgException {
 		this.contents = contents.trim();
 		context = new ExecutionContext();
 
 		// Separate the head and body
 		String[] parts = this.contents.split("---");
 		if (parts.length != 2)
-			throw new ScriptParseException("Could not parse script, file contains more than one head seperator");
+			throw new XPkgParseException("Could not parse script, file contains more than one head seperator");
 		head = parts[0];
 		code = parts[1];
 
@@ -55,7 +58,8 @@ public class ScriptExecutor {
 	}
 
 	// Read file metadata
-	private void readMeta() throws ScriptParseException, InvalidScriptException, ProgrammerError {
+	@SuppressWarnings("rawtypes")
+	private void readMeta() throws XPkgException {
 		Scanner scanner = null;
 		try {
 
@@ -63,6 +67,7 @@ public class ScriptExecutor {
 			scanner = new Scanner(head);
 			while (scanner.hasNext()) {
 				String line = scanner.nextLine().trim();
+				context.incCounter();
 
 				// Ignore comments and blank lines
 				if (line.startsWith("#") || line == "")
@@ -70,10 +75,9 @@ public class ScriptExecutor {
 
 				// Try to split the line in two
 				String[] lineParts = line.split(":");
-				if (lineParts.length != 2) {
-					throw new InvalidScriptException(
-							"Error reading script head: line has no or too many ':' in file head");
-				}
+				if (lineParts.length != 2)
+					throw new XPkgParseException("Too many ':'s in file head");
+
 				String keyStr = lineParts[0].trim();
 				String valStr = lineParts[1].trim();
 
@@ -89,10 +93,17 @@ public class ScriptExecutor {
 					context.setScriptType(EnumParser.getScriptType(valStr));
 					break;
 				default:
-					throw new InvalidScriptException("As a user, you shouldn't see this error... "
-							+ "there was a key that hasn't been implemented in the parsing of the metadata");
+					throw new XPkgUnimplementedException(
+							"There is a key '" + key + "' hasn't been implemented in the parsing of the metadata");
 				}
 			}
+
+			// Increase the counter to account for the '---'
+			context.incCounter();
+		} catch (Exception e) {
+			if (e instanceof ILineException)
+				throw ((ILineException) e).setLine(context.getLineCounter());
+			throw e;
 		} finally {
 			if (scanner != null)
 				scanner.close();
@@ -100,13 +111,15 @@ public class ScriptExecutor {
 	}
 
 	// Execute the file line by line, throws if execution fails
-	public void execute() throws InvalidScriptException, ScriptExecutionException, ProgrammerError {
+	@SuppressWarnings("rawtypes")
+	public void execute() throws Throwable {
 
 		Scanner scanner = null;
 		try {
 			scanner = new Scanner(code);
 			while (scanner.hasNext()) {
 				String line = scanner.nextLine().trim();
+				context.incCounter();
 
 				// Ignore all lines with comments in them
 				if (line.startsWith("#") || line == "")
@@ -156,8 +169,11 @@ public class ScriptExecutor {
 				}
 
 			}
+		} catch (Throwable e) {
+			if (e instanceof ILineException)
+				throw ((ILineException) e).setLine(context.getLineCounter());
+			throw e;
 		} finally {
-//			context.printContext();
 			if (scanner != null)
 				scanner.close();
 			if (didMakeContext)
@@ -168,15 +184,18 @@ public class ScriptExecutor {
 	// Jump to the next flow control statement that's executable, returns true if it
 	// reaches an executable statement, and false if it reaches the end of the flow
 	// control
-	private boolean gotoNextFlowControl(Scanner scanner) throws InvalidScriptException, ScriptExecutionException, ProgrammerError {
+	private boolean gotoNextFlowControl(Scanner scanner)
+			throws XPkgUndefinedVarException, XPkgInvalidCallException, XPkgTypeMismatchException, XPkgParseException {
 		return gotoNextFlowControl(scanner, false);
 	}
 
 	private boolean gotoNextFlowControl(Scanner scanner, boolean jumpToEnd)
-			throws InvalidScriptException, ScriptExecutionException, ProgrammerError {
-		int branchDepth = 0;
-		while (scanner.hasNext()) {
+			throws XPkgParseException, XPkgUndefinedVarException, XPkgInvalidCallException, XPkgTypeMismatchException {
 
+		// The amount of nested if statements we're in
+		int branchDepth = 0;
+
+		while (scanner.hasNext()) {
 			String subLine = scanner.nextLine().trim();
 
 			// Ignore all lines with comments in them
@@ -194,9 +213,8 @@ public class ScriptExecutor {
 
 				// Determine if we can execute the IF or ELIF
 				if (!jumpToEnd && (subCmd == CommandName.ELSE
-						|| (subCmd == CommandName.ELIF && ParseHelper.isTrue(subArgs, context)))) {
+						|| (subCmd == CommandName.ELIF && ParseHelper.isTrue(subArgs, context))))
 					return true;
-				}
 			} else if (subCmd == CommandName.ENDIF) {
 				if (branchDepth == 0)
 					return false;
@@ -207,8 +225,11 @@ public class ScriptExecutor {
 	}
 
 	// Get the code for the current flow control branch
-	private String getFlowControlCode(Scanner scanner) throws InvalidScriptException {
+	private String getFlowControlCode(Scanner scanner) throws XPkgParseException {
 		wasLastEndIf = false;
+
+		// The line we started at
+		int startLine = context.getLineCounter();
 
 		// The code to return
 		String branchCode = "";
@@ -217,6 +238,7 @@ public class ScriptExecutor {
 		while (scanner.hasNext()) {
 
 			String subLine = scanner.nextLine().trim();
+			context.incCounter();
 
 			// Ignore all lines with comments in them
 			if (subLine.startsWith("#") || subLine == "")
@@ -231,11 +253,18 @@ public class ScriptExecutor {
 				branchCode += subLine + "\n";
 			} else if ((subCmd == CommandName.ELSE || subCmd == CommandName.ELIF) && branchDepth == 0) {
 
+				// Reset the line counter
+				context.setCounter(startLine);
+
 				// We have found the end of the IF branch, so return it it
 				return branchCode;
 
 			} else if (subCmd == CommandName.ENDIF) {
 				if (branchDepth == 0) {
+
+					// Reset the line counter
+					context.setCounter(startLine);
+
 					wasLastEndIf = true;
 					return branchCode;
 				}
@@ -245,6 +274,6 @@ public class ScriptExecutor {
 				branchCode += subLine + "\n";
 			}
 		}
-		throw new InvalidScriptException("If statment does not have ENDIF command");
+		throw new XPkgFlowControlException("If statment does not have ENDIF command");
 	}
 }

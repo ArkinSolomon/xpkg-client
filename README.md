@@ -106,6 +106,10 @@ The path to the currently working X-Plane directory.
 
 The path to the temporary directory.
 
+##### *STRING* `$SPACE`
+
+Just a string which contains only a single space.
+
 ### XPKGS Reference
 
 #### Head keys
@@ -136,6 +140,10 @@ Options:
 The location of scenery in the `scenery_packs.ini` file.
 
 #### Commands
+
+##### context<sub>&nbsp;[*Debug*]<sub>
+
+Print the current execution context for debugging.
 
 ##### get [$VAR] [RESOURCE_ID]
 

@@ -1,6 +1,6 @@
 package net.arkinsolomon.xpkg.Vars;
 
-//This variable type is a boolean, ture or false
+//This variable type is a boolean, true or false
 public class XPkgBool extends XPkgVar {
 	
 	//The data that this is storing
