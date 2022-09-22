@@ -1,7 +1,6 @@
 package net.arkinsolomon.xpkg;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Scanner;
 
 //This file provides an interface for executing scripts
