@@ -78,8 +78,16 @@ public class ExecutionContext {
 			setInternalVar("$TMP", tmp);
 			setInternalVar("$SPACE", new XPkgString(" "));
 		} catch (Exception e) {
-			//Should be no reason this is reached
+			// Should be no reason this is reached
 		}
+	}
+
+	// Create a blank execution context for testing
+	public static ExecutionContext createBlankContext() throws XPkgInvalidCallException, IOException {
+		ExecutionContext context = new ExecutionContext();
+		context.setScriptType(ScriptType.OTHER);
+		context.setPackageType(PackageType.OTHER);
+		return context;
 	}
 
 	// Increment the line counter

@@ -3,6 +3,7 @@ package net.arkinsolomon.xpkg;
 import java.io.File;
 import java.util.Scanner;
 
+
 //This file provides an interface for executing scripts
 public class ScriptExecutionHandler {
 
@@ -21,11 +22,30 @@ public class ScriptExecutionHandler {
 			// Execute the file
 			ScriptExecutor file = new ScriptExecutor(s);
 			file.execute();
-		}catch (Throwable e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 		} finally {
 			if (reader != null)
 				reader.close();
 		}
+	}
+
+	// Execute some code (for testing)
+	public static ExecutionContext executeText(String text) throws Throwable {
+		return executeText(text, ExecutionContext.createBlankContext());
+	}
+
+	// Execute a some code (for testing) with a provided execution context
+	public static ExecutionContext executeText(String text, ExecutionContext context) throws Throwable {
+
+		// Create a context if there is none
+		if (context == null)
+			return executeText(text);
+
+		ScriptExecutor script = new ScriptExecutor(text, context);
+		script.execute();
+
+		// Return context (without closing) no matter what
+		return context;
 	}
 }

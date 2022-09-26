@@ -8,14 +8,39 @@ import net.arkinsolomon.xpkg.ExecutionContext;
 import net.arkinsolomon.xpkg.Exceptions.XPkgExecutionException;
 import net.arkinsolomon.xpkg.Exceptions.XPkgUnimplementedException;
 
+
 // Class that allows commands to be called and managed
 public abstract class Command {
 
 	// Store all commands
 	private static HashMap<CommandName, Method> cmds = new HashMap<CommandName, Method>();
 
+	// True if we've registered commands already
+	private static boolean hasRegisteredCommands = false;
+
+	// Register all commands
+	public static void registerCommands() throws XPkgExecutionException {
+		
+		//Only register once
+		if (hasRegisteredCommands)
+			return;
+		hasRegisteredCommands = true;
+		
+		//Register all commands
+		registerCmd(CommandName.GET, GetCommand.class);
+		registerCmd(CommandName.PRINT, PrintCommand.class);
+		registerCmd(CommandName.SET, SetCommand.class);
+		registerCmd(CommandName.SETSTR, SetstrCommand.class);
+		registerCmd(CommandName.MKDIR, MkdirCommand.class);
+		registerCmd(CommandName.MKDIRS, MkdirsCommand.class);
+		registerCmd(CommandName.ISPL, IsplCommand.class);
+		registerCmd(CommandName.JOIN, JoinCommand.class);
+		registerCmd(CommandName.JOINP, JoinpCommand.class);
+		registerCmd(CommandName.CONTEXT, ContextCommand.class);
+	}
+
 	// Register a command
-	public static void registerCmd(CommandName cName, Class<? extends Command> c) throws XPkgExecutionException {
+	private static void registerCmd(CommandName cName, Class<? extends Command> c) throws XPkgExecutionException {
 
 		// Make sure command has execute() method
 		Method m;
@@ -35,8 +60,7 @@ public abstract class Command {
 	}
 
 	// Execute a command
-	public static void call(CommandName n, String[] args, ExecutionContext context)
-			throws Throwable {
+	public static void call(CommandName n, String[] args, ExecutionContext context) throws Throwable {
 		Method m = cmds.get(n);
 		if (m == null)
 			throw new XPkgUnimplementedException("The command '" + n

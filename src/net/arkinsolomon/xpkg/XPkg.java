@@ -1,34 +1,19 @@
 package net.arkinsolomon.xpkg;
 
+import java.io.File;
+
 import net.arkinsolomon.xpkg.Commands.Command;
-import net.arkinsolomon.xpkg.Commands.CommandName;
-import net.arkinsolomon.xpkg.Commands.ContextCommand;
-import net.arkinsolomon.xpkg.Commands.GetCommand;
-import net.arkinsolomon.xpkg.Commands.IsplCommand;
-import net.arkinsolomon.xpkg.Commands.JoinCommand;
-import net.arkinsolomon.xpkg.Commands.JoinpCommand;
-import net.arkinsolomon.xpkg.Commands.MkdirCommand;
-import net.arkinsolomon.xpkg.Commands.MkdirsCommand;
-import net.arkinsolomon.xpkg.Commands.PrintCommand;
-import net.arkinsolomon.xpkg.Commands.SetCommand;
-import net.arkinsolomon.xpkg.Commands.SetstrCommand;
 
 public class XPkg {
 
 	public static void main(String[] args) {
+		
+		//Configure
+		Configuration.setXpPath(new File("/Users/arkinsolomon/Desktop/X-Plane 12"));
 
 		// Register all commands
 		try {
-			Command.registerCmd(CommandName.GET, GetCommand.class);
-			Command.registerCmd(CommandName.PRINT, PrintCommand.class);
-			Command.registerCmd(CommandName.SET, SetCommand.class);
-			Command.registerCmd(CommandName.SETSTR, SetstrCommand.class);
-			Command.registerCmd(CommandName.MKDIR, MkdirCommand.class);
-			Command.registerCmd(CommandName.MKDIRS, MkdirsCommand.class);
-			Command.registerCmd(CommandName.ISPL, IsplCommand.class);
-			Command.registerCmd(CommandName.JOIN, JoinCommand.class);
-			Command.registerCmd(CommandName.JOINP, JoinpCommand.class);
-			Command.registerCmd(CommandName.CONTEXT, ContextCommand.class);
+			Command.registerCommands();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -1,5 +1,6 @@
 package net.arkinsolomon.xpkg.Commands;
 
+import net.arkinsolomon.xpkg.Configuration;
 import net.arkinsolomon.xpkg.ExecutionContext;
 import net.arkinsolomon.xpkg.ParseHelper;
 import net.arkinsolomon.xpkg.Exceptions.XPkgArgLenException;
@@ -9,7 +10,8 @@ import net.arkinsolomon.xpkg.Exceptions.XPkgUndefinedVarException;
 //This class simply prints something
 public class PrintCommand extends Command {
 
-	public static void execute(String[] args, ExecutionContext context) throws XPkgArgLenException, XPkgInvalidCallException, XPkgUndefinedVarException {
+	public static void execute(String[] args, ExecutionContext context)
+			throws XPkgArgLenException, XPkgInvalidCallException, XPkgUndefinedVarException {
 
 		// Make sure there is at least one argument
 		if (args.length == 0)
@@ -26,9 +28,17 @@ public class PrintCommand extends Command {
 			if (!context.hasVar(args[0]))
 				throw new XPkgUndefinedVarException(args[0]);
 
-			System.out.println(context.getVar(args[0]));
+			String varValue = context.getVar(args[0]).toString();
+			if (Configuration.getInlinePrint())
+				System.out.print(varValue);
+			else
+				System.out.println(varValue);
 			return;
 		}
-		System.out.println(String.join(" ", args));
+		String printStr = String.join(" ", args);
+		if (Configuration.getInlinePrint())
+			System.out.print(printStr);
+		else
+			System.out.println(printStr);
 	}
 }
