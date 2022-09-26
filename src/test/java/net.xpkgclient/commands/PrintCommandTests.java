@@ -50,7 +50,7 @@ class PrintCommandTests {
 
     // Print just regular strings
     @Test
-    void basic() throws Throwable {
+    void testBasicPrints() throws Throwable {
         assertEquals("Hello", printText("Hello", null).trim());
         assertEquals("Hello world!", printText("Hello world!", null).trim());
         assertEquals("Howdy there ma'am", printText("Howdy there ma'am", null).trim());
@@ -58,7 +58,7 @@ class PrintCommandTests {
 
     // Print some variables
     @Test
-    void variable() throws Throwable {
+    void testVariablePrints() throws Throwable {
 
         // Setup test context
         ExecutionContext context = ExecutionContext.createBlankContext();
@@ -77,18 +77,18 @@ class PrintCommandTests {
     @Test
     void exceptions() throws XPkgInvalidCallException, XPkgImmutableVarException, IOException {
 
-		//Setup test context
-		ExecutionContext context = ExecutionContext.createBlankContext();
+        //Setup test context
+        ExecutionContext context = ExecutionContext.createBlankContext();
         context.setVar("$testStr", new XPkgString("Test string"));
 
         // Test without any arguments
-        Exception e1 = assertThrows(XPkgArgLenException.class, () -> ScriptExecutionHandler.executeText("print"));
+        assertThrows(XPkgArgLenException.class, () -> ScriptExecutionHandler.executeText("print"));
+        assertThrows(XPkgArgLenException.class, () -> ScriptExecutionHandler.executeText("print   "));
 
         // Test with variable then text
-        Exception e2 = assertThrows(XPkgArgLenException.class, () -> ScriptExecutionHandler.executeText("print $testStr hello"));
+        assertThrows(XPkgArgLenException.class, () -> ScriptExecutionHandler.executeText("print $testStr hello"));
 
         // Test with non-existent variable
-        Exception e3 = assertThrows(XPkgUndefinedVarException.class, () -> ScriptExecutionHandler.executeText("print $nonExistentVar"));
-
+        assertThrows(XPkgUndefinedVarException.class, () -> ScriptExecutionHandler.executeText("print $nonExistentVar"));
     }
 }

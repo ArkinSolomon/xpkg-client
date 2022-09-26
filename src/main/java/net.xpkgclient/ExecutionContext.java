@@ -43,6 +43,7 @@ public class ExecutionContext {
 
         // Create a unique id for the temporary folder
         String uniqueID = UUID.randomUUID().toString();
+
         // The X-Plane folder and temporary folders
         XPkgString xp = new XPkgString(Configuration.getXpPath().toString());
         tmp = new XPkgResource(new File(xp.getValue(), "xpkg/temp/" + uniqueID));
