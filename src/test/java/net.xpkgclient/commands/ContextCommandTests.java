@@ -1,25 +1,16 @@
 package net.xpkgclient.commands;
 
-import net.xpkgclient.Configuration;
+import net.xpkgclient.ConfigSetupExtension;
 import net.xpkgclient.ScriptExecutionHandler;
 import net.xpkgclient.exceptions.XPkgArgLenException;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ExtendWith(ConfigSetupExtension.class)
 class ContextCommandTests {
-
-    // Set up configuration and commands
-    @BeforeAll
-    static void setUpBeforeClass() throws Exception {
-        Configuration.setInlinePrint(true);
-        Configuration.setXpPath(new File("/Users/arkinsolomon/Desktop/X-Plane 12"));
-        Command.registerCommands();
-    }
 
     //Test basic execution (make sure it doesn't throw an error)
     @Test

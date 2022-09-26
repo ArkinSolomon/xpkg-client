@@ -37,7 +37,7 @@ public class IsplCommand extends Command {
             throw QuickHandles.handleGetStr(CommandName.ISPL, e);
         }
 
-        // Check the path name and set he value
+        // Check the path name and set the value
         boolean isValid = ParseHelper.isValidPath(testStr);
         context.setVar(assignee, new XPkgBool(isValid));
     }

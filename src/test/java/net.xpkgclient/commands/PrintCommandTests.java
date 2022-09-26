@@ -1,5 +1,6 @@
 package net.xpkgclient.commands;
 
+import net.xpkgclient.ConfigSetupExtension;
 import net.xpkgclient.Configuration;
 import net.xpkgclient.ExecutionContext;
 import net.xpkgclient.ScriptExecutionHandler;
@@ -8,27 +9,20 @@ import net.xpkgclient.exceptions.XPkgImmutableVarException;
 import net.xpkgclient.exceptions.XPkgInvalidCallException;
 import net.xpkgclient.exceptions.XPkgUndefinedVarException;
 import net.xpkgclient.vars.XPkgString;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+//TODO Split the tests up into individual classes
 //Test the print command
+@ExtendWith(ConfigSetupExtension.class)
 class PrintCommandTests {
-
-    // Set up configuration and commands
-    @BeforeAll
-    static void setUpBeforeClass() throws Exception {
-        Configuration.setInlinePrint(true);
-        Configuration.setXpPath(new File("/Users/arkinsolomon/Desktop/X-Plane 12"));
-        Command.registerCommands();
-    }
 
     // Get the string from executing a print test
     private static String printText(String testArg, ExecutionContext context) throws Throwable {
@@ -61,6 +55,7 @@ class PrintCommandTests {
     void testVariablePrints() throws Throwable {
 
         // Setup test context
+        //TODO setup context using ExecutionContext methods instead of through scripts to isolate testing to the print command
         ExecutionContext context = ExecutionContext.createBlankContext();
         ScriptExecutionHandler.executeText("setstr $testStr Oh look at that a string", context);
         ScriptExecutionHandler.executeText("set $test2 TRUE", context);
