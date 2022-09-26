@@ -1,0 +1,14 @@
+package net.xpkgclient.vars;
+
+//Top level XPkg variable
+public abstract class XPkgVar {
+
+    //Get the type of variable
+    public abstract VarType getVarType();
+
+    //Get a string representation of the variable
+    public abstract String toString();
+
+    //Create a copy of this variable
+    public abstract XPkgVar copy();
+}	
