@@ -43,6 +43,7 @@ public class ParseHelper {
     }
 
     // Determine if a set of arguments evaluates to true
+    @SuppressWarnings("SpellCheckingInspection")
     public static boolean isTrue(String[] args, ExecutionContext context) throws XPkgInvalidBoolStatement,
             XPkgUndefinedVarException, XPkgInvalidCallException, XPkgTypeMismatchException {
 
@@ -110,17 +111,17 @@ public class ParseHelper {
             if (!context.hasVar(args[0]))
                 throw new XPkgUndefinedVarException(args[0]);
 
+            // Make sure there's no other argument
+            if (args.length > 1)
+                throw new XPkgInternalException("arglen");
+
             // Get the variable and check the type
             XPkgVar var = context.getVar(args[0]);
             VarType vType = var.getVarType();
 
-            if (vType == VarType.STRING) {
+            if (vType == VarType.STRING)
                 retStr = ((XPkgString) var).getValue();
-
-                // Make sure there's no other argument
-                if (args.length > 1)
-                    throw new XPkgInternalException("arg");
-            } else
+            else
                 throw new XPkgInternalException("mismatch", vType);
         } else
 
@@ -130,6 +131,7 @@ public class ParseHelper {
     }
 
     // Determine if a string contains any of an item
+    @SuppressWarnings("SameParameterValue")
     private static boolean stringContains(String testStr, String matches) {
         String[] m = matches.split("");
         return Arrays.stream(m).anyMatch(testStr::contains);

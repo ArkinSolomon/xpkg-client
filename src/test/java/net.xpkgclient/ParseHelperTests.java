@@ -1,6 +1,10 @@
 package net.xpkgclient;
 
+import net.xpkgclient.commands.CommandName;
+import net.xpkgclient.exceptions.QuickHandles;
+import net.xpkgclient.exceptions.XPkgArgLenException;
 import net.xpkgclient.exceptions.XPkgImmutableVarException;
+import net.xpkgclient.exceptions.XPkgInternalException;
 import net.xpkgclient.exceptions.XPkgInvalidBoolStatement;
 import net.xpkgclient.exceptions.XPkgInvalidCallException;
 import net.xpkgclient.exceptions.XPkgTypeMismatchException;
@@ -13,7 +17,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(ConfigSetupExtension.class)
 public class ParseHelperTests {
@@ -475,7 +482,55 @@ public class ParseHelperTests {
     }
 
     @Test
-    void testGetStrNormal() {
+    void testGetStrSingleWord() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgInternalException {
+        assertEquals("foobar", ParseHelper.getStr(new String[]{"foobar"}, context));
+    }
 
+    @Test
+    void testGetStrMultiWord() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgInternalException {
+        assertEquals("foo bar", ParseHelper.getStr(new String[]{"foo", "bar"}, context));
+    }
+
+    @Test
+    void testGetStrSingleVar() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgInternalException {
+        assertEquals("String 1", ParseHelper.getStr(new String[]{"$str1"}, context));
+    }
+
+    @Test
+    void testGetStrSingleUndef() {
+        assertThrows(XPkgUndefinedVarException.class, () -> ParseHelper.getStr(new String[]{"$undefined_var"}, context));
+    }
+
+    @Test
+    void testGetStrMultiVar() {
+        assertThrows(XPkgArgLenException.class, () -> {
+            try {
+                ParseHelper.getStr(new String[]{"$str1", "$str2"}, context);
+            } catch (XPkgInternalException e) {
+                throw QuickHandles.handleGetStr(CommandName.__INTERNAL_TEST_COMMAND, e);
+            }
+        });
+    }
+
+    @Test
+    void testGetStrMultiVarSecondUndef() {
+        assertThrows(XPkgArgLenException.class, () -> {
+            try {
+                ParseHelper.getStr(new String[]{"$str1", "$undefined_var"}, context);
+            } catch (XPkgInternalException e) {
+                throw QuickHandles.handleGetStr(CommandName.__INTERNAL_TEST_COMMAND, e);
+            }
+        });
+    }
+
+    @Test
+    void testGetStrMismatch() {
+        assertThrows(XPkgTypeMismatchException.class, () -> {
+            try {
+                ParseHelper.getStr(new String[]{"$bool_t"}, context);
+            } catch (XPkgInternalException e) {
+                throw QuickHandles.handleGetStr(CommandName.__INTERNAL_TEST_COMMAND, e);
+            }
+        });
     }
 }
