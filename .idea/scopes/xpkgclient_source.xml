@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="xpkgclient-source" pattern="src:net.xpkgclient..*||src:net.xpkgclient.commands..*||src:net.xpkgclient.enums..*||src:net.xpkgclient.exceptions..*||src:net.xpkgclient.vars..*" />
+</component>
