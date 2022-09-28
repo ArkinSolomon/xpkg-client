@@ -24,16 +24,16 @@ import java.util.UUID;
 public class ExecutionContext {
 
     // All environment variable names
-    private static final String[] envVarNames = new String[]{"$IS_MAC_OS", "$IS_WINDOWS", "$IS_LINUX", "$IS_OTHER_OS",
+    private static final String[] envVarNames = {"$IS_MAC_OS", "$IS_WINDOWS", "$IS_LINUX", "$IS_OTHER_OS",
             "$XP_DIR", "$TMP", "$SPACE"};
     // Store all variables
     private final HashMap<String, XPkgVar> vars;
+    private final XPkgResource tmp;
     // Head or file meta
     private PackageType packageType;
     private ScriptType scriptType;
     // If this context is active (note closed)
     private boolean isActive;
-    private final XPkgResource tmp;
     // The currently executing line
     private int currentLine = 0;
 
@@ -92,11 +92,6 @@ public class ExecutionContext {
     // Increment the line counter
     public void incCounter() {
         ++currentLine;
-    }
-
-    // Set the line counter
-    public void setCounter(int newCount) {
-//		currentLine = newCount;
     }
 
     // Get the line counter

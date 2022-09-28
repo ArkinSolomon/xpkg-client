@@ -114,4 +114,12 @@ class PrintCommandTests {
     void testPrintUndefinedVar() {
         assertThrows(XPkgUndefinedVarException.class, () -> PrintCommand.execute(new String[]{"$nonExistentVar"}, context));
     }
+
+    @Test
+    void testClosedContext() throws XPkgInvalidCallException, IOException, XPkgImmutableVarException {
+        ExecutionContext closingContext = ExecutionContext.createBlankContext();
+        closingContext.setVar("$closeTestStr", new XPkgString("This should throw an exception"));
+        closingContext.close();
+        assertThrows(XPkgInvalidCallException.class, () -> PrintCommand.execute(new String[]{"$closeTestStr"}, closingContext));
+    }
 }

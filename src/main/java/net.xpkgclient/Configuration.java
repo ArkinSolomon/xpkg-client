@@ -7,6 +7,7 @@ public class Configuration {
 
     // Get or set the currently active X-Plane path
     private static File xpPath = null;
+
     // True if the PRINT command should print using print() instead of println(),
     // used for testing
     private static boolean inlinePrint = false;

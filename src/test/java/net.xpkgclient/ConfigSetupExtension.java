@@ -24,6 +24,6 @@ public class ConfigSetupExtension implements BeforeAllCallback, ExtensionContext
 
     @Override
     public void close() {
-        // Your "after all tests" logic goes here
+
     }
 }

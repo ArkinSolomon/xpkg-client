@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 
 // Class that allows commands to be called and managed
-public abstract class Command {
+public class Command {
 
     // Store all commands
     private static final HashMap<CommandName, Method> cmds = new HashMap<>();

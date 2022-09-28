@@ -11,6 +11,6 @@ public class XPkgInvalidBoolStatement extends XPkgParseException {
 
     //When there is an invalid item
     public XPkgInvalidBoolStatement(String item) {
-        super("Invalid item in boolean statment: '" + item + "'");
+        super("Invalid item in boolean statement: '" + item + "'");
     }
 }

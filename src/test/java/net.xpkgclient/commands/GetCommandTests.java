@@ -1,7 +1,7 @@
 package net.xpkgclient.commands;
 
 import net.xpkgclient.ConfigSetupExtension;
-import net.xpkgclient.ScriptExecutionHandler;
+import net.xpkgclient.ExecutionContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -13,6 +13,6 @@ public class GetCommandTests {
     //We haven't really done anything yet, so it just shouldn't throw an error
     @Test
     void testNormal() {
-        assertDoesNotThrow(() -> ScriptExecutionHandler.executeText("get $var resource"), "GET command threw exception when it was not supposed to");
+        assertDoesNotThrow(() -> GetCommand.execute(new String[]{"$var", "resource_id"}, ExecutionContext.createBlankContext()), "GET command threw exception when it was not supposed to");
     }
 }

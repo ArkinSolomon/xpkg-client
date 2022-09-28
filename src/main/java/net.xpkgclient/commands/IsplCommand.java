@@ -15,7 +15,7 @@ import java.util.Arrays;
 public class IsplCommand extends Command {
     public static void execute(String[] args, ExecutionContext context)
             throws
-			XPkgException {
+            XPkgException {
 
         // Argument checking
         if (args.length < 2)

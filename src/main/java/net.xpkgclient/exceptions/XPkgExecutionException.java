@@ -11,7 +11,6 @@ public class XPkgExecutionException extends XPkgScriptRunnerException {
 
     // Class constructors (same as superclass's)
     public XPkgExecutionException() {
-        super();
     }
 
     public XPkgExecutionException(String message) {

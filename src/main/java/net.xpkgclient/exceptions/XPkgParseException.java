@@ -11,7 +11,6 @@ public class XPkgParseException extends XPkgScriptRunnerException implements ILi
 
     //Basic class constructors
     public XPkgParseException() {
-        super();
     }
 
     public XPkgParseException(String message) {

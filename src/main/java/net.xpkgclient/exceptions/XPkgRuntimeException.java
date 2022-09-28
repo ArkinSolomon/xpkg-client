@@ -11,7 +11,6 @@ public class XPkgRuntimeException extends XPkgScriptRunnerException implements I
 
     // Class constructors (same as superclass's)
     public XPkgRuntimeException() {
-        super();
     }
 
     public XPkgRuntimeException(String message) {

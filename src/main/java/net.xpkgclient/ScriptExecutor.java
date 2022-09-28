@@ -22,10 +22,8 @@ public class ScriptExecutor {
 
     // Script execution context
     private final ExecutionContext context;
-
-    private String head;
     private final String code;
-
+    private String head;
     // True if we made the execution context
     private boolean didMakeContext = false;
 
@@ -210,9 +208,6 @@ public class ScriptExecutor {
     private String getFlowControlCode(Scanner scanner) throws XPkgParseException {
         wasLastEndIf = false;
 
-        // The line we started at
-        int startLine = context.getLineCounter();
-
         // The code to return
         StringBuilder branchCode = new StringBuilder();
 
@@ -235,18 +230,11 @@ public class ScriptExecutor {
                 branchCode.append(subLine).append("\n");
             } else if ((subCmd == CommandName.ELSE || subCmd == CommandName.ELIF) && branchDepth == 0) {
 
-                // Reset the line counter
-                context.setCounter(startLine);
-
                 // We have found the end of the IF branch, so return it
                 return branchCode.toString();
 
             } else if (subCmd == CommandName.ENDIF) {
                 if (branchDepth == 0) {
-
-                    // Reset the line counter
-                    context.setCounter(startLine);
-
                     wasLastEndIf = true;
                     return branchCode.toString();
                 }

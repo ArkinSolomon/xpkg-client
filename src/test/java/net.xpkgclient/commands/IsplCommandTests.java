@@ -2,7 +2,6 @@ package net.xpkgclient.commands;
 
 import net.xpkgclient.ConfigSetupExtension;
 import net.xpkgclient.ExecutionContext;
-import net.xpkgclient.ScriptExecutionHandler;
 import net.xpkgclient.vars.VarType;
 import net.xpkgclient.vars.XPkgBool;
 import net.xpkgclient.vars.XPkgVar;
@@ -16,9 +15,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class IsplCommandTests {
 
     //Basic ISPL command checks, returns empty string if passed
-    private static String testBasic(String path, boolean expected) throws Throwable {
+    private static String testBasic(String[] args, boolean expected) throws Throwable {
         ExecutionContext context = ExecutionContext.createBlankContext();
-        ScriptExecutionHandler.executeText("ispl $testVar " + path, context);
+        IsplCommand.execute(args, context);
+//        ScriptExecutionHandler.executeText("ispl $testVar " + path, context);
         if (!context.hasVar("$testVar"))
             return "Context does not have variable";
         XPkgVar var = context.getVar("$testVar");
@@ -35,7 +35,7 @@ public class IsplCommandTests {
     void testNormal() throws Throwable {
 
         // Test normal path like checking
-        String output = testBasic("/is/this/path/like", true);
+        String output = testBasic(new String[]{"$testVar", "/is/this/path/like"}, true);
         if (!output.isBlank())
             fail(output);
     }
@@ -44,7 +44,7 @@ public class IsplCommandTests {
     void testFail() throws Throwable {
 
         // Test a failed path
-        String output = testBasic("this/should/not/be/pathlike", false);
+        String output = testBasic(new String[]{"$testVar", "this/should/not/be/pathlike"}, false);
         if (!output.isBlank())
             fail(output);
     }
@@ -53,7 +53,7 @@ public class IsplCommandTests {
     void testDoubleDot() throws Throwable {
 
         //Test a path with a double dot in it
-        String output = testBasic("this/should/not/be/pathlike/../i/hope/", false);
+        String output = testBasic(new String[]{"$testVar", "this/should/not/be/pathlike/../i/hope/"}, false);
         if (!output.isBlank())
             fail(output);
     }
@@ -62,7 +62,7 @@ public class IsplCommandTests {
     void testSpace() throws Throwable {
 
         //Test a path with a space in it
-        String output = testBasic("/this/should/be a/pathlike", true);
+        String output = testBasic(new String[]{"$testVar", "/this/should/be", "a/pathlike"}, true);
         if (!output.isBlank())
             fail(output);
     }

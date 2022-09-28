@@ -17,21 +17,29 @@ public class ParseHelper {
 
     // Check if a variable is a valid variable name
     public static boolean isValidVarName(String variable) {
-        if (!variable.startsWith("$"))
+        if (variable == null || !variable.startsWith("$"))
             return false;
         String name = variable.substring(1);
-        return !stringContains(name, "!@#$%^&*()-+={}[]\\|'\":;<>,./?") && name.length() > 0;
+        return name.length() > 0 && name.matches("^\\w+$") && !name.substring(0, 1).matches("\\d");
     }
 
     // Determine if a string is a valid path
     public static boolean isValidPath(String path) {
 
         // If a path is empty it's valid
-        if (path.isEmpty())
+        if (path.isEmpty() || path.equalsIgnoreCase("/"))
             return true;
 
-        return path.startsWith("/") && !path.contains("\\") && !stringContains(path, "~%")
-                && !path.matches(".+/\\.\\./?.+");
+        if (!(path.startsWith("/") && !path.contains("\\") && !stringContains(path, "~%")
+                && !path.matches(".+/\\.(\\.)?/?.+")))
+            return false;
+
+        String[] pathParts = path.split("/");
+        for (String part : pathParts) {
+            if (part.matches("^\s+") || path.matches("\s+$"))
+                return false;
+        }
+        return true;
     }
 
     // Determine if a set of arguments evaluates to true
@@ -40,6 +48,8 @@ public class ParseHelper {
 
         // First separate all OR's from AND's
         String[] ands = String.join(" ", args).split("\\|");
+
+        boolean statementCurrentlyTrue = false;
 
         // Loop through every and
         for (String andStatement : ands) {
@@ -83,10 +93,11 @@ public class ParseHelper {
                 isThisStatementTrue = var.getValue();
             }
 
+            //Don't return immediately, check for type mismatches
             if (isThisStatementTrue)
-                return true;
+                statementCurrentlyTrue = true;
         }
-        return false;
+        return statementCurrentlyTrue;
     }
 
     // Get a string or the value of a string variable

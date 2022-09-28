@@ -4,7 +4,8 @@ import net.xpkgclient.commands.CommandName;
 import net.xpkgclient.vars.VarType;
 
 // This class provides static functions for quick exception handling of internal exceptions
-public final class QuickHandles {
+public enum QuickHandles {
+    ;
 
     // Methods to handle ParseHelper.getStr();
     public static XPkgException handleGetStr(CommandName cmd, XPkgInternalException e) {
