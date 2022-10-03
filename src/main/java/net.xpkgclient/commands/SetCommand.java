@@ -27,13 +27,14 @@ import net.xpkgclient.exceptions.XPkgTypeMismatchException;
 import net.xpkgclient.exceptions.XPkgUndefinedVarException;
 import net.xpkgclient.vars.XPkgBool;
 import net.xpkgclient.vars.XPkgVar;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
 /**
  * This command sets a variable to another variable or the result of a boolean expression.
  */
-public class SetCommand extends Command {
+class SetCommand extends Command {
 
     /**
      * Set a variable to another variable or the result of a boolean expression.
@@ -46,7 +47,7 @@ public class SetCommand extends Command {
      * @throws XPkgImmutableVarException Thrown if the user tries to overwrite a default variable.
      * @throws XPkgTypeMismatchException Thrown if there is a type mismatch within a boolean expression.
      */
-    public static void execute(String[] args, ExecutionContext context) throws XPkgParseException,
+    public static void execute(String @NotNull [] args, ExecutionContext context) throws XPkgParseException,
             XPkgUndefinedVarException, XPkgExecutionException, XPkgImmutableVarException,
             XPkgTypeMismatchException {
 

@@ -17,11 +17,12 @@ package net.xpkgclient.commands;
 
 import net.xpkgclient.ExecutionContext;
 import net.xpkgclient.exceptions.XPkgArgLenException;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This command prints the current execution context.
  */
-public class ContextCommand extends Command {
+class ContextCommand extends Command {
 
     /**
      * The class execution command.
@@ -30,7 +31,7 @@ public class ContextCommand extends Command {
      * @param context The execution context to print.
      * @throws XPkgArgLenException Thrown if there are any arguments provided.
      */
-    public static void execute(String[] args, ExecutionContext context) throws XPkgArgLenException {
+    public static void execute(String @NotNull [] args, ExecutionContext context) throws XPkgArgLenException {
         if (args.length > 0)
             throw new XPkgArgLenException(CommandName.CONTEXT, args.length);
         context.printContext();

@@ -26,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(ConfigSetupExtension.class)
 class PrintCommandTests {
 
-    //Basic context that is shared among many tests
+    // Basic context that is shared among many tests
     private static ExecutionContext context;
 
-    //Setup and cleanup execution contexts
+    // Setup and cleanup execution contexts
     @BeforeAll
     public static void setupBeforeClass() throws XPkgInvalidCallException, IOException, XPkgImmutableVarException {
         context = ExecutionContext.createBlankContext();
@@ -39,7 +39,7 @@ class PrintCommandTests {
     }
 
     @AfterAll
-    public static void cleanupAfterClass() throws XPkgInvalidCallException, IOException, XPkgImmutableVarException {
+    public static void cleanupAfterClass() {
         context.close();
     }
 

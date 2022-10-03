@@ -16,15 +16,16 @@
 package net.xpkgclient.commands;
 
 import net.xpkgclient.ExecutionContext;
+import org.jetbrains.annotations.NotNull;
 
 //TODO this
 
 /**
  * Get a resource? idk yet
  */
-public class GetCommand extends Command {
+class GetCommand extends Command {
 
-    public static void execute(String[] args, ExecutionContext context) {
+    public static void execute(String @NotNull [] args, ExecutionContext context) {
         System.out.println("GET COMMAND EXECUTION: " + args[0] + ", " + args[1]);
         //
         //		// Make sure args[0] is a valid variable

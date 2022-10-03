@@ -50,7 +50,7 @@ public class XPkgArgLenException extends XPkgParseException {
      * @param reason In what scenario the command expects the maximum (prepended with "if ").
      */
     public XPkgArgLenException(CommandName cmd, int max, String reason) {
-        super("Invalid argument length: The " + cmd + " command expects " + max + " arguments if  " + reason);
+        super("Invalid argument length: The " + cmd + " command expects " + max + " arguments if " + reason);
     }
 
     // Command takes no arguments

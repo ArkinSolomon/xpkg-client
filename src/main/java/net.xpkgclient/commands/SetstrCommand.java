@@ -23,13 +23,14 @@ import net.xpkgclient.exceptions.XPkgInvalidCallException;
 import net.xpkgclient.exceptions.XPkgInvalidVarNameException;
 import net.xpkgclient.exceptions.XPkgTypeMismatchException;
 import net.xpkgclient.vars.XPkgString;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
 /**
  * This command sets a string variable's value.
  */
-public class SetstrCommand extends Command {
+class SetstrCommand extends Command {
 
     /**
      * The class execution command.
@@ -42,7 +43,7 @@ public class SetstrCommand extends Command {
      * @throws XPkgImmutableVarException   Thrown if the user tries to set the value of a default environment variable.
      * @throws XPkgTypeMismatchException   Thrown if the user provides a variable instead of a ...STRING. In this case the {@link net.xpkgclient.commands.SetCommand} command should be used.
      */
-    public static void execute(String[] args, ExecutionContext context)
+    public static void execute(String @NotNull [] args, ExecutionContext context)
             throws XPkgArgLenException, XPkgInvalidVarNameException, XPkgInvalidCallException,
             XPkgImmutableVarException, XPkgTypeMismatchException {
 

@@ -15,8 +15,6 @@
 
 package net.xpkgclient.vars;
 
-import net.xpkgclient.ParseHelper;
-
 /**
  * A variable which represents a STRING.
  */
@@ -80,14 +78,5 @@ public class XPkgString extends XPkgVar {
      */
     public void setValue(String newValue) {
         data = newValue;
-    }
-
-    /**
-     * Check if the data stored in this variable could be considered pathlike.
-     *
-     * @return True if the data stored in this variable is pathlike.
-     */
-    public boolean isPathLike(){
-        return ParseHelper.isValidPath(data);
     }
 }

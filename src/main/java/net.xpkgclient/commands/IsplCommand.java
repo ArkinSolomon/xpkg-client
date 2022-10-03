@@ -23,13 +23,14 @@ import net.xpkgclient.exceptions.XPkgException;
 import net.xpkgclient.exceptions.XPkgInternalException;
 import net.xpkgclient.exceptions.XPkgInvalidVarNameException;
 import net.xpkgclient.vars.XPkgBool;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
 /**
  * Determine if a string can be considered pathlike, and store the result in a variable.
  */
-public class IsplCommand extends Command {
+class IsplCommand extends Command {
 
     /**
      * The class execution command.
@@ -38,7 +39,7 @@ public class IsplCommand extends Command {
      * @param context The execution context that this command executes within.
      * @throws XPkgException Can be thrown for multiple reasons such as user error, or a type mismatch, or another reason.
      */
-    public static void execute(String[] args, ExecutionContext context)
+    public static void execute(String @NotNull [] args, ExecutionContext context)
             throws
             XPkgException {
 

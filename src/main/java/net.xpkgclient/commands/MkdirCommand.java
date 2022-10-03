@@ -23,13 +23,14 @@ import net.xpkgclient.exceptions.XPkgArgLenException;
 import net.xpkgclient.exceptions.XPkgException;
 import net.xpkgclient.exceptions.XPkgInternalException;
 import net.xpkgclient.exceptions.XPkgNotPathLikeException;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
 /**
  * This class creates a single directory (not the parent directories) within the X-Plane directory
  */
-public class MkdirCommand extends Command {
+class MkdirCommand extends Command {
 
     /**
      * The class execution command.
@@ -38,7 +39,7 @@ public class MkdirCommand extends Command {
      * @param context The execution context that this command executes within.
      * @throws XPkgException Can be thrown for multiple reasons such as user error, or a type mismatch, or another reason.
      */
-    public static void execute(String[] args, ExecutionContext context) throws XPkgException {
+    public static void execute(String @NotNull [] args, ExecutionContext context) throws XPkgException {
 
         // Argument checking
         if (args.length < 1)

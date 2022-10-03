@@ -163,11 +163,13 @@ Determine if a variable or path is a valid path.
 
 ##### join [$STRING] [$STRING or ...STRING]
 
-Join the second string onto the end of the first one (stored in the first string). Note that you can only use variables, although it can be used for paths, it's not recommended, use `joinp` instead.
+Join the second string onto the end of the first one (stored in the first string). If the first variable does not exist,
+it will be created with an empty string as it's value. Note that you can only use string variables. Although it can be
+used for pathlike variables, it's not recommended, use `JOINP` instead.
 
 ##### joinp [$PATHLIKE] [$PATHLIKE or ...PATHLIKE]
 
-Join and format the two paths together. Don't use for strings, use `join` for strings instead.
+Join and format the two paths together. Don't use for strings, use `JOIN` for regular strings instead.
 
 ##### mkdir [$PATHLIKE or ...PATHLIKE] **NEED TO MKDIR IN MUTABLERESOURCE**
 

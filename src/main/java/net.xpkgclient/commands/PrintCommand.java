@@ -21,11 +21,12 @@ import net.xpkgclient.ParseHelper;
 import net.xpkgclient.exceptions.XPkgArgLenException;
 import net.xpkgclient.exceptions.XPkgException;
 import net.xpkgclient.exceptions.XPkgUndefinedVarException;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This class prints a variable.
  */
-public class PrintCommand extends Command {
+class PrintCommand extends Command {
 
     /**
      * The class execution command.
@@ -34,7 +35,7 @@ public class PrintCommand extends Command {
      * @param context The execution context that this command executes within.
      * @throws XPkgException Can be thrown for multiple reasons such as user error, or a type mismatch, or another reason.
      */
-    public static void execute(String[] args, ExecutionContext context)
+    public static void execute(String @NotNull [] args, ExecutionContext context)
             throws XPkgException {
 
         // Make sure there is at least one argument

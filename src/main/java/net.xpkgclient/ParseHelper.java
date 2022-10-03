@@ -26,6 +26,7 @@ import net.xpkgclient.vars.VarType;
 import net.xpkgclient.vars.XPkgBool;
 import net.xpkgclient.vars.XPkgString;
 import net.xpkgclient.vars.XPkgVar;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -55,7 +56,7 @@ public class ParseHelper {
      * @param path The potential path that is being checked. Requires a leading slash. If a leading slash is not present the path will be considered invalid.
      * @return True if the path is valid.
      */
-    public static boolean isValidPath(String path) {
+    public static boolean isValidPath(@NotNull String path) {
 
         // If a path is empty it's valid
         if (path.isEmpty() || path.equalsIgnoreCase("/"))
@@ -168,7 +169,7 @@ public class ParseHelper {
      * @throws XPkgInternalException     Thrown with the message 'arglen' if there are too many arguments (only happens if the first argument is a variable and there is more than one argument). Can also be thrown with the message 'mismatch' if the first argument exists and is a valid variable, but is not of type STRING. If thrown with 'mismatch' the type of the variable received will be thrown as a {@code VarType} enumeration as the exception's data.
      * @throws XPkgInvalidCallException  Thrown if the execution context provided is closed.
      */
-    public static String getStr(String[] args, ExecutionContext context)
+    public static String getStr(String @NotNull [] args, ExecutionContext context)
             throws XPkgUndefinedVarException, XPkgInternalException, XPkgInvalidCallException {
         String retStr;
 
