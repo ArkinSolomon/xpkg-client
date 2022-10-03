@@ -17,7 +17,6 @@ package net.xpkgclient.commands;
 
 import net.xpkgclient.ExecutionContext;
 
-//This class gets and stores a file
 //TODO this
 
 /**

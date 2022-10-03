@@ -90,8 +90,6 @@ public class ParseHelper {
         String joined = String.join(" ", args);
 
         // Make sure there's no two AND's or OR's together
-
-        //TODO Write tests for this
         if (joined.contains("\\|\\s*\\|"))
             throw new XPkgInvalidBoolStatement('|');
         else if (joined.matches("&\\s*&"))
@@ -110,6 +108,11 @@ public class ParseHelper {
             // Evaluate each part of the and statement separately
             andStatement = andStatement.trim();
             String[] parts = andStatement.split("&");
+            if (andStatement.startsWith("&") || andStatement.endsWith("&"))
+                throw new XPkgInvalidBoolStatement();
+
+            //            if (parts.length == 0)
+            //                throw new XPkgInvalidBoolStatement();
 
             for (String part : parts) {
                 part = part.trim();
@@ -127,8 +130,12 @@ public class ParseHelper {
                     continue;
 
                 // Check if it's a variable
-                if (!isValidVarName(part))
+                if (!isValidVarName(part)) {
+                    if (part.isBlank())
+                        throw new XPkgInvalidBoolStatement();
                     throw new XPkgInvalidBoolStatement(part);
+                }
+
 
                 // Check if the variable exists
                 if (!context.hasVar(part))

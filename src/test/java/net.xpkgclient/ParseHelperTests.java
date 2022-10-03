@@ -43,7 +43,7 @@ public class ParseHelperTests {
     }
 
     @AfterAll
-    public static void cleanupAfterClass(){
+    public static void cleanupAfterClass() {
         context.close();
     }
 
@@ -487,6 +487,46 @@ public class ParseHelperTests {
     @Test
     void testTruthFalseOrTrueAndTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"FALSE", "|", "TRUE", "&", "TRUE"}, context));
+    }
+
+    @Test
+    void testTruthTwoAndsTogetherSameArg() {
+        assertThrows(XPkgInvalidBoolStatement.class, () -> ParseHelper.isTrue(new String[]{"TRUE", "&&", "TRUE"}, context));
+    }
+
+    @Test
+    void testTruthTwoAndsTogetherDifferentArgs() {
+        assertThrows(XPkgInvalidBoolStatement.class, () -> ParseHelper.isTrue(new String[]{"TRUE", "&", "&", "TRUE"}, context));
+    }
+
+    @Test
+    void testTruthTwoOrsTogetherSameArg() {
+        assertThrows(XPkgInvalidBoolStatement.class, () -> ParseHelper.isTrue(new String[]{"TRUE", "||", "TRUE"}, context));
+    }
+
+    @Test
+    void testTruthTwoOrsTogetherDifferentArgs() {
+        assertThrows(XPkgInvalidBoolStatement.class, () -> ParseHelper.isTrue(new String[]{"TRUE", "|", "|", "TRUE"}, context));
+    }
+
+    @Test
+    void testTruthAndOrTogetherSameArg() {
+        assertThrows(XPkgInvalidBoolStatement.class, () -> ParseHelper.isTrue(new String[]{"TRUE", "&|", "TRUE"}, context));
+    }
+
+    @Test
+    void testTruthAndOrTogetherDifferentArgs() {
+        assertThrows(XPkgInvalidBoolStatement.class, () -> ParseHelper.isTrue(new String[]{"TRUE", "&", "|", "TRUE"}, context));
+    }
+
+    @Test
+    void testTruthOrAndTogetherSameArg() {
+        assertThrows(XPkgInvalidBoolStatement.class, () -> ParseHelper.isTrue(new String[]{"TRUE", "|&", "TRUE"}, context));
+    }
+
+    @Test
+    void testTruthOrAndTogetherDifferentArgs() {
+        assertThrows(XPkgInvalidBoolStatement.class, () -> ParseHelper.isTrue(new String[]{"TRUE", "|", "&", "TRUE"}, context));
     }
 
     @Test
