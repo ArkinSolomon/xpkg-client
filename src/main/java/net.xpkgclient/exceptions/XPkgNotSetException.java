@@ -17,14 +17,21 @@ package net.xpkgclient.exceptions;
 
 import java.io.Serial;
 
-// A simple exception when an item has not been set
-public class XPkgNotYetSetException extends XPkgInvalidCallException {
+/**
+ * Exception thrown when trying to get an item has not been set.
+ */
+public class XPkgNotSetException extends XPkgInvalidCallException {
 
-    // Serial identifier
     @Serial
     private static final long serialVersionUID = 8964432147160549873L;
 
-    public XPkgNotYetSetException(String var) {
-        super("'" + var + "' has not yet been set");
+    //TODO check the index of the callstack
+    /**
+     * Create a simple exception saying the variable has not been set.
+     *
+     * @param var The variable that hasn't been set.
+     */
+    public XPkgNotSetException(String var) {
+        super("Variable not set: '" + var + "' has not been set", 4);
     }
 }

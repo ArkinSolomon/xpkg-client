@@ -19,15 +19,41 @@ import net.xpkgclient.enums.HeadKey;
 
 import java.io.Serial;
 
-// Exception thrown if a value is not suitable for a head key
+/**
+ * Exception thrown if a value is not suitable for a head key.
+ */
 public class XPkgInvalidHeadValException extends XPkgParseException {
 
-    //Serial identifier
     @Serial
     private static final long serialVersionUID = 6072185362526976813L;
 
-    // Basic constructor to show a simple message
+    /**
+     * Create a new exception with a message stating that the head key value is not acceptable.
+     *
+     * @param hk The head key that the user inputted.
+     * @param invalidVal The value that the user inputted which was not valid.
+     */
     public XPkgInvalidHeadValException(HeadKey hk, String invalidVal) {
         super("Invalid head value: '" + invalidVal + "' is not a valid value for " + hk);
+    }
+
+    /**
+     * Add a line to the exception.
+     *
+     * @param line The line number at which the exception occurred.
+     * @param e    The exception to add the line to.
+     */
+    private XPkgInvalidHeadValException(int line, XPkgInvalidHeadValException e) {
+        super("Parse error at line " + line + ": " + e.getMessage(), e);
+    }
+
+    /**
+     * Add a line to the exception.
+     *
+     * @param line The line number at which the exception occurred.
+     */
+    @Override
+    public XPkgInvalidHeadValException setLine(int line) {
+        return new XPkgInvalidHeadValException(line, this);
     }
 }

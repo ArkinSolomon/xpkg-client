@@ -15,37 +15,67 @@
 
 package net.xpkgclient.vars;
 
-//This variable type is a boolean, true or false
+/**
+ * A boolean (true or false) variable.
+ */
 public class XPkgBool extends XPkgVar {
 
-    //The data that this is storing
+    //The value of this variable
     private boolean data;
 
-    //Create a new boolean
+    /**
+     * Create a new boolean variable with a value.
+     *
+     * @param value The value to set the new variable to.
+     */
     public XPkgBool(boolean value) {
         data = value;
     }
 
+    /**
+     * Get the type of variable this is.
+     *
+     * @return Always returns {@link VarType#BOOL}.
+     */
     @Override
     public VarType getVarType() {
         return VarType.BOOL;
     }
 
+    /**
+     * Get the string representation of the data held in the variable.
+     *
+     * @return "TRUE" if the value of the variable is true, or "FALSE" if it is not.
+     */
     @Override
     public String toString() {
         return data ? "TRUE" : "FALSE";
     }
 
+    /**
+     * Create a copy of this variable.
+     *
+     * @return A new {@link XPkgBool} with the same value as this variable.
+     */
     @Override
     public XPkgBool copy() {
-        return new XPkgBool(getValue());
+        return new XPkgBool(data);
     }
 
+    /**
+     * Get the current value of this variable.
+     *
+     * @return The current value of this variable.
+     */
     public boolean getValue() {
         return data;
     }
 
-    //Get or set the value
+    /**
+     * Update the value of this variable.
+     *
+     * @param newValue The new value of this variable.
+     */
     public void setValue(boolean newValue) {
         data = newValue;
     }

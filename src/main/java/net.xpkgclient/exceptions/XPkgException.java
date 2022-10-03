@@ -17,26 +17,45 @@ package net.xpkgclient.exceptions;
 
 import java.io.Serial;
 
-//Top level exception for all custom XPkgExceptions
+/**
+ * Top level exception for all custom exceptions.
+ */
 public class XPkgException extends Exception {
 
-    // Serial identifier
     @Serial
     private static final long serialVersionUID = 5674756055664564736L;
 
-    // Basic constructors (basically the same as Exception)
+    /**
+     * Default constructor, creates a new exception with no message.
+     */
     public XPkgException() {
-        this((String) null);
+        super();
     }
 
+    /**
+     * Create a new exception with a message.
+     *
+     * @param message The message for the exception.
+     */
     public XPkgException(String message) {
         super(message);
     }
 
+    /**
+     * Create an exception with a message and a cause.
+     *
+     * @param message The message for the exception.
+     * @param cause   The cause of the exception.
+     */
     public XPkgException(String message, Exception cause) {
         super(message, cause);
     }
 
+    /**
+     * Create a message with a cause and no message.
+     *
+     * @param cause The cause of the exception.
+     */
     public XPkgException(Exception cause) {
         super(cause);
     }

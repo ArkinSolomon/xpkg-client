@@ -15,37 +15,79 @@
 
 package net.xpkgclient.vars;
 
+import net.xpkgclient.ParseHelper;
+
+/**
+ * A variable which represents a STRING.
+ */
 public class XPkgString extends XPkgVar {
 
     // The data that this variable stores
     private String data;
 
-    // Create a new string
+    /**
+     * Create a new variable with a value.
+     *
+     * @param value The initial value of this variable.
+     */
     public XPkgString(String value) {
         data = value;
     }
 
+    /**
+     * Get the type of variable this is.
+     *
+     * @return Always returns {@link VarType#STRING}.
+     */
     @Override
     public VarType getVarType() {
         return VarType.STRING;
     }
 
+    /**
+     * Returns the data in the variable. Since the data is a string() this does the same thing as {@link #getValue()}.
+     *
+     * @return The data in the variable.
+     */
     @Override
     public String toString() {
         return data;
     }
 
+    /**
+     * Create a copy of this variable.
+     *
+     * @return A new {@link XPkgString} with the same string value as this one.
+     */
     @Override
     public XPkgString copy() {
-        return new XPkgString(getValue());
+        return new XPkgString(data);
     }
 
+    /**
+     * Get the value of this variable.
+     *
+     * @return The data stored in this variable.
+     */
     public String getValue() {
         return data;
     }
 
-    // Get or set the string
+    /**
+     * Update the value of this variable.
+     *
+     * @param newValue The new string value that this variable will store.
+     */
     public void setValue(String newValue) {
         data = newValue;
+    }
+
+    /**
+     * Check if the data stored in this variable could be considered pathlike.
+     *
+     * @return True if the data stored in this variable is pathlike.
+     */
+    public boolean isPathLike(){
+        return ParseHelper.isValidPath(data);
     }
 }

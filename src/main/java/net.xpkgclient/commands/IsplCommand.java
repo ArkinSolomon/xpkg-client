@@ -26,8 +26,18 @@ import net.xpkgclient.vars.XPkgBool;
 
 import java.util.Arrays;
 
-//This command determines if a path or variable is pathlike, and stores the boolean result in a variable
+/**
+ * Determine if a string can be considered pathlike, and store the result in a variable.
+ */
 public class IsplCommand extends Command {
+
+    /**
+     * The class execution command.
+     *
+     * @param args    The arguments to the command. See the readme for valid arguments.
+     * @param context The execution context that this command executes within.
+     * @throws XPkgException Can be thrown for multiple reasons such as user error, or a type mismatch, or another reason.
+     */
     public static void execute(String[] args, ExecutionContext context)
             throws
             XPkgException {

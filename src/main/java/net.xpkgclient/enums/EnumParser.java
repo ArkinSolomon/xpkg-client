@@ -21,9 +21,19 @@ import net.xpkgclient.exceptions.XPkgInvalidHeadValException;
 import net.xpkgclient.exceptions.XPkgParseException;
 
 //This class contains static methods for parsing different enumerations
+
+/**
+ * This class contains static methods that converts strings to enums.
+ */
 public class EnumParser {
 
-    // Get a HeadKey enumeration from a string
+    /**
+     * Get a {@link net.xpkgclient.enums.HeadKey} enumeration from a string.
+     *
+     * @param headKey The string to parse into a {@link net.xpkgclient.enums.HeadKey} enumeration.
+     * @return The corresponding HeadKey as an enumeration.
+     * @throws XPkgInvalidHeadKeyException Returned if the provided HeadKey does not exist.
+     */
     public static HeadKey getHeadKey(String headKey) throws XPkgInvalidHeadKeyException {
         return switch (headKey.toUpperCase()) {
             case "SCRIPT_TYPE" -> HeadKey.SCRIPT_TYPE;
@@ -32,7 +42,13 @@ public class EnumParser {
         };
     }
 
-    // Get a ScriptType enumeration from a string
+    /**
+     * Get a {@link net.xpkgclient.enums.ScriptType} enumeration from a string.
+     *
+     * @param scriptType The string to parse into a {@link net.xpkgclient.enums.ScriptType} enumeration.
+     * @return The corresponding ScriptType as an enumeration.
+     * @throws XPkgInvalidHeadValException Returned if the provided ScriptType is not valid.
+     */
     public static ScriptType getScriptType(String scriptType) throws XPkgInvalidHeadValException {
         return switch (scriptType.toUpperCase()) {
             case "OTHER" -> ScriptType.OTHER;
@@ -43,7 +59,13 @@ public class EnumParser {
         };
     }
 
-    // Get a PackageType enumeration from a string
+    /**
+     * Get a {@link net.xpkgclient.enums.PackageType} enumeration from a string.
+     *
+     * @param packageType The string to parse into a {@link net.xpkgclient.enums.PackageType} enumeration.
+     * @return The corresponding PackageType as an enumeration.
+     * @throws XPkgInvalidHeadValException Returned if the provided PackageType is not valid.
+     */
     public static PackageType getPackageType(String packageType) throws XPkgInvalidHeadValException {
         return switch (packageType.toUpperCase()) {
             case "OTHER" -> PackageType.OTHER;
@@ -56,6 +78,14 @@ public class EnumParser {
     }
 
     // Get a Command enumeration from a string
+
+    /**
+     * Get a {@link net.xpkgclient.commands.CommandName} enumeration from a string.
+     *
+     * @param command The string to parse into a {@link net.xpkgclient.commands.CommandName} enumeration.
+     * @return The corresponding command name as an enumeration.
+     * @throws XPkgParseException Returned if the provided command name is not valid.
+     */
     public static CommandName getCommand(String command) throws XPkgParseException {
         return switch (command.toUpperCase()) {
             case "QUICK" -> CommandName.QUICK;

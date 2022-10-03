@@ -21,18 +21,24 @@ import net.xpkgclient.enums.EnumParser;
 import net.xpkgclient.enums.HeadKey;
 import net.xpkgclient.exceptions.ILineException;
 import net.xpkgclient.exceptions.XPkgException;
+import net.xpkgclient.exceptions.XPkgExecutionException;
 import net.xpkgclient.exceptions.XPkgFlowControlException;
 import net.xpkgclient.exceptions.XPkgInvalidCallException;
 import net.xpkgclient.exceptions.XPkgParseException;
 import net.xpkgclient.exceptions.XPkgTypeMismatchException;
 import net.xpkgclient.exceptions.XPkgUndefinedVarException;
 import net.xpkgclient.exceptions.XPkgUnimplementedException;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
 //This class parses and executes scripts
+
+/**
+ * This class handles and executes script setup and command execution delegation.
+ */
 public class ScriptExecutor {
 
     // Script execution context
@@ -46,8 +52,14 @@ public class ScriptExecutor {
     // end?
     private boolean wasLastEndIf = false;
 
-    // Parse the entire file
-    public ScriptExecutor(String contents) throws IOException, XPkgException {
+    /**
+     * Load an entire script file and prepare it for execution.
+     *
+     * @param contents The text that was in the script.
+     * @throws IOException   Thrown if there was an issue creating a temporary folder within the ExecutionContext constructor.
+     * @throws XPkgException Thrown if there was an issue parsing the script.
+     */
+    public ScriptExecutor(@NotNull String contents) throws IOException, XPkgException {
         // File contents
         String contents1 = contents.trim();
         context = new ExecutionContext();
@@ -63,13 +75,22 @@ public class ScriptExecutor {
         didMakeContext = true;
     }
 
-    // Execute a subscript by passing in context and code
-    public ScriptExecutor(String code, ExecutionContext context) {
+    /**
+     * Load code but do not create a new execution context, instead use the one provided.
+     *
+     * @param code    The text to execute.
+     * @param context The already existing execution context to execute the script in.
+     */
+    public ScriptExecutor(String code, @NotNull ExecutionContext context) {
         this.code = code;
         this.context = context;
     }
 
-    // Read file metadata
+    /**
+     * Read the file head.
+     *
+     * @throws XPkgException Thrown if there was an error parsing the head.
+     */
     private void readMeta() throws XPkgException {
         try (Scanner scanner = new Scanner(head)) {
 
@@ -111,7 +132,11 @@ public class ScriptExecutor {
         }
     }
 
-    // Execute the file line by line, throws if execution fails
+    /**
+     * Execute a file line by line.
+     *
+     * @throws Throwable Thrown if there was an issue executing any command, can be parse errors, or execution errors, or general Java errors.
+     */
     @SuppressWarnings("rawtypes")
     public void execute() throws Throwable {
 
@@ -177,16 +202,34 @@ public class ScriptExecutor {
         }
     }
 
-    // Jump to the next flow control statement that's executable, returns true if it
-    // reaches an executable statement, and false if it reaches the end of the flow
-    // control
+    /**
+     * Jump the current scanner position to the next executable flow control statements.
+     *
+     * @param scanner The {@code Scanner} that is reading the file contents line by line, and which will be incremented to the next flow control statement.
+     * @return True if it reaches a flow control statement that is executable, or false if it reaches the end of the flow control statement.
+     * @throws XPkgUndefinedVarException Thrown if a boolean expression has an undefined variable.
+     * @throws XPkgInvalidCallException  Thrown if this instance's execution context has been closed.
+     * @throws XPkgTypeMismatchException Thrown if a boolean expression has a type mismatch.
+     * @throws XPkgParseException        Thrown if there was an issue parsing the code.
+     */
     private boolean gotoNextFlowControl(Scanner scanner)
-            throws XPkgUndefinedVarException, XPkgInvalidCallException, XPkgTypeMismatchException, XPkgParseException {
+            throws XPkgUndefinedVarException, XPkgExecutionException, XPkgTypeMismatchException, XPkgParseException {
         return gotoNextFlowControl(scanner, false);
     }
 
-    private boolean gotoNextFlowControl(Scanner scanner, boolean jumpToEnd)
-            throws XPkgParseException, XPkgUndefinedVarException, XPkgInvalidCallException, XPkgTypeMismatchException {
+    /**
+     * Either jump to the next executable flow control statement, or jump to the end of the flow control statement.
+     *
+     * @param scanner   The {@code Scanner} that is reading the file contents line by line, and which will be incremented to the next flow control statement.
+     * @param jumpToEnd True if we should just jump to the end of the flow control statement.
+     * @return True if it reaches a flow control statement that is executable, or false if it reaches the end of the flow control statement.
+     * @throws XPkgUndefinedVarException Thrown if a boolean expression has an undefined variable.
+     * @throws XPkgInvalidCallException  Thrown if this instance's execution context has been closed.
+     * @throws XPkgTypeMismatchException Thrown if a boolean expression has a type mismatch.
+     * @throws XPkgParseException        Thrown if there was an issue parsing the code.
+     */
+    private boolean gotoNextFlowControl(@NotNull Scanner scanner, boolean jumpToEnd)
+            throws XPkgParseException, XPkgUndefinedVarException, XPkgExecutionException, XPkgTypeMismatchException {
 
         // The amount of nested if statements we're in
         int branchDepth = 0;
@@ -216,11 +259,18 @@ public class ScriptExecutor {
                 --branchDepth;
             }
         }
+        // Might need to throw a XPkgFlowControlException here
         return false;
     }
 
-    // Get the code for the current flow control branch
-    private String getFlowControlCode(Scanner scanner) throws XPkgParseException {
+    /**
+     * Get the code for the current flow control branch that {@code scanner} is at.
+     *
+     * @param scanner The {@code Scanner} that is reading the file contents line by line, and which will be incremented to the next flow control statement.
+     * @return The code for the current flow control branch.
+     * @throws XPkgParseException Thrown if there was an issue parsing the code.
+     */
+    private @NotNull String getFlowControlCode(@NotNull Scanner scanner) throws XPkgParseException, XPkgInvalidCallException {
         wasLastEndIf = false;
 
         // The code to return
@@ -243,21 +293,20 @@ public class ScriptExecutor {
             if (subCmd == CommandName.IF) {
                 ++branchDepth;
                 branchCode.append(subLine).append("\n");
-            } else if ((subCmd == CommandName.ELSE || subCmd == CommandName.ELIF) && branchDepth == 0) {
+            } else if ((subCmd == CommandName.ELSE || subCmd == CommandName.ELIF) && branchDepth == 0)
 
                 // We have found the end of the IF branch, so return it
                 return branchCode.toString();
 
-            } else if (subCmd == CommandName.ENDIF) {
+            else if (subCmd == CommandName.ENDIF) {
                 if (branchDepth == 0) {
                     wasLastEndIf = true;
                     return branchCode.toString();
                 }
                 --branchDepth;
                 branchCode.append(subLine).append("\n");
-            } else {
+            } else
                 branchCode.append(subLine).append("\n");
-            }
         }
         throw new XPkgFlowControlException("If statement does not have ENDIF command");
     }

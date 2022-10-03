@@ -1,0 +1,5 @@
+net.xpkgclient
+net.xpkgclient.commands
+net.xpkgclient.enums
+net.xpkgclient.exceptions
+net.xpkgclient.vars

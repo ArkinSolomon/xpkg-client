@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"net.xpkgclient"},{"l":"net.xpkgclient.commands"},{"l":"net.xpkgclient.enums"},{"l":"net.xpkgclient.exceptions"},{"l":"net.xpkgclient.vars"}];updateSearchResults();

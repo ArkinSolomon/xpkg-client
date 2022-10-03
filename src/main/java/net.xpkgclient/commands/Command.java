@@ -23,7 +23,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
-// Class that allows commands to be called and managed
+/**
+ * This class is the superclass of all specific commands, it stores all the commands.
+ */
 public class Command {
 
     // Store all commands
@@ -32,7 +34,11 @@ public class Command {
     // True if we've registered commands already
     private static boolean hasRegisteredCommands = false;
 
-    // Register all commands
+    /**
+     * Register all commands.
+     *
+     * @throws XPkgExecutionException Thrown if a command does not have a static {@code execute} method.
+     */
     public static void registerCommands() throws XPkgExecutionException {
 
         //Only register once
@@ -53,10 +59,16 @@ public class Command {
         registerCmd(CommandName.CONTEXT, ContextCommand.class);
     }
 
-    // Register a command
+    /**
+     * Register a single command.
+     *
+     * @param cName The name of the command to register.
+     * @param c     The reference to the command class type.
+     * @throws XPkgExecutionException Thrown if a command does not have a static {@code execute} method, or if there was a security exception.
+     */
     private static void registerCmd(CommandName cName, Class<? extends Command> c) throws XPkgExecutionException {
 
-        // Make sure command has execute() method
+        // Make sure command has an execute() method
         Method m;
         try {
             m = c.getMethod("execute", String[].class, ExecutionContext.class);
@@ -73,11 +85,18 @@ public class Command {
         cmds.put(cName, m);
     }
 
-    // Execute a command
-    public static void call(CommandName n, String[] args, ExecutionContext context) throws Throwable {
-        Method m = cmds.get(n);
+    /**
+     * Execute a single command.
+     *
+     * @param cName   The name of the command to execute.
+     * @param args    The arguments provided to the command.
+     * @param context The context to execute the command in.
+     * @throws Throwable An {@code XPkgUnimplementedException} if the command can be thrown if the command isn't implemented. It also will pass up any exceptions thrown by the command itself.
+     */
+    public static void call(CommandName cName, String[] args, ExecutionContext context) throws Throwable {
+        Method m = cmds.get(cName);
         if (m == null)
-            throw new XPkgUnimplementedException("The command '" + n
+            throw new XPkgUnimplementedException("The command '" + cName
                     + "' hasn't been registered or is an improperly handled flow control statement");
 
         // Pass the exceptions up to main

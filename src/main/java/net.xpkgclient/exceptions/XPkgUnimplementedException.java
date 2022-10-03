@@ -17,14 +17,21 @@ package net.xpkgclient.exceptions;
 
 import java.io.Serial;
 
-// An exception thrown when a class or method is not registered or implemented
+/**
+ * An exception thrown when a class or method is not registered or implemented.
+ */
 public class XPkgUnimplementedException extends XPkgExecutionException {
 
-    //Serial identifier
     @Serial
     private static final long serialVersionUID = -3064139511429346241L;
 
     // Provide a message
+
+    /**
+     * Create a new exception with a message saying that the exception was internal and a problem with X-Pkg.
+     *
+     * @param message The issue with X-Pkg.
+     */
     public XPkgUnimplementedException(String message) {
         super("Unimplemented exception [not a script issue, but a problem with X-Pkg]:" + message);
     }

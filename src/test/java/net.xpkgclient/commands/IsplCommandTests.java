@@ -18,10 +18,10 @@ public class IsplCommandTests {
     private static String testBasic(String[] args, boolean expected) throws Throwable {
         ExecutionContext context = ExecutionContext.createBlankContext();
         IsplCommand.execute(args, context);
-//        ScriptExecutionHandler.executeText("ispl $testVar " + path, context);
         if (!context.hasVar("$testVar"))
             return "Context does not have variable";
         XPkgVar var = context.getVar("$testVar");
+        context.close();
         if (var.getVarType() != VarType.BOOL)
             return "Context has variable, but it is not a boolean";
         if (((XPkgBool) var).getValue() != expected)
@@ -30,20 +30,22 @@ public class IsplCommandTests {
         return "";
     }
 
-    //Test normal execution
     @Test
     void testNormal() throws Throwable {
-
-        // Test normal path like checking
         String output = testBasic(new String[]{"$testVar", "/is/this/path/like"}, true);
         if (!output.isBlank())
             fail(output);
     }
 
     @Test
-    void testFail() throws Throwable {
+    void testFile() throws Throwable {
+        String output = testBasic(new String[]{"$testVar", "/this/points/to/a/file.txt"}, true);
+        if (!output.isBlank())
+            fail(output);
+    }
 
-        // Test a failed path
+    @Test
+    void testFail() throws Throwable {
         String output = testBasic(new String[]{"$testVar", "this/should/not/be/pathlike"}, false);
         if (!output.isBlank())
             fail(output);
@@ -51,8 +53,6 @@ public class IsplCommandTests {
 
     @Test
     void testDoubleDot() throws Throwable {
-
-        //Test a path with a double dot in it
         String output = testBasic(new String[]{"$testVar", "this/should/not/be/pathlike/../i/hope/"}, false);
         if (!output.isBlank())
             fail(output);
@@ -61,7 +61,6 @@ public class IsplCommandTests {
     @Test
     void testSpace() throws Throwable {
 
-        //Test a path with a space in it
         String output = testBasic(new String[]{"$testVar", "/this/should/be", "a/pathlike"}, true);
         if (!output.isBlank())
             fail(output);

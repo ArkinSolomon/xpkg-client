@@ -17,13 +17,19 @@ package net.xpkgclient.exceptions;
 
 import java.io.Serial;
 
-// Exceptions thrown with flow control errors
+/**
+ * Exception thrown when a user makes an issue with flow control.
+ */
 public class XPkgFlowControlException extends XPkgParseException {
 
-    // Serial identifier
     @Serial
     private static final long serialVersionUID = 2081401572143123366L;
 
+    /**
+     * Create a new exception with a message.
+     *
+     * @param message The message for the exception.
+     */
     public XPkgFlowControlException(String message) {
         super("Flow control error: " + message);
     }

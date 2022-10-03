@@ -21,12 +21,13 @@ import net.xpkgclient.exceptions.XPkgAlreadySetException;
 import net.xpkgclient.exceptions.XPkgClosedExecutionContextException;
 import net.xpkgclient.exceptions.XPkgImmutableVarException;
 import net.xpkgclient.exceptions.XPkgInvalidCallException;
-import net.xpkgclient.exceptions.XPkgNotYetSetException;
+import net.xpkgclient.exceptions.XPkgNotSetException;
 import net.xpkgclient.vars.XPkgBool;
 import net.xpkgclient.vars.XPkgResource;
 import net.xpkgclient.vars.XPkgString;
 import net.xpkgclient.vars.XPkgVar;
 import org.apache.commons.lang3.SystemUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +36,9 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.UUID;
 
-//This file stores variables and other data for execution
+/**
+ * This file stores variables and other environment data for execution of a script or the portion of a script.
+ */
 public class ExecutionContext {
 
     // All environment variable names
@@ -47,21 +50,29 @@ public class ExecutionContext {
     // Head or file meta
     private PackageType packageType;
     private ScriptType scriptType;
-    // If this context is active (note closed)
+    // If this context is active (true if not closed)
     private boolean isActive;
     // The currently executing line
     private int currentLine = 0;
 
+    //TODO setup cache directories for file modification tracking and resource directories for resource storage
+
+    /**
+     * Create a default execution context.
+     *
+     * @throws IOException Thrown if there was an issue creating the temporary directory.
+     */
     public ExecutionContext() throws IOException {
         isActive = true;
         vars = new HashMap<>();
 
+        //TODO store UUID
         // Create a unique id for the temporary folder
         String uniqueID = UUID.randomUUID().toString();
 
         // The X-Plane folder and temporary folders
         XPkgString xp = new XPkgString(Configuration.getXpPath().toString());
-        tmp = new XPkgResource(new File(xp.getValue(), "xpkg/temp/" + uniqueID));
+        tmp = new XPkgResource(new File(xp.getValue(), "xpkg/tmp/" + uniqueID));
 
         // Create the temporary file
         Files.createDirectories(Path.of(tmp.getValue().toString()));
@@ -86,16 +97,29 @@ public class ExecutionContext {
         }
     }
 
-    // Create a blank execution context for testing
-    public static ExecutionContext createBlankContext() throws XPkgInvalidCallException, IOException {
+    /**
+     * Create a blank execution context for testing. Sets both script_type and package_type to {@code OTHER}.
+     *
+     * @return A new execution context.
+     * @throws IOException Thrown if there was an issue creating the temporary directory.
+     */
+    public static ExecutionContext createBlankContext() throws IOException {
         ExecutionContext context = new ExecutionContext();
-        context.setScriptType(ScriptType.OTHER);
-        context.setPackageType(PackageType.OTHER);
+        try {
+            context.setScriptType(ScriptType.OTHER);
+            context.setPackageType(PackageType.OTHER);
+        } catch (XPkgInvalidCallException e) {
+            // Should be no reason this is reached
+        }
         return context;
     }
 
-    // Check if a variable name is an environment variable name (returns true if it
-    // is)
+    /**
+     * Check if a variable name is an environment/default variable name.
+     *
+     * @param name The name of the variable to check (including the dollar sign at the beginning).
+     * @return True if the variable name is an environment/default variable name.
+     */
     private static boolean isEnvVarName(String name) {
         for (String n : envVarNames) {
             if (n.equals(name))
@@ -104,89 +128,150 @@ public class ExecutionContext {
         return false;
     }
 
-    // Increment the line counter
-    public void incCounter() {
+    /**
+     * Increment the line counter by one.
+     */
+    public void incCounter() throws XPkgInvalidCallException {
+        activityCheck();
         ++currentLine;
     }
 
-    // Get the line counter
-    public int getLineCounter() {
+    /**
+     * Get the current line counter.
+     *
+     * @return The current line of program execution.
+     */
+    public int getLineCounter() throws XPkgInvalidCallException {
+        activityCheck();
         return currentLine;
     }
 
-    // Close and destroy the context
+    /**
+     * Close the context and delete all temporary files.
+     */
     public void close() {
         isActive = false;
+        //noinspection ResultOfMethodCallIgnored
         tmp.getValue().delete();
     }
 
+    /**
+     * Get the package_type of the execution context read from the script head.
+     *
+     * @return The package_type of the execution context.
+     * @throws XPkgInvalidCallException Thrown if the execution context is closed.
+     */
     public PackageType getPackageType() throws XPkgInvalidCallException {
-        if (!isActive)
-            throw new XPkgClosedExecutionContextException();
+        activityCheck();
         if (packageType == null)
-            throw new XPkgNotYetSetException("package_type");
+            throw new XPkgNotSetException("package_type");
         return packageType;
     }
 
-    // PackageType getter and setter
+    /**
+     * Set the package_type of the script after reading it from the script head.
+     *
+     * @param type The package_type of the script.
+     * @throws XPkgInvalidCallException Thrown if the execution context is closed, or if the package_type has already been set.
+     */
     public void setPackageType(PackageType type) throws XPkgInvalidCallException {
-        if (!isActive)
-            throw new XPkgClosedExecutionContextException();
+        activityCheck();
         if (packageType != null)
-            throw new XPkgInvalidCallException("Execution context already has set packageType");
+            throw new XPkgAlreadySetException("package_type");
         packageType = type;
     }
 
+    /**
+     * Get the script_type of the execution context read from the script head.
+     *
+     * @return The script_type of the execution context.
+     * @throws XPkgInvalidCallException Thrown if the execution context is closed or if the script_type has not been set.
+     */
     public ScriptType getScriptType() throws XPkgInvalidCallException {
-        if (!isActive)
-            throw new XPkgClosedExecutionContextException();
+        activityCheck();
         if (scriptType == null)
-            throw new XPkgNotYetSetException("script_type");
+            throw new XPkgNotSetException("script_type");
         return scriptType;
     }
 
-    // ScriptType getter and setter
+    /**
+     * Set the script_type of the script after reading it from the script head.
+     *
+     * @param type The script_type of the script.
+     * @throws XPkgInvalidCallException Thrown if the execution context is closed, or if the script_type has already been set.
+     */
     public void setScriptType(ScriptType type) throws XPkgInvalidCallException {
-        if (!isActive)
-            throw new XPkgClosedExecutionContextException();
+        activityCheck();
         if (scriptType != null)
             throw new XPkgAlreadySetException("script_type");
         scriptType = type;
     }
 
-    public File getTmpDir() {
+    /**
+     * Get the directory for all temporary files created in this execution context.
+     *
+     * @return The directory for all temporary files created in this execution context.
+     * @throws XPkgInvalidCallException Thrown if the execution context is closed.
+     */
+    public File getTmpDir() throws XPkgInvalidCallException {
+        activityCheck();
         return tmp.getValue();
     }
 
-    // Set a variable
+    /**
+     * Set a variable.
+     *
+     * @param name  The name of the variable to set.
+     * @param value The instance of an {@link XPkgVar} to set the value of the variable to.
+     * @throws XPkgInvalidCallException  Thrown if the execution context is closed.
+     * @throws XPkgImmutableVarException Thrown if {@code name} is an immutable variable.
+     */
     public void setVar(String name, XPkgVar value) throws XPkgInvalidCallException, XPkgImmutableVarException {
-        if (!isActive)
-            throw new XPkgClosedExecutionContextException();
+        activityCheck();
         if (isEnvVarName(name))
             throw new XPkgImmutableVarException("Error: attempted to set value of immutable environment variable");
         setInternalVar(name, value);
     }
 
-    // Set a variable without safety checks
-    private void setInternalVar(String name, XPkgVar value) {
+    /**
+     * Set a variable without the safety checks like in {@link #setVar(String, XPkgVar)}.
+     *
+     * @param name  The name of the variable to set.
+     * @param value The instance of an {@link XPkgVar} to set the value of the variable to.
+     */
+    private void setInternalVar(@NotNull String name, XPkgVar value) {
         vars.put(name, value);
     }
 
     // Get a variable
-    public XPkgVar getVar(String name) throws XPkgInvalidCallException {
-        if (!isActive)
-            throw new XPkgClosedExecutionContextException();
+
+    /**
+     * Get a variable.
+     *
+     * @param name The name of the variable to get.
+     * @return The instance of an {@link XPkgVar} which was set using {@link #setVar(String, XPkgVar)} or {@link #setInternalVar(String, XPkgVar)}. Returns null if the variable is not set.
+     * @throws XPkgInvalidCallException Thrown if the execution context is closed.
+     */
+    public XPkgVar getVar(@NotNull String name) throws XPkgInvalidCallException {
+        activityCheck();
         return vars.get(name);
     }
 
-    // Check if a variable exists
-    public boolean hasVar(String name) throws XPkgInvalidCallException {
-        if (!isActive)
-            throw new XPkgClosedExecutionContextException();
+    /**
+     * Check if a variable exists.
+     *
+     * @param name The name of the variable to check for existence.
+     * @return True if the variable exists.
+     * @throws XPkgInvalidCallException Thrown if the execution context is closed.
+     */
+    public boolean hasVar(@NotNull String name) throws XPkgInvalidCallException {
+        activityCheck();
         return vars.containsKey(name);
     }
 
-    // Print data about execution context
+    /**
+     * Print all execution context data to {@code System.out}.
+     */
     public void printContext() {
 
         if (!isActive) {
@@ -205,5 +290,15 @@ public class ExecutionContext {
         } catch (Exception e) {
             // You really should never reach this
         }
+    }
+
+    /**
+     * Throw an exception if this execution context is closed.
+     *
+     * @throws XPkgClosedExecutionContextException Thrown if the execution context is closed.
+     */
+    private void activityCheck() throws XPkgClosedExecutionContextException {
+        if (!isActive)
+            throw new XPkgClosedExecutionContextException();
     }
 }

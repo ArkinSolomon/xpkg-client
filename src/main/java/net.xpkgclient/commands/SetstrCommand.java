@@ -26,8 +26,22 @@ import net.xpkgclient.vars.XPkgString;
 
 import java.util.Arrays;
 
-//This command just sets the value of a variable to a string
+/**
+ * This command sets a string variable's value.
+ */
 public class SetstrCommand extends Command {
+
+    /**
+     * The class execution command.
+     *
+     * @param args    The arguments provided to the command.
+     * @param context The execution context that this command is being executed in.
+     * @throws XPkgArgLenException         Thrown if there are less than two arguments.
+     * @throws XPkgInvalidVarNameException Thrown if there is an invalid variable name.
+     * @throws XPkgInvalidCallException    Thrown if the provided execution context is closed.
+     * @throws XPkgImmutableVarException   Thrown if the user tries to set the value of a default environment variable.
+     * @throws XPkgTypeMismatchException   Thrown if the user provides a variable instead of a ...STRING. In this case the {@link net.xpkgclient.commands.SetCommand} command should be used.
+     */
     public static void execute(String[] args, ExecutionContext context)
             throws XPkgArgLenException, XPkgInvalidVarNameException, XPkgInvalidCallException,
             XPkgImmutableVarException, XPkgTypeMismatchException {

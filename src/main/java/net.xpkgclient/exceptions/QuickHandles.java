@@ -18,10 +18,20 @@ package net.xpkgclient.exceptions;
 import net.xpkgclient.commands.CommandName;
 import net.xpkgclient.vars.VarType;
 
-// This class provides static functions for quick exception handling of internal exceptions
+/**
+ * This class provides static methods for quick exception handling of internal exceptions that occur commonly.
+ */
 public class QuickHandles {
 
     // Methods to handle ParseHelper.getStr();
+
+    /**
+     * This class handles {@link net.xpkgclient.exceptions.XPkgInternalException}s thrown by
+     *
+     * @param cmd The command that had the {@link net.xpkgclient.exceptions.XPkgInternalException} thrown.
+     * @param e   The exception thrown.
+     * @return A clear human-readable exception.
+     */
     public static XPkgException handleGetStr(CommandName cmd, XPkgInternalException e) {
         if (e.getMessage().equalsIgnoreCase("arglen"))
             return new XPkgArgLenException(cmd, 2, "a variable is the second argument");

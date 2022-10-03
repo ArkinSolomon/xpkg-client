@@ -15,15 +15,31 @@
 
 package net.xpkgclient.vars;
 
-//Top level XPkg variable
+/**
+ * Top level superclass which all variable types for XPKGS will inherit from.
+ */
 public abstract class XPkgVar {
 
     //Get the type of variable
+
+    /**
+     * Get the type of a variable, should be constant and hardcoded within the variable.
+     *
+     * @return The type of variable.
+     */
     public abstract VarType getVarType();
 
-    //Get a string representation of the variable
+    /**
+     * Get a string representation of the variable, mostly for printing.
+     *
+     * @return The string representation of the variable.
+     */
     public abstract String toString();
 
-    //Create a copy of this variable
+    /**
+     * Create a copy of the variable.
+     *
+     * @return A variable of the same type and with the same value.
+     */
     public abstract XPkgVar copy();
 }	

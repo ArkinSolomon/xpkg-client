@@ -4,11 +4,13 @@ import net.xpkgclient.ConfigSetupExtension;
 import net.xpkgclient.Configuration;
 import net.xpkgclient.ExecutionContext;
 import net.xpkgclient.exceptions.XPkgArgLenException;
+import net.xpkgclient.exceptions.XPkgException;
 import net.xpkgclient.exceptions.XPkgImmutableVarException;
 import net.xpkgclient.exceptions.XPkgInvalidCallException;
 import net.xpkgclient.exceptions.XPkgUndefinedVarException;
 import net.xpkgclient.vars.XPkgBool;
 import net.xpkgclient.vars.XPkgString;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(ConfigSetupExtension.class)
 class PrintCommandTests {
 
-    //Basic contexts that are shared among many tests
+    //Basic context that is shared among many tests
     private static ExecutionContext context;
 
-    //Setup execution contexts
+    //Setup and cleanup execution contexts
     @BeforeAll
     public static void setupBeforeClass() throws XPkgInvalidCallException, IOException, XPkgImmutableVarException {
         context = ExecutionContext.createBlankContext();
@@ -36,6 +38,10 @@ class PrintCommandTests {
         context.setVar("$test3", new XPkgBool(false));
     }
 
+    @AfterAll
+    public static void cleanupAfterClass() throws XPkgInvalidCallException, IOException, XPkgImmutableVarException {
+        context.close();
+    }
 
     // Get the string from executing a print test
     private static String printText(String[] args, ExecutionContext context) throws Throwable {
@@ -116,7 +122,7 @@ class PrintCommandTests {
     }
 
     @Test
-    void testClosedContext() throws XPkgInvalidCallException, IOException, XPkgImmutableVarException {
+    void testClosedContext() throws XPkgException, IOException {
         ExecutionContext closingContext = ExecutionContext.createBlankContext();
         closingContext.setVar("$closeTestStr", new XPkgString("This should throw an exception"));
         closingContext.close();

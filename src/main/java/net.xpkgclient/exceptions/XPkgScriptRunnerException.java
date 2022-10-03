@@ -17,26 +17,45 @@ package net.xpkgclient.exceptions;
 
 import java.io.Serial;
 
-// Top level exception for errors that occur when running scripts
+/**
+ * Top level exception for errors that occur when running scripts.
+ */
 public class XPkgScriptRunnerException extends XPkgException {
 
-    // Serial identifier
     @Serial
     private static final long serialVersionUID = -4155621685868796790L;
 
-    // Basic constructors (basically the same as Exception)
+    /**
+     * Default constructor, creates a new exception with no message.
+     */
     public XPkgScriptRunnerException() {
-        this((String) null);
+        super();
     }
 
+    /**
+     * Create a new exception with a message.
+     *
+     * @param message The message for the exception.
+     */
     public XPkgScriptRunnerException(String message) {
         super(message);
     }
 
+    /**
+     * Create an exception with a message and a cause.
+     *
+     * @param message The message for the exception.
+     * @param cause   The cause of the exception.
+     */
     public XPkgScriptRunnerException(String message, Exception cause) {
         super(message, cause);
     }
 
+    /**
+     * Create a message with a cause and no message.
+     *
+     * @param cause The cause of the exception.
+     */
     public XPkgScriptRunnerException(Exception cause) {
         super(cause);
     }

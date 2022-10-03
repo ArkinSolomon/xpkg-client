@@ -17,14 +17,21 @@ package net.xpkgclient.exceptions;
 
 import java.io.Serial;
 
-// A simple exception when an item can not be set
+/**
+ * Exception thrown when a meta variable in an execution context has already not be set.
+ */
 public class XPkgAlreadySetException extends XPkgInvalidCallException {
 
-    // Serial identifier
     @Serial
     private static final long serialVersionUID = 7960672666236728584L;
 
+    //TODO check the index of the callstack
+    /**
+     * Throw with a simple message.
+     *
+     * @param var The variable that has already been set.
+     */
     public XPkgAlreadySetException(String var) {
-        super("'" + var + "' has already been set");
+        super("'" + var + "' has already been set", 6);
     }
 }

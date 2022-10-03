@@ -15,9 +15,18 @@
 
 package net.xpkgclient.exceptions;
 
-// This interface is for exceptions that can point to a single line
+/**
+ * Interface which when implemented has allows an exception to point to a single line.
+ *
+ * @param <T> The exception class which extends {@link net.xpkgclient.exceptions.XPkgException}
+ */
 public interface ILineException<T extends XPkgException> {
 
-    // Return a new exception with the line number
+    /**
+     * Returns a new exception with the line number.
+     *
+     * @param line The line to set the exception to.
+     * @return The new exception.
+     */
     T setLine(int line);
 }

@@ -31,8 +31,18 @@ import net.xpkgclient.vars.XPkgVar;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-//This command joins two paths
+/**
+ * This class joins two pathlike strings and stores the result.
+ */
 public class JoinpCommand extends Command {
+
+    /**
+     * The class execution command.
+     *
+     * @param args    The arguments to the command. See the readme for valid arguments.
+     * @param context The execution context that this command executes within.
+     * @throws XPkgException Can be thrown for multiple reasons such as user error, or a type mismatch, or another reason.
+     */
     public static void execute(String[] args, ExecutionContext context) throws XPkgException {
 
         // Check arguments

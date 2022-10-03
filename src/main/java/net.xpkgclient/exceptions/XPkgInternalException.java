@@ -17,44 +17,85 @@ package net.xpkgclient.exceptions;
 
 import java.io.Serial;
 
-// Exceptions meant to be caught in order to be thrown later (useful for full
-// stack trace debugging), used mainly in static classes and passing
-// information
+/**
+ * Exceptions meant to be caught in order to be thrown later (useful for full stack trace debugging), used mainly in static classes and passing information.
+ */
 public class XPkgInternalException extends Exception {
 
-    // Serial identifier
     @Serial
     private static final long serialVersionUID = -6371838915978668117L;
 
+    // Data held by this exception for passing up secondary information.
     Object data;
 
     // Basic constructors
+
+    /**
+     * Create an exception with no message.
+     */
     public XPkgInternalException() {
         this(null, null);
     }
 
+    /**
+     * Create an exception with a message.
+     *
+     * @param message The message for the exception.
+     */
     public XPkgInternalException(String message) {
         this(message, null);
     }
 
+    /**
+     * Create an exception with a message and secondary data.
+     *
+     * @param message The message for the exception.
+     * @param data    Additional data for the exception.
+     */
     public XPkgInternalException(String message, Object data) {
         super(message);
         this.data = data;
     }
 
+    /**
+     * Create an exception with a message and a cause.
+     *
+     * @param message The message for the exception.
+     * @param cause   The cause of the exception.
+     */
     public XPkgInternalException(String message, Exception cause) {
         super(message, cause);
     }
 
-    // We want to call our own constructor to set this.message
+    /**
+     * Create a new exception with no message and a cause.
+     *
+     * @param cause The cause of the exception.
+     */
     public XPkgInternalException(Exception cause) {
+
+        // We want to call our own constructor to set the message of the exception
         this(cause == null ? null : cause.toString(), cause);
         if (cause instanceof XPkgInternalException)
             data = ((XPkgInternalException) cause).getData();
     }
 
-    // Get the data passed in
+    /**
+     * Get the data passed in, returns null if there was no data.
+     *
+     * @return The data passed in.
+     */
     public Object getData() {
         return data;
     }
+
+    /**
+     * Set the data of this exception.
+     *
+     * @param data The data to pass through the exception.
+     */
+    public void setData(Object data) {
+        this.data = data;
+    }
+
 }

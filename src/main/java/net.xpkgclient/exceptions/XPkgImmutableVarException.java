@@ -18,14 +18,41 @@ package net.xpkgclient.exceptions;
 import java.io.Serial;
 
 // Exception when trying to change an immutable variable
-public class XPkgImmutableVarException extends XPkgRuntimeException {
 
-    // Serial identifier
+/**
+ * Exception thrown when trying to change an immutable variable, which is one of the default/environment variables created when the {@link net.xpkgclient.ExecutionContext} is created.
+ */
+public class XPkgImmutableVarException extends XPkgRuntimeException implements ILineException<XPkgRuntimeException> {
+
     @Serial
     private static final long serialVersionUID = -5842352310837071330L;
 
-    // Say that the variable is immutable
+    /**
+     * Create a new exception that says a given variable name is immutable.
+     *
+     * @param varName The immutable variable.
+     */
     public XPkgImmutableVarException(String varName) {
         super("'" + varName + "' is immutable and can not be changed");
+    }
+
+    /**
+     * Add a line to the exception.
+     *
+     * @param line The line number at which the exception occurred.
+     * @param e    The exception to add the line to.
+     */
+    private XPkgImmutableVarException(int line, XPkgImmutableVarException e) {
+        super("Parse error at line " + line + ": " + e.getMessage(), e);
+    }
+
+    /**
+     * Add a line to the exception.
+     *
+     * @param line The line number at which the exception occurred.
+     */
+    @Override
+    public XPkgImmutableVarException setLine(int line) {
+        return new XPkgImmutableVarException(line, this);
     }
 }

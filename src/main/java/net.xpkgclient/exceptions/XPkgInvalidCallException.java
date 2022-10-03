@@ -17,27 +17,35 @@ package net.xpkgclient.exceptions;
 
 import java.io.Serial;
 
-// This exception is called when a method is called that shouldn't be
+/**
+ * This exception is called when a method is called when it shouldn't be.
+ */
 public class XPkgInvalidCallException extends XPkgExecutionException {
 
-    // Serial identifier
     @Serial
     private static final long serialVersionUID = -7391328873326455824L;
 
-    // Constructor that makes a message
-    public XPkgInvalidCallException(String reason) {
-        this(reason, 1);
+    /**
+     * Create a new exception and show the stack trace.
+     *
+     * @param message The message for the exception.
+     * @param index The index in the callstack
+     */
+    public XPkgInvalidCallException(String message, int index) {
+        super("Invalid call to method '" + getCallerMethodName(index) + "': " + message);
     }
 
-    public XPkgInvalidCallException(String reason, int index) {
-        super("Invalid call to method '" + getCallerMethodName(index) + "': " + reason);
-    }
-
-    //Get the name of the method in the call stack
+    /**
+     * Get the name of a method in the current call stack
+     *
+     * @param i The index of the method to get in the call stack.
+     * @return The name of the method in the call stack.
+     */
     private static String getCallerMethodName(int i) {
+        //noinspection OptionalGetWithoutIsPresent
         return StackWalker.
                 getInstance().
-                walk(stream -> stream.skip(1).findFirst().get()).
+                walk(stream -> stream.skip(i).findFirst().get()).
                 getMethodName();
     }
 }

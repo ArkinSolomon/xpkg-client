@@ -20,30 +20,59 @@ import java.io.Serial;
 // The top level class for exceptions while parsing, like invalid scripts
 public class XPkgParseException extends XPkgScriptRunnerException implements ILineException<XPkgParseException> {
 
-    // Serial identifier
     @Serial
     private static final long serialVersionUID = 6594331598568622239L;
 
-    //Basic class constructors
+    /**
+     * Default constructor, creates a new exception with no message.
+     */
     public XPkgParseException() {
+        super();
     }
 
+    /**
+     * Create a new exception with a message.
+     *
+     * @param message The message for the exception.
+     */
     public XPkgParseException(String message) {
         super(message);
     }
 
+    /**
+     * Create an exception with a message and a cause.
+     *
+     * @param message The message for the exception.
+     * @param cause   The cause of the exception.
+     */
     public XPkgParseException(String message, Exception cause) {
         super(message, cause);
     }
 
+    /**
+     * Create a message with a cause and no message.
+     *
+     * @param cause The cause of the exception.
+     */
     public XPkgParseException(Exception cause) {
         super(cause);
     }
 
+    /**
+     * Add a line to the exception.
+     *
+     * @param line The line number at which the exception occurred.
+     * @param e    The exception to add the line to.
+     */
     private XPkgParseException(int line, XPkgParseException e) {
         this("Parse error at line " + line + ": " + e.getMessage(), e);
     }
 
+    /**
+     * Add a line to the exception.
+     *
+     * @param line The line number at which the exception occurred.
+     */
     @Override
     public XPkgParseException setLine(int line) {
         return new XPkgParseException(line, this);

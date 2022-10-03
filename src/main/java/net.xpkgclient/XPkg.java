@@ -19,8 +19,16 @@ import net.xpkgclient.commands.Command;
 
 import java.io.File;
 
+/**
+ * Main class. XPkg-Client entry point.
+ */
 public class XPkg {
 
+    /**
+     * Main method. XPkg-Client entry point.
+     *
+     * @param args Client arguments.
+     */
     public static void main(String[] args) {
 
         //Configure
@@ -32,11 +40,11 @@ public class XPkg {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//		try {
-//				throw new XPkgTypeMismatchException("join", "second", VarType.STRING, VarType.RESOURCE);
-//		} catch (XPkgRuntimeException e) {
-//			throw new XPkgRuntimeException(7, e);
-//		}
+        //		try {
+        //				throw new XPkgTypeMismatchException("join", "second", VarType.STRING, VarType.RESOURCE);
+        //		} catch (XPkgRuntimeException e) {
+        //			throw new XPkgRuntimeException(7, e);
+        //		}
 
         // Execute a test script
         ScriptExecutionHandler.executeFile("/Users/arkinsolomon/Desktop/test.xpkgs");

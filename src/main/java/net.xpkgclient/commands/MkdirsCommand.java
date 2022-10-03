@@ -29,7 +29,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-//This class creates a directory as well as parent directories within the X-Plane directory
+/**
+ * This class creates a directory (and all parent directories) within the X-Plane directory.
+ */
 public class MkdirsCommand extends Command {
 
     public static void execute(String[] args, ExecutionContext context) throws IOException, XPkgException {

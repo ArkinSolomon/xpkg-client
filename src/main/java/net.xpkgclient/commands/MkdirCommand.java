@@ -26,10 +26,18 @@ import net.xpkgclient.exceptions.XPkgNotPathLikeException;
 
 import java.io.File;
 
-//This class creates a single directory (not the parent directories) within the X-Plane directory
+/**
+ * This class creates a single directory (not the parent directories) within the X-Plane directory
+ */
 public class MkdirCommand extends Command {
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
+    /**
+     * The class execution command.
+     *
+     * @param args    The arguments to the command. See the readme for valid arguments.
+     * @param context The execution context that this command executes within.
+     * @throws XPkgException Can be thrown for multiple reasons such as user error, or a type mismatch, or another reason.
+     */
     public static void execute(String[] args, ExecutionContext context) throws XPkgException {
 
         // Argument checking

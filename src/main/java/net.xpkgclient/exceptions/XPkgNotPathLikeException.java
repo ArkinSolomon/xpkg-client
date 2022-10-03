@@ -19,21 +19,53 @@ import net.xpkgclient.commands.CommandName;
 
 import java.io.Serial;
 
-// Exception thrown if variable is not a pathlike when expected
+/**
+ * Exception thrown if a variable or string is not a pathlike when a pathlike variable or string was expected.
+ */
 public class XPkgNotPathLikeException extends XPkgRuntimeException {
 
-    // Serial identifier
     @Serial
     private static final long serialVersionUID = -4254373123050488699L;
 
-    //Say variable was not pathlike
+    /**
+     * Create a new exception stating that a variable's value was not pathlike.
+     *
+     * @param cmd The command that is throwing this exception.
+     * @param varName The name of the variable which held the invalid value.
+     * @param value The value that was invalid (useful for the script author to debug).
+     */
     public XPkgNotPathLikeException(CommandName cmd, String varName, String value) {
         super(cmd + " expected the variable '" + varName + "' to be a pathlike string, got: " + value);
     }
 
-    //Say constant was not path like
+    /**
+     * Say a constant was not pathlike.
+     *
+     * @param cmd The command that is throwing this exception.
+     * @param value The value that was invalid.
+     */
     public XPkgNotPathLikeException(CommandName cmd, String value) {
         super(cmd + " expected a pathlike, got: " + value);
     }
 
+
+    /**
+     * Add a line to the exception.
+     *
+     * @param line The line number at which the exception occurred.
+     * @param e    The exception to add the line to.
+     */
+    private XPkgNotPathLikeException(int line, XPkgNotPathLikeException e) {
+        super("Runtime error at line " + line + ": " + e.getMessage(), e);
+    }
+
+    /**
+     * Add a line to the exception.
+     *
+     * @param line The line number at which the exception occurred.
+     */
+    @Override
+    public XPkgNotPathLikeException setLine(int line) {
+        return new XPkgNotPathLikeException(line, this);
+    }
 }

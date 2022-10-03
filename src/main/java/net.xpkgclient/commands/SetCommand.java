@@ -18,10 +18,11 @@ package net.xpkgclient.commands;
 import net.xpkgclient.ExecutionContext;
 import net.xpkgclient.ParseHelper;
 import net.xpkgclient.exceptions.XPkgArgLenException;
+import net.xpkgclient.exceptions.XPkgExecutionException;
 import net.xpkgclient.exceptions.XPkgImmutableVarException;
-import net.xpkgclient.exceptions.XPkgInvalidBoolStatement;
 import net.xpkgclient.exceptions.XPkgInvalidCallException;
 import net.xpkgclient.exceptions.XPkgInvalidVarNameException;
+import net.xpkgclient.exceptions.XPkgParseException;
 import net.xpkgclient.exceptions.XPkgTypeMismatchException;
 import net.xpkgclient.exceptions.XPkgUndefinedVarException;
 import net.xpkgclient.vars.XPkgBool;
@@ -29,12 +30,25 @@ import net.xpkgclient.vars.XPkgVar;
 
 import java.util.Arrays;
 
-//This class sets a variable based on multiple different things
+/**
+ * This command sets a variable to another variable or the result of a boolean expression.
+ */
 public class SetCommand extends Command {
 
-    public static void execute(String[] args, ExecutionContext context) throws XPkgArgLenException,
-            XPkgInvalidVarNameException, XPkgUndefinedVarException, XPkgInvalidCallException, XPkgImmutableVarException,
-            XPkgInvalidBoolStatement, XPkgTypeMismatchException {
+    /**
+     * Set a variable to another variable or the result of a boolean expression.
+     *
+     * @param args    The arguments provided to the command.
+     * @param context The execution context that this command is being executed in.
+     * @throws XPkgParseException        Thrown if there was an error parsing the script, which can be a result of many user errors.
+     * @throws XPkgUndefinedVarException Thrown if a variable provided by the user is not defined.
+     * @throws XPkgInvalidCallException  Thrown if the execution context is closed.
+     * @throws XPkgImmutableVarException Thrown if the user tries to overwrite a default variable.
+     * @throws XPkgTypeMismatchException Thrown if there is a type mismatch within a boolean expression.
+     */
+    public static void execute(String[] args, ExecutionContext context) throws XPkgParseException,
+            XPkgUndefinedVarException, XPkgExecutionException, XPkgImmutableVarException,
+            XPkgTypeMismatchException {
 
         // Make sure there are enough arguments
         if (args.length < 2)

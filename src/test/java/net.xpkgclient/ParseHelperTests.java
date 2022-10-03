@@ -3,14 +3,17 @@ package net.xpkgclient;
 import net.xpkgclient.commands.CommandName;
 import net.xpkgclient.exceptions.QuickHandles;
 import net.xpkgclient.exceptions.XPkgArgLenException;
+import net.xpkgclient.exceptions.XPkgExecutionException;
 import net.xpkgclient.exceptions.XPkgImmutableVarException;
 import net.xpkgclient.exceptions.XPkgInternalException;
 import net.xpkgclient.exceptions.XPkgInvalidBoolStatement;
 import net.xpkgclient.exceptions.XPkgInvalidCallException;
+import net.xpkgclient.exceptions.XPkgParseException;
 import net.xpkgclient.exceptions.XPkgTypeMismatchException;
 import net.xpkgclient.exceptions.XPkgUndefinedVarException;
 import net.xpkgclient.vars.XPkgBool;
 import net.xpkgclient.vars.XPkgString;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +31,7 @@ public class ParseHelperTests {
     //Basic contexts that are shared among many tests
     private static ExecutionContext context;
 
-    //Setup execution contexts
+    //Setup and cleanup execution context
     @BeforeAll
     public static void setupBeforeClass() throws XPkgInvalidCallException, IOException, XPkgImmutableVarException {
         context = ExecutionContext.createBlankContext();
@@ -37,6 +40,11 @@ public class ParseHelperTests {
         context.setVar("$bool_f", new XPkgBool(false));
         context.setVar("$str1", new XPkgString("String 1"));
         context.setVar("$str2", new XPkgString("String 2"));
+    }
+
+    @AfterAll
+    public static void cleanupAfterClass(){
+        context.close();
     }
 
     @Test
@@ -225,22 +233,22 @@ public class ParseHelperTests {
     }
 
     @Test
-    void testTruthConstantTrue() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthConstantTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"TRUE"}, context));
     }
 
     @Test
-    void testTruthConstantFalse() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthConstantFalse() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertFalse(ParseHelper.isTrue(new String[]{"FALSE"}, context));
     }
 
     @Test
-    void testTruthConstantTrueCaseInsensitive() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthConstantTrueCaseInsensitive() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"tRuE"}, context));
     }
 
     @Test
-    void testTruthConstantFalseCaseInsensitive() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthConstantFalseCaseInsensitive() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertFalse(ParseHelper.isTrue(new String[]{"faLSe"}, context));
     }
 
@@ -250,47 +258,47 @@ public class ParseHelperTests {
     }
 
     @Test
-    void testTruthOrDoubleTrue() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthOrDoubleTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"TRUE", "|", "TRUE"}, context));
     }
 
     @Test
-    void testTruthTrueOrFalse() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthTrueOrFalse() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"TRUE", "|", "FALSE"}, context));
     }
 
     @Test
-    void testTruthFalseOrTrue() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthFalseOrTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"FALSE", "|", "TRUE"}, context));
     }
 
     @Test
-    void testTruthOrTripleTrue() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthOrTripleTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"TRUE", "|", "TRUE", "|", "TRUE"}, context));
     }
 
     @Test
-    void testTruthOrTwoTrueOneFalse() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthOrTwoTrueOneFalse() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"TRUE", "|", "TRUE", "|", "FALSE"}, context));
     }
 
     @Test
-    void testTruthOrTwoFalseOneTrue() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthOrTwoFalseOneTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"FALSE", "|", "TRUE", "|", "FALSE"}, context));
     }
 
     @Test
-    void testTruthOrTripleFalse() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthOrTripleFalse() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertFalse(ParseHelper.isTrue(new String[]{"FALSE", "|", "FALSE", "|", "FALSE"}, context));
     }
 
     @Test
-    void testTruthTrueVar() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthTrueVar() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"$bool_t"}, context));
     }
 
     @Test
-    void testTruthFalseVar() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthFalseVar() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertFalse(ParseHelper.isTrue(new String[]{"$bool_f"}, context));
     }
 
@@ -325,7 +333,7 @@ public class ParseHelperTests {
     }
 
     @Test
-    void testTruthOrDoubleTruthyVar() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthOrDoubleTruthyVar() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"$bool_t", "|", "$bool_t"}, context));
     }
 
@@ -351,37 +359,37 @@ public class ParseHelperTests {
     }
 
     @Test
-    void testTruthAndDoubleTrue() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthAndDoubleTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"TRUE", "&", "TRUE"}, context));
     }
 
     @Test
-    void testTruthTrueAndFalse() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthTrueAndFalse() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertFalse(ParseHelper.isTrue(new String[]{"TRUE", "&", "FALSE"}, context));
     }
 
     @Test
-    void testTruthFalseAndTrue() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthFalseAndTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertFalse(ParseHelper.isTrue(new String[]{"FALSE", "&", "TRUE"}, context));
     }
 
     @Test
-    void testTruthAndTripleTrue() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthAndTripleTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"TRUE", "&", "TRUE", "&", "TRUE"}, context));
     }
 
     @Test
-    void testTruthAndTwoTrueOneFalse() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthAndTwoTrueOneFalse() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertFalse(ParseHelper.isTrue(new String[]{"TRUE", "&", "TRUE", "&", "FALSE"}, context));
     }
 
     @Test
-    void testTruthAndTwoFalseOneTrue() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthAndTwoFalseOneTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertFalse(ParseHelper.isTrue(new String[]{"FALSE", "&", "TRUE", "&", "FALSE"}, context));
     }
 
     @Test
-    void testTruthAndTripleFalse() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthAndTripleFalse() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertFalse(ParseHelper.isTrue(new String[]{"FALSE", "&", "FALSE", "&", "FALSE"}, context));
     }
 
@@ -406,7 +414,7 @@ public class ParseHelperTests {
     }
 
     @Test
-    void testTruthAndDoubleTruthyVar() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthAndDoubleTruthyVar() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"$bool_t", "&", "$bool_t"}, context));
     }
 
@@ -432,52 +440,52 @@ public class ParseHelperTests {
     }
 
     @Test
-    void testTruthTrueAndFalseOrFalse() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthTrueAndFalseOrFalse() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertFalse(ParseHelper.isTrue(new String[]{"TRUE", "&", "FALSE", "|", "FALSE"}, context));
     }
 
     @Test
-    void testTruthTrueAndFalseOrTrue() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthTrueAndFalseOrTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"TRUE", "&", "FALSE", "|", "TRUE"}, context));
     }
 
     @Test
-    void testTruthTrueAndTrueOrTrue() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthTrueAndTrueOrTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"TRUE", "&", "TRUE", "|", "FALSE"}, context));
     }
 
     @Test
-    void testTruthFalseAndFalseOrTrue() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthFalseAndFalseOrTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"FALSE", "&", "FALSE", "|", "TRUE"}, context));
     }
 
     @Test
-    void testTruthFalseAndTrueOrTrue() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthFalseAndTrueOrTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"FALSE", "&", "TRUE", "|", "TRUE"}, context));
     }
 
     @Test
-    void testTruthTrueOrFalseAndFalse() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthTrueOrFalseAndFalse() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"TRUE", "|", "FALSE", "&", "FALSE"}, context));
     }
 
     @Test
-    void testTruthTrueOrFalseAndTrue() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthTrueOrFalseAndTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"TRUE", "|", "FALSE", "&", "TRUE"}, context));
     }
 
     @Test
-    void testTruthTrueOrTrueAndTrue() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthTrueOrTrueAndTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"TRUE", "|", "TRUE", "&", "FALSE"}, context));
     }
 
     @Test
-    void testTruthFalseOrFalseAndTrue() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthFalseOrFalseAndTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertFalse(ParseHelper.isTrue(new String[]{"FALSE", "|", "FALSE", "&", "TRUE"}, context));
     }
 
     @Test
-    void testTruthFalseOrTrueAndTrue() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgInvalidBoolStatement {
+    void testTruthFalseOrTrueAndTrue() throws XPkgExecutionException, XPkgUndefinedVarException, XPkgTypeMismatchException, XPkgParseException {
         assertTrue(ParseHelper.isTrue(new String[]{"FALSE", "|", "TRUE", "&", "TRUE"}, context));
     }
 

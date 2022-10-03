@@ -17,34 +17,64 @@ package net.xpkgclient.exceptions;
 
 import java.io.Serial;
 
-// Top level exception for errors that occur while running
+/**
+ * Top level exception for script errors that occur while running.
+ */
 public class XPkgRuntimeException extends XPkgScriptRunnerException implements ILineException<XPkgRuntimeException> {
 
-    // Serial identifier
     @Serial
     private static final long serialVersionUID = -8557642804365998541L;
 
-    // Class constructors (same as superclass constructors)
+    /**
+     * Default constructor, creates a new exception with no message.
+     */
     public XPkgRuntimeException() {
+        super();
     }
 
+    /**
+     * Create a new exception with a message.
+     *
+     * @param message The message for the exception.
+     */
     public XPkgRuntimeException(String message) {
         super(message);
     }
 
+    /**
+     * Create an exception with a message and a cause.
+     *
+     * @param message The message for the exception.
+     * @param cause   The cause of the exception.
+     */
     public XPkgRuntimeException(String message, Exception cause) {
         super(message, cause);
     }
 
+    /**
+     * Create a message with a cause and no message.
+     *
+     * @param cause The cause of the exception.
+     */
     public XPkgRuntimeException(Exception cause) {
         super(cause);
     }
 
+    /**
+     * Add a line to the exception.
+     *
+     * @param line The line number at which the exception occurred.
+     * @param e    The exception to add the line to.
+     */
     private XPkgRuntimeException(int line, XPkgRuntimeException e) {
         this("Error at line " + line + ": " + e.getMessage(), e);
     }
 
-    // Add the line to the message
+    /**
+     * Add a line to the exception.
+     *
+     * @param line The line number at which the exception occurred.
+     */
     @Override
     public XPkgRuntimeException setLine(int line) {
         return new XPkgRuntimeException(line, this);

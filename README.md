@@ -72,11 +72,15 @@ Pathlike variables are just formatted strings. They always start with a slash, a
 
 #### Resources
 
-Resources are essentially paths to immutable folders. Items of resources can be accessed using pathlike strings.
+Resources are essentially paths to immutable directories. Items of resources can be accessed using pathlike strings.
 
 #### MutableResources
 
-A mutable resource is similar to a resource, however they are able to be modified.
+A mutable resource is similar to a resource, however they can be modified.
+
+#### Files
+
+A file is a path to a single file, as opposed to a directory (which is a resource). Files usually point to an item within a resource or a mutable resource.
 
 #### Environment variables
 

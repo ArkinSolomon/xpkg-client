@@ -15,9 +15,11 @@
 
 package net.xpkgclient;
 
+import net.xpkgclient.exceptions.XPkgExecutionException;
 import net.xpkgclient.exceptions.XPkgInternalException;
 import net.xpkgclient.exceptions.XPkgInvalidBoolStatement;
 import net.xpkgclient.exceptions.XPkgInvalidCallException;
+import net.xpkgclient.exceptions.XPkgParseException;
 import net.xpkgclient.exceptions.XPkgTypeMismatchException;
 import net.xpkgclient.exceptions.XPkgUndefinedVarException;
 import net.xpkgclient.vars.VarType;
@@ -28,9 +30,18 @@ import net.xpkgclient.vars.XPkgVar;
 import java.util.Arrays;
 
 //This class provides static methods to help parse
+
+/**
+ * This class provide methods to easily help commands parse repeating scenarios (such as booleans and getting ...STRING's).
+ */
 public class ParseHelper {
 
-    // Check if a variable is a valid variable name
+    /**
+     * Check if a variable name is valid.
+     *
+     * @param variable The variable name, including the dollar sign at the beginning, if the dollar sign is not present, it will be considered invalid.
+     * @return True if the variable name is valid. Does not guarantee existence.
+     */
     public static boolean isValidVarName(String variable) {
         if (variable == null || !variable.startsWith("$"))
             return false;
@@ -38,14 +49,19 @@ public class ParseHelper {
         return name.length() > 0 && name.matches("^\\w+$") && !name.substring(0, 1).matches("\\d");
     }
 
-    // Determine if a string is a valid path
+    /**
+     * Check if a string can be considered a path. Also check for bad characters, like the tilde, percent sign, or double dots.
+     *
+     * @param path The potential path that is being checked. Requires a leading slash. If a leading slash is not present the path will be considered invalid.
+     * @return True if the path is valid.
+     */
     public static boolean isValidPath(String path) {
 
         // If a path is empty it's valid
         if (path.isEmpty() || path.equalsIgnoreCase("/"))
             return true;
 
-        if (!(path.startsWith("/") && !path.contains("\\") && !stringContains(path, "~%")
+        if (!(path.startsWith("/") && !path.contains("\\") && !stringContains(path, "~%$")
                 && !path.matches(".+/\\.(\\.)?/?.+")))
             return false;
 
@@ -57,13 +73,32 @@ public class ParseHelper {
         return true;
     }
 
-    // Determine if a set of arguments evaluates to true
-    @SuppressWarnings("SpellCheckingInspection")
-    public static boolean isTrue(String[] args, ExecutionContext context) throws XPkgInvalidBoolStatement,
-            XPkgUndefinedVarException, XPkgInvalidCallException, XPkgTypeMismatchException {
+    /**
+     * Evaluate a list of arguments and determine, based on the current execution context and constants if the expression evaluates to True.
+     *
+     * @param args    The arguments to check.
+     * @param context The execution context that this evaluation is running in.
+     * @return True if the expression evaluates to true with regard to the provided execution context.
+     * @throws XPkgInvalidBoolStatement  Exception thrown if there is an unexpected token in the expression.
+     * @throws XPkgUndefinedVarException Exception thrown if a variable is undefined. Only thrown if the expression hasn't already been evaluated to true.
+     * @throws XPkgInvalidCallException  Exception thrown if the execution context provided is closed.
+     * @throws XPkgTypeMismatchException Exception thrown if the type of a provided variable is not a boolean. Thrown even if the expression has already been evaluated to true.
+     */
+    public static boolean isTrue(String[] args, ExecutionContext context) throws XPkgParseException,
+            XPkgUndefinedVarException, XPkgExecutionException, XPkgTypeMismatchException {
+
+        String joined = String.join(" ", args);
+
+        // Make sure there's no two AND's or OR's together
+
+        //TODO Write tests for this
+        if (joined.contains("\\|\\s*\\|"))
+            throw new XPkgInvalidBoolStatement('|');
+        else if (joined.matches("&\\s*&"))
+            throw new XPkgInvalidBoolStatement('&');
 
         // First separate all OR's from AND's
-        String[] ands = String.join(" ", args).split("\\|");
+        String[] ands = joined.split("\\|");
 
         boolean statementCurrentlyTrue = false;
 
@@ -116,19 +151,30 @@ public class ParseHelper {
         return statementCurrentlyTrue;
     }
 
-    // Get a string or the value of a string variable
+    /**
+     * Get remaining arguments as a string by determining if the first variable is a variable and returning that, or combining all values in args.
+     *
+     * @param args    The arguments to get a string from.
+     * @param context The execution context that this evaluation is running in.
+     * @return The string evaluation of the args.
+     * @throws XPkgUndefinedVarException Thrown if there is only one argument which is a valid variable name, but if the variable does not exist.
+     * @throws XPkgInternalException     Thrown with the message 'arglen' if there are too many arguments (only happens if the first argument is a variable and there is more than one argument). Can also be thrown with the message 'mismatch' if the first argument exists and is a valid variable, but is not of type STRING. If thrown with 'mismatch' the type of the variable received will be thrown as a {@code VarType} enumeration as the exception's data.
+     * @throws XPkgInvalidCallException  Thrown if the execution context provided is closed.
+     */
     public static String getStr(String[] args, ExecutionContext context)
             throws XPkgUndefinedVarException, XPkgInternalException, XPkgInvalidCallException {
         String retStr;
 
         // Make sure the variable name is valid and exist
         if (isValidVarName(args[0])) {
-            if (!context.hasVar(args[0]))
-                throw new XPkgUndefinedVarException(args[0]);
 
             // Make sure there's no other argument
             if (args.length > 1)
                 throw new XPkgInternalException("arglen");
+
+            // Ensure the variable exists
+            if (!context.hasVar(args[0]))
+                throw new XPkgUndefinedVarException(args[0]);
 
             // Get the variable and check the type
             XPkgVar var = context.getVar(args[0]);
@@ -145,7 +191,13 @@ public class ParseHelper {
         return retStr;
     }
 
-    // Determine if a string contains any of an item
+    /**
+     * Determine if a string matches any characters.
+     *
+     * @param testStr The string to test against.
+     * @param matches The characters to check for in {@code testStr}.
+     * @return True if any characters in {@code matches} are inside {@code testStr}.
+     */
     @SuppressWarnings("SameParameterValue")
     private static boolean stringContains(String testStr, String matches) {
         String[] m = matches.split("");

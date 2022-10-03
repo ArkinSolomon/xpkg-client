@@ -19,14 +19,23 @@ import net.xpkgclient.Configuration;
 import net.xpkgclient.ExecutionContext;
 import net.xpkgclient.ParseHelper;
 import net.xpkgclient.exceptions.XPkgArgLenException;
-import net.xpkgclient.exceptions.XPkgInvalidCallException;
+import net.xpkgclient.exceptions.XPkgException;
 import net.xpkgclient.exceptions.XPkgUndefinedVarException;
 
-//This class simply prints something
+/**
+ * This class prints a variable.
+ */
 public class PrintCommand extends Command {
 
+    /**
+     * The class execution command.
+     *
+     * @param args    The arguments to the command. See the readme for valid arguments.
+     * @param context The execution context that this command executes within.
+     * @throws XPkgException Can be thrown for multiple reasons such as user error, or a type mismatch, or another reason.
+     */
     public static void execute(String[] args, ExecutionContext context)
-            throws XPkgArgLenException, XPkgInvalidCallException, XPkgUndefinedVarException {
+            throws XPkgException {
 
         // Make sure there is at least one argument
         if (args.length == 0)

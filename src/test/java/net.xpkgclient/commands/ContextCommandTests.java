@@ -6,21 +6,32 @@ import net.xpkgclient.exceptions.XPkgArgLenException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(ConfigSetupExtension.class)
 class ContextCommandTests {
 
-    //Test basic execution (make sure it doesn't throw an error)
     @Test
-    void testNormal() {
-        assertDoesNotThrow(() -> ContextCommand.execute(new String[]{}, ExecutionContext.createBlankContext()), "Context command threw exception that was not expected");
+    void testNormal() throws IOException {
+        ExecutionContext context = ExecutionContext.createBlankContext();
+        assertDoesNotThrow(() -> ContextCommand.execute(new String[]{}, context), "Context command threw exception that was not expected while printing information about open execution context.");
+        context.close();
     }
 
-    //Test that it throws an exception when there's argument
     @Test
-    void testArgLen() {
-        assertThrows(XPkgArgLenException.class, () -> ContextCommand.execute(new String[]{"an_argument"}, ExecutionContext.createBlankContext()));
+    void testClosedContextPrint() throws IOException {
+        ExecutionContext context = ExecutionContext.createBlankContext();
+        context.close();
+        assertDoesNotThrow(() -> ContextCommand.execute(new String[]{}, context), "Context command threw exception that was not expected while printing information about closed execution context");
+    }
+
+    @Test
+    void testArgLen() throws IOException{
+        ExecutionContext context = ExecutionContext.createBlankContext();
+        assertThrows(XPkgArgLenException.class, () -> ContextCommand.execute(new String[]{"an_argument"}, context));
+        context.close();
     }
 }
