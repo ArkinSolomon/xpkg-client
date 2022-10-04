@@ -34,7 +34,7 @@ public class QuickHandles {
      */
     public static XPkgException handleGetStr(CommandName cmd, XPkgInternalException e) {
         if (e.getMessage().equalsIgnoreCase("arglen"))
-            return new XPkgArgLenException(cmd, 2, "a variable is the second argument");
+            return new XPkgArgLenException(cmd, 2, "a variable is the second argument", e);
         else if (e.getMessage().equalsIgnoreCase("mismatch"))
             return new XPkgTypeMismatchException(cmd, "second", VarType.STRING, (VarType) e.getData(), e);
         else

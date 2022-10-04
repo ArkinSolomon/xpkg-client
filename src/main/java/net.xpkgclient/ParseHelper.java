@@ -137,7 +137,6 @@ public class ParseHelper {
                     throw new XPkgInvalidBoolStatement(part);
                 }
 
-
                 // Check if the variable exists
                 if (!context.hasVar(part))
                     throw new XPkgUndefinedVarException(part);

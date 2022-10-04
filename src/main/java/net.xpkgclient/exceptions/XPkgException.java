@@ -47,7 +47,7 @@ public class XPkgException extends Exception {
      * @param message The message for the exception.
      * @param cause   The cause of the exception.
      */
-    public XPkgException(String message, Exception cause) {
+    public XPkgException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -56,7 +56,7 @@ public class XPkgException extends Exception {
      *
      * @param cause The cause of the exception.
      */
-    public XPkgException(Exception cause) {
+    public XPkgException(Throwable cause) {
         super(cause);
     }
 }

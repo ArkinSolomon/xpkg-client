@@ -40,8 +40,6 @@ public class XPkgArgLenException extends XPkgParseException {
         super("Invalid argument length: The " + cmd + " command expects " + expected + " arguments, got " + actual);
     }
 
-    // Too many arguments with a note for a reason
-
     /**
      * Constructor which is used to throw when a command expects a maximum amount of arguments for a certain reason.
      *
@@ -53,7 +51,16 @@ public class XPkgArgLenException extends XPkgParseException {
         super("Invalid argument length: The " + cmd + " command expects " + max + " arguments if " + reason);
     }
 
-    // Command takes no arguments
+    /**
+     * Constructor which is used to throw when a command expects a maximum amount of arguments for a certain reason, with another exception as the cause.
+     *
+     * @param cmd    The command that threw the exception.
+     * @param max    The maximum amount of arguments for the given reason.
+     * @param reason In what scenario the command expects the maximum (prepended with "if ").
+     */
+    public XPkgArgLenException(CommandName cmd, int max, String reason, Throwable cause) {
+        super("Invalid argument length: The " + cmd + " command expects " + max + " arguments if " + reason, cause);
+    }
 
     /**
      * Constructor which is used to throw when a command expects no arguments, but is given some anyway.

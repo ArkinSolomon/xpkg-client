@@ -45,7 +45,7 @@ public class XPkgParseException extends XPkgScriptRunnerException implements ILi
      * @param message The message for the exception.
      * @param cause   The cause of the exception.
      */
-    public XPkgParseException(String message, Exception cause) {
+    public XPkgParseException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -54,7 +54,7 @@ public class XPkgParseException extends XPkgScriptRunnerException implements ILi
      *
      * @param cause The cause of the exception.
      */
-    public XPkgParseException(Exception cause) {
+    public XPkgParseException(Throwable cause) {
         super(cause);
     }
 

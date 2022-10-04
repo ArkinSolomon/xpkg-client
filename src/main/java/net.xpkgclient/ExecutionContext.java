@@ -93,7 +93,7 @@ public class ExecutionContext {
             setInternalVar("$TMP", tmp);
             setInternalVar("$SPACE", new XPkgString(" "));
         } catch (Exception e) {
-            // Should be no reason this is reached
+            throw new IllegalStateException(e);
         }
     }
 
@@ -109,7 +109,7 @@ public class ExecutionContext {
             context.setScriptType(ScriptType.OTHER);
             context.setPackageType(PackageType.OTHER);
         } catch (XPkgInvalidCallException e) {
-            // Should be no reason this is reached
+            throw new IllegalStateException(e);
         }
         return context;
     }

@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 /**
  * This class joins two pathlike strings and stores the result.
@@ -71,14 +72,19 @@ class JoinpCommand extends Command {
 
         // Get the second part of the path and combine them
         String secondHalf;
+        args = Arrays.copyOfRange(args, 1, args.length);
         try {
             secondHalf = ParseHelper.getStr(args, context);
         } catch (XPkgInternalException e) {
             throw QuickHandles.handleGetStr(CommandName.JOINP, e);
         }
+        if (!ParseHelper.isValidPath(secondHalf))
+            throw new XPkgNotPathLikeException(CommandName.JOINP, secondHalf);
+
 
         XPkgString assigneeVar = (XPkgString) context.getVar(assignee);
         Path newPath = Paths.get(assigneeVar.getValue(), secondHalf);
-        assigneeVar.setValue(newPath.toString());
+        XPkgString newStr = new XPkgString(newPath.toString());
+        context.setVar(assignee, newStr);
     }
 }

@@ -63,7 +63,7 @@ public class XPkgInternalException extends Exception {
      * @param message The message for the exception.
      * @param cause   The cause of the exception.
      */
-    public XPkgInternalException(String message, Exception cause) {
+    public XPkgInternalException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -72,7 +72,7 @@ public class XPkgInternalException extends Exception {
      *
      * @param cause The cause of the exception.
      */
-    public XPkgInternalException(Exception cause) {
+    public XPkgInternalException(Throwable cause) {
 
         // We want to call our own constructor to set the message of the exception
         this(cause == null ? null : cause.toString(), cause);

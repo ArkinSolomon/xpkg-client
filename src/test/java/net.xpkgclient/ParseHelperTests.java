@@ -183,6 +183,16 @@ public class ParseHelperTests {
     }
 
     @Test
+    void testValidPathSpace() {
+        assertFalse(ParseHelper.isValidPath(" "));
+    }
+
+    @Test
+    void testValidPathMultiSpace() {
+        assertFalse(ParseHelper.isValidPath("   "));
+    }
+
+    @Test
     void testValidPathSingleSlash() {
         assertTrue(ParseHelper.isValidPath("/"));
     }
