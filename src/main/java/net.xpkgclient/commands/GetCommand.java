@@ -27,6 +27,7 @@ class GetCommand extends Command {
 
     public static void execute(String @NotNull [] args, ExecutionContext context) {
         System.out.println("GET COMMAND EXECUTION: " + args[0] + ", " + args[1]);
+
         //
         //		// Make sure args[0] is a valid variable
         //		if (!ParseHelper.isValidVarName(args[0]))

@@ -37,71 +37,77 @@ public class JoinCommandTests {
         }
     }
 
-    @Test
-    void joinTwoStrings() throws XPkgException, IOException {
+    /**
+     * Run code within a certain execution context, which is after {@code runner} runs.
+     *
+     * @param runner A lambda with an {@link ExecutionContext} as it's only parameter.
+     * @throws IOException   Thrown when there is an issue creating temporary files in the execution context.
+     * @throws XPkgException Thrown when there's an issue with the tested code.
+     */
+    private static void runInDefaultContext(@NotNull ContextRunner runner) throws XPkgException, IOException {
         ExecutionContext context = newCtx();
-        JoinCommand.execute(new String[]{"$str1", "$str2"}, context);
-        assertEquals("String 1String 2", context.getVar("$str1").toString());
+        runner.run(context);
         context.close();
     }
 
+
     @Test
-    void joinStringAndSpace() throws XPkgException, IOException {
-        ExecutionContext context = newCtx();
-        JoinCommand.execute(new String[]{"$str1", "$SPACE"}, context);
-        assertEquals("String 1 ", context.getVar("$str1").toString());
-        context.close();
+    void testJoinTwoStrings() throws XPkgException, IOException {
+        runInDefaultContext(context -> {
+            JoinCommand.execute(new String[]{"$str1", "$str2"}, context);
+            assertEquals("String 1String 2", context.getVar("$str1").toString());
+        });
     }
 
     @Test
-    void joinStringToSpace() throws IOException {
-        ExecutionContext context = newCtx();
-        assertThrows(XPkgImmutableVarException.class, () -> JoinCommand.execute(new String[]{"$SPACE", "$str2"}, context));
-        context.close();
+    void testJoinStringAndSpace() throws XPkgException, IOException {
+        runInDefaultContext(context -> {
+            JoinCommand.execute(new String[]{"$str1", "$SPACE"}, context);
+            assertEquals("String 1 ", context.getVar("$str1").toString());
+        });
     }
 
     @Test
-    void joinStringLiteralToString() throws XPkgException, IOException {
-        ExecutionContext context = newCtx();
-        JoinCommand.execute(new String[]{"$str3", "wow", "look", "a", "string"}, context);
-        assertEquals("String 3wow look a string", context.getVar("$str3").toString());
-        context.close();
+    void testJoinStringToSpace() throws XPkgException, IOException {
+        runInDefaultContext(context -> assertThrows(XPkgImmutableVarException.class, () -> JoinCommand.execute(new String[]{"$SPACE", "$str2"}, context)));
     }
 
     @Test
-    void joinSameStringVariable() throws XPkgException, IOException {
-        ExecutionContext context = newCtx();
-        JoinCommand.execute(new String[]{"$str1", "$str1"}, context);
-        assertEquals("String 1String 1", context.getVar("$str1").toString());
-        context.close();
+    void testJoinStringLiteralToString() throws XPkgException, IOException {
+        runInDefaultContext(context -> {
+            JoinCommand.execute(new String[]{"$str3", "wow", "look", "a", "string"}, context);
+            assertEquals("String 3wow look a string", context.getVar("$str3").toString());
+        });
     }
 
     @Test
-    void joinStringLiteralTwoVariables() throws IOException {
-        ExecutionContext context = newCtx();
-        assertThrows(XPkgArgLenException.class, () -> JoinCommand.execute(new String[]{"$str1", "$str2", "$str3"}, context));
-        context.close();
+    void testJoinSameStringVariable() throws XPkgException, IOException {
+        runInDefaultContext(context -> {
+            JoinCommand.execute(new String[]{"$str1", "$str1"}, context);
+            assertEquals("String 1String 1", context.getVar("$str1").toString());
+        });
     }
 
     @Test
-    void joinFirstVarUndefined() throws IOException, XPkgException {
-        ExecutionContext context = newCtx();
-        JoinCommand.execute(new String[]{"$undef_var", "$str1"}, context);
-        assertEquals("String 1", context.getVar("$undef_var").toString());
-        context.close();
+    void testJoinStringLiteralTwoVariables() throws XPkgException, IOException {
+        runInDefaultContext(context -> assertThrows(XPkgArgLenException.class, () -> JoinCommand.execute(new String[]{"$str1", "$str2", "$str3"}, context)));
     }
 
     @Test
-    void joinSecondVarUndefined() throws IOException {
-        ExecutionContext context = newCtx();
-        assertThrows(XPkgUndefinedVarException.class, () -> JoinCommand.execute(new String[]{"$str1", "$undef_var"}, context));
-        context.close();
+    void testJoinFirstVarUndefined() throws XPkgException, IOException {
+        runInDefaultContext(context -> {
+            JoinCommand.execute(new String[]{"$undef_var", "$str1"}, context);
+            assertEquals("String 1", context.getVar("$undef_var").toString());
+        });
     }
 
     @Test
-    void joinNoArgs() throws IOException {
-        ExecutionContext context = newCtx();
-        assertThrows(XPkgArgLenException.class, () -> JoinCommand.execute(new String[]{}, context));
-        context.close();
+    void testJoinSecondVarUndefined() throws XPkgException, IOException {
+        runInDefaultContext(context -> assertThrows(XPkgUndefinedVarException.class, () -> JoinCommand.execute(new String[]{"$str1", "$undef_var"}, context)));
+    }
+
+    @Test
+    void testJoinNoArgs() throws XPkgException, IOException {
+        runInDefaultContext(context -> assertThrows(XPkgArgLenException.class, () -> JoinCommand.execute(new String[]{}, context)));
     }
 }

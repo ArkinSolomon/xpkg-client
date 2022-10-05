@@ -13,11 +13,13 @@
  * either express or implied limitations under the License.
  */
 
-package net.xpkgclient.vars;
+package net.xpkgclient.filesystem;
 
-/**
- * The different types a variable can be.
- */
-public enum VarType {
-    STRING, RESOURCE, BOOL, MUTABLERESOURCE
+import java.io.File;
+
+public class CopyDirectoryOperation {
+
+    public CopyDirectoryOperation(File initialDirectory, File destinationDirectory) {
+
+    }
 }

@@ -37,7 +37,6 @@ public class QuickHandles {
             return new XPkgArgLenException(cmd, 2, "a variable is the second argument", e);
         else if (e.getMessage().equalsIgnoreCase("mismatch"))
             return new XPkgTypeMismatchException(cmd, "second", VarType.STRING, (VarType) e.getData(), e);
-        else
-            return new XPkgException("An unknown exception occurred", e);
+        return new XPkgException("An unknown exception occurred", e);
     }
 }

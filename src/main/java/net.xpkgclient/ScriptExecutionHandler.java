@@ -23,7 +23,7 @@ import java.util.Scanner;
 /**
  * This class is a simple interface for running scripts.
  */
-public class ScriptExecutionHandler {
+public final class ScriptExecutionHandler {
 
     // Read and execute the whole file
 

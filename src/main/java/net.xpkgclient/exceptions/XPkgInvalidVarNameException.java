@@ -15,6 +15,8 @@
 
 package net.xpkgclient.exceptions;
 
+import net.xpkgclient.commands.CommandName;
+
 import java.io.Serial;
 
 /**
@@ -32,6 +34,16 @@ public class XPkgInvalidVarNameException extends XPkgParseException {
      */
     public XPkgInvalidVarNameException(String name) {
         super("Invalid variable name: '" + name + "' is not a valid variable");
+    }
+
+    /**
+     * Create a new exception saying that a command expected a variable as an argument.
+     *
+     * @param cmd  The command that is throwing this exception.
+     * @param name The name of the variable that is invalid.
+     */
+    public XPkgInvalidVarNameException(CommandName cmd, String name) {
+        super("Invalid variable name: The command '" + cmd + "' expected a variable as the first argument, but instead got '" + name + "'");
     }
 
     /**

@@ -1,7 +1,6 @@
 package net.xpkgclient.commands;
 
 import net.xpkgclient.ConfigSetupExtension;
-import net.xpkgclient.ContextRunner;
 import net.xpkgclient.ExecutionContext;
 import net.xpkgclient.exceptions.XPkgArgLenException;
 import net.xpkgclient.exceptions.XPkgException;
@@ -38,13 +37,13 @@ public class JoinpCommandTests {
     }
 
     /**
-     * Run code within a certain execution context, which is closed on exit.
+     * Run code within a certain execution context, which is after {@code runner} runs.
      *
      * @param runner A lambda with an {@link ExecutionContext} as it's only parameter.
      * @throws IOException   Thrown when there is an issue creating temporary files in the execution context.
      * @throws XPkgException Thrown when there's an issue with the tested code.
      */
-    private static void runInDefaultContext(@NotNull ContextRunner runner) throws IOException, XPkgException {
+    private static void runInDefaultContext(@NotNull ContextRunner runner) throws XPkgException, IOException {
         ExecutionContext context = newCtx();
         runner.run(context);
         context.close();
