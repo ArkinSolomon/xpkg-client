@@ -83,4 +83,13 @@ public class XPkgResource extends XPkgVar {
     public void setValue(@NotNull File newDir) {
         resourcePath = newDir;
     }
+
+    /**
+     * True if this resource is mutable.
+     *
+     * @return Always returns false for this class.
+     */
+    public boolean isMutable() {
+        return false;
+    }
 }

@@ -22,10 +22,12 @@ import net.xpkgclient.exceptions.XPkgClosedExecutionContextException;
 import net.xpkgclient.exceptions.XPkgImmutableVarException;
 import net.xpkgclient.exceptions.XPkgInvalidCallException;
 import net.xpkgclient.exceptions.XPkgNotSetException;
+import net.xpkgclient.filesystem.FileTracker;
 import net.xpkgclient.vars.XPkgBool;
-import net.xpkgclient.vars.XPkgResource;
+import net.xpkgclient.vars.XPkgMutableResource;
 import net.xpkgclient.vars.XPkgString;
 import net.xpkgclient.vars.XPkgVar;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,19 +45,31 @@ public class ExecutionContext {
 
     // All environment variable names
     private static final String[] envVarNames = {"$IS_MAC_OS", "$IS_WINDOWS", "$IS_LINUX", "$IS_OTHER_OS",
-            "$XP_DIR", "$TMP", "$SPACE"};
+            "$XP", "$TMP", "$SPACE"};
+
     // Store all variables
     private final HashMap<String, XPkgVar> vars;
-    private final XPkgResource tmp;
+    // Track all changes to the file system
+    public final FileTracker fileTracker;
+    // Mutable resources exposed to the user
+    private final XPkgMutableResource tmp;
+    private final XPkgMutableResource xp;
+    // The base file for all caches
+    private final File baseFile;
+    // Where we store downloaded resources
+    private final File resourceDownloadFiles;
+    // Where we cache overwritten files
+    private final File overwrittenFiles;
+
     // Head or file meta
     private PackageType packageType;
     private ScriptType scriptType;
+
     // If this context is active (true if not closed)
     private boolean isActive;
+
     // The currently executing line
     private int currentLine = 0;
-
-    //TODO setup cache directories for file modification tracking and resource directories for resource storage
 
     /**
      * Create a default execution context.
@@ -66,16 +80,22 @@ public class ExecutionContext {
         isActive = true;
         vars = new HashMap<>();
 
-        //TODO store UUID
         // Create a unique id for the temporary folder
-        String uniqueID = UUID.randomUUID().toString();
+        String contextId = UUID.randomUUID().toString();
 
         // The X-Plane folder and temporary folders
-        XPkgString xp = new XPkgString(Configuration.getXpPath().toString());
-        tmp = new XPkgResource(new File(xp.getValue(), "xpkg/tmp/" + uniqueID));
+        baseFile = new File(Configuration.getXpPath(), "xpkg/" + contextId);
+        xp = new XPkgMutableResource(Configuration.getXpPath());
+        tmp = new XPkgMutableResource(new File(baseFile, "tmp"));
+        resourceDownloadFiles = new File(baseFile, "resources");
+        overwrittenFiles = new File(baseFile, "cache");
 
-        // Create the temporary file
+        fileTracker = new FileTracker();
+
+        // Create the directories
         Files.createDirectories(Path.of(tmp.getValue().toString()));
+        Files.createDirectories(Path.of(resourceDownloadFiles.toString()));
+        Files.createDirectories(Path.of(overwrittenFiles.toString()));
 
         // Set flags for operating system information
         boolean isMacOS = SystemUtils.IS_OS_MAC;
@@ -89,7 +109,7 @@ public class ExecutionContext {
             setInternalVar("$IS_WINDOWS", new XPkgBool(isWindows));
             setInternalVar("$IS_LINUX", new XPkgBool(isLinux));
             setInternalVar("$IS_OTHER_OS", new XPkgBool(isOtherOS));
-            setInternalVar("$XP_DIR", xp);
+            setInternalVar("$XP", xp);
             setInternalVar("$TMP", tmp);
             setInternalVar("$SPACE", new XPkgString(" "));
         } catch (Exception e) {
@@ -151,8 +171,11 @@ public class ExecutionContext {
      */
     public void close() {
         isActive = false;
-        //noinspection ResultOfMethodCallIgnored
-        tmp.getValue().delete();
+        try {
+            FileUtils.deleteDirectory(baseFile);
+        } catch (IOException e) {
+            // Do nothing, it'll be cleared at next start
+        }
     }
 
     /**
@@ -207,16 +230,16 @@ public class ExecutionContext {
         scriptType = type;
     }
 
-    /**
-     * Get the directory for all temporary files created in this execution context.
-     *
-     * @return The directory for all temporary files created in this execution context.
-     * @throws XPkgInvalidCallException Thrown if the execution context is closed.
-     */
-    public File getTmpDir() throws XPkgInvalidCallException {
-        activityCheck();
-        return tmp.getValue();
-    }
+    //    /**
+    //     * Get the directory for all temporary files created in this execution context.
+    //     *
+    //     * @return The directory for all temporary files created in this execution context.
+    //     * @throws XPkgInvalidCallException Thrown if the execution context is closed.
+    //     */
+    //    public File getTmpDir() throws XPkgInvalidCallException {
+    //        activityCheck();
+    //        return tmp.getValue();
+    //    }
 
     /**
      * Set a variable.

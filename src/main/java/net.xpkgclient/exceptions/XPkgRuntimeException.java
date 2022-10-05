@@ -47,7 +47,7 @@ public class XPkgRuntimeException extends XPkgScriptRunnerException implements I
      * @param message The message for the exception.
      * @param cause   The cause of the exception.
      */
-    public XPkgRuntimeException(String message, Exception cause) {
+    public XPkgRuntimeException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -56,7 +56,7 @@ public class XPkgRuntimeException extends XPkgScriptRunnerException implements I
      *
      * @param cause The cause of the exception.
      */
-    public XPkgRuntimeException(Exception cause) {
+    public XPkgRuntimeException(Throwable cause) {
         super(cause);
     }
 

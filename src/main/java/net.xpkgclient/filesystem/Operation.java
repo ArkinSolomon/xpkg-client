@@ -13,11 +13,28 @@
  * either express or implied limitations under the License.
  */
 
-package net.xpkgclient.vars;
+package net.xpkgclient.filesystem;
+
+import java.io.IOException;
 
 /**
- * The different types a variable can be.
+ * An instance of this class is an operation done on the file system which can be undone.
  */
-public enum VarType {
-    STRING, RESOURCE, BOOL, MUTABLERESOURCE
+public abstract class Operation {
+
+    protected boolean performed;
+
+    protected Operation() {
+        performed = false;
+    }
+
+    /**
+     * Perform the operation.
+     */
+    public abstract void perform() throws IOException;
+
+    /**
+     * Undo the operation.
+     */
+    public abstract void undo() throws IOException;
 }

@@ -59,13 +59,12 @@ public class ScriptExecutor {
      * @throws IOException   Thrown if there was an issue creating a temporary folder within the ExecutionContext constructor.
      * @throws XPkgException Thrown if there was an issue parsing the script.
      */
-    public ScriptExecutor(@NotNull String contents) throws IOException, XPkgException {
-        // File contents
-        String contents1 = contents.trim();
+    public ScriptExecutor(@NotNull String contents) throws XPkgException, IOException {
+        contents = contents.trim();
         context = new ExecutionContext();
 
         // Separate the head and body
-        String[] parts = contents1.split("---");
+        String[] parts = contents.split("---");
         if (parts.length != 2)
             throw new XPkgParseException("Could not parse script, file contains more than one head separator");
         head = parts[0];
@@ -124,7 +123,7 @@ public class ScriptExecutor {
             }
 
             // Increase the counter to account for the '---'
-            context.incCounter();
+            //            context.incCounter();
         } catch (Exception e) {
             if (e instanceof ILineException)
                 throw ((ILineException<?>) e).setLine(context.getLineCounter());
@@ -193,6 +192,7 @@ public class ScriptExecutor {
 
             }
         } catch (Throwable e) {
+            context.fileTracker.undoOperations();
             if (e instanceof ILineException)
                 throw ((ILineException) e).setLine(context.getLineCounter());
             throw e;

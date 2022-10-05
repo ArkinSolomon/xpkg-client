@@ -13,11 +13,16 @@ This project uses Eclipse as well as the [Apache Commons Lang](https://commons.a
 
 #### Introduction
 
-Scripting in XPKGS is fairly simple and very assembly like. The language is designed for developers to easily write install scripts and move files around. Most developers, in fact, will not have to even write scripts, as most packages can have install scripts written for them through the developer portal.
+Scripting in XPKGS is fairly simple and very assembly like. The language is designed for developers to easily write
+install scripts and move files around. Most developers, in fact, will not have to even write scripts, as most packages
+can have installation scripts written for them through the developer portal.
 
-Scripts are very limited in what they can do, only being allowed to access resources from repositories added by the user as well as only being allowed to modify files within the X-Plane directory. However scripts have enough capability to do more than enough to modify the X-Plane directory in order to install the most complex of plugins.
+Scripts are very limited in what they can do, only being allowed to access resources from repositories added by the user
+as well as only being allowed to modify files within the X-Plane directory. However, scripts have enough capability to
+do more than enough to modify the X-Plane directory in order to install the most complex of plugins.
 
-All scripting files are written in .xpkgs format. using XPKGS (X-Pkg Script), a custom scripting language built specifically for X-Pkg.
+All scripting files are written in .xpkgs format. using XPKGS (X-Pkg Script), a custom scripting language built
+specifically for X-Pkg.
 
 #### Format
 
@@ -41,9 +46,12 @@ Commands are **NOT** case-sensitive, though by convention they are lowercase.
 
 #### Variables
 
-Variables are a crucial part of any programming language and are in XPKGS as well. Variables start with dollar signs (`$`) and have a word after them, such as `$myVar`. Variables **ARE** case sensitive, and by convention, variables are named with camelCase.
+Variables are a crucial part of any programming language and are in XPKGS as well. Variables start with dollar
+signs (`$`) and have a word after them, such as `$myVar`. Variables **ARE** case-sensitive, and by convention, variables
+are named with camelCase.
 
-Variables are also loosely typed, meaning that you can change the type of a variable by changing the type of value. For instance consider the following:
+Variables are also loosely typed, meaning that you can change the type of a variable by changing the type of value. For
+instance consider the following:
 
 ```
 ---
@@ -52,23 +60,35 @@ setstr $myVar Hello World!
 get $myVar a_resource_id
 # $myVar is now a Resource
 ```
+
 *If you're confused about the code see the reference below*
 
-There are three main ways to set variables. Commands can sometimes take variable names as parameters. These will be over written with a value from a command. Variables can also be set using either the `SET` or `SETSTR` commands.
+There are three main ways to set variables. Commands can sometimes take variable names as parameters. These will be
+overwritten with a value from a command. Variables can also be set using either the `SET` or `SETSTR` commands.
 
 #### Booleans
 
-Booleans are very simplistic in XPKGS. The primitive true/false values are simply `TRUE` or `FALSE`. These values are **NOT** case-sensitive, though by convention they are in all caps. To invert a boolean prepend a `!` to the beginning of a variable or primitive. To perform a logical and operation between two booleans use the `&` character. To perform a logical or between two booleans, use the `|` character.
+Booleans are very simplistic in XPKGS. The primitive true/false values are simply `TRUE` or `FALSE`. These values are **
+NOT** case-sensitive, though by convention they are in all caps. To invert a boolean prepend a `!` to the beginning of a
+variable or primitive. To perform a logical and operation between two booleans use the `&` character. To perform a
+logical or between two booleans, use the `|` character.
 
-If statements **DO NOT** support parenthetical execution, and are instead evaluated NOT first, then AND, then OR. Adding a parenthesis will throw an error.
+If statements **DO NOT** support parenthetical execution, and are instead evaluated NOT first, then AND, then OR. Adding
+a parenthesis will throw an error.
 
 #### Strings
 
-Strings are denoted in the reference as `...STRING`. Strings are always the last argument in any command. There is no quotes or wrappers around the string just type it out as normal (even if it has spaces).
+Strings are denoted in the reference as `...STRING`. Strings are always the last argument in any command. There is no
+quotes or wrappers around the string just type it out as normal (even if it has spaces).
 
-#### Pathlike
+#### *Pathlike*
 
-Pathlike variables are just formatted strings. They always start with a slash, and can not contain characters such as `..`, `~`, or `%`.
+Pathlike variables are just formatted strings. They always start with a slash, and can not contain characters such
+as `..`, `~`, or `%`.
+
+#### *ResourceId*
+
+A resource id is just a string whose value is a resource id.
 
 #### Resources
 
@@ -88,7 +108,7 @@ Your script by default has variables built in for determining things such as X-P
 
 ##### *BOOL* `$IS_MAC_OS`
 
-True if the operating system is MacOS.
+True if the operating system is macOS.
 
 ##### *BOOL* `$IS_WINDOWS`
 
@@ -102,13 +122,17 @@ True if the operating system is Linux.
 
 True if the operating system is a different operating system.
 
-##### *STRING* `$XP_DIR` **NEEDS TO BE MUTABLERESOURCE**
+##### *MUTABLERESOURCE* `$XP`
 
-The path to the currently working X-Plane directory.
+The currently working X-Plane directory.
 
-##### *STRING* `$TMP` **NEEDS TO BE MUTABLERESOURCE**
+##### *MUTABLERESOURCE* `$TMP`
 
-The path to the temporary directory.
+The temporary directory for temporary file storage. This directory will be deleted on script exit.
+
+##### *RESOURCE* `$default` <u>NOT IMPLEMENTED</u>
+
+The directory for the resource.
 
 ##### *STRING* `$SPACE`
 
@@ -149,11 +173,11 @@ The location of scenery in the `scenery_packs.ini` file.
 
 Print the current execution context for debugging.
 
-##### get [$VAR] [RESOURCE_ID]
+##### get [$VAR] [RESOURCE_ID] <u>NOT IMPLEMENTED</u>
 
 Get a resource and store it in a new variable.
 
-##### if [$BOOL or BOOL]
+##### if [$BOOL or BOOL] <u>NOT COMMAND; NEEDS TO BE MOVED</u>
 
 Execute code between this if and the next branch control command if the provided variable or statement evaluates to true.
 
@@ -164,28 +188,28 @@ Determine if a variable or path is a valid path.
 ##### join [$STRING] [$STRING or ...STRING]
 
 Join the second string onto the end of the first one (stored in the first string). If the first variable does not exist,
-it will be created with an empty string as it's value. Note that you can only use string variables. Although it can be
+it will be created with an empty string as its value. Note that you can only use string variables. Although it can be
 used for pathlike variables, it's not recommended, use `JOINP` instead.
 
 ##### joinp [$PATHLIKE] [$PATHLIKE or ...PATHLIKE]
 
-Join and format the two paths together. Don't use for strings, use `JOIN` for regular strings instead.
+Join and format two paths together, very similar to `JOIN`. Use `JOIN` for regular strings instead.
 
-##### mkdir [$PATHLIKE or ...PATHLIKE] **NEED TO MKDIR IN MUTABLERESOURCE**
+##### mkdir [$MUTABLERESOURCE] [$PATHLIKE or ...PATHLIKE]
 
-Create a directory at the path within the X-Plane directory.
+Create a directory at the path within the mutable resource. If the path exists it will throw an exception, check for
+existence beforehand.
 
-##### mkdirs [$PATHLIKE ...PATHLIKE] **NEED TO MKDIR IN MUTABLERESOURCE**
+##### mkdirs [$MUTABLERESOURCE] [$PATHLIKE ...PATHLIKE]
 
-Create a directory at the path within the X-Plane directory as well as all directory in between.
+Create a directory at the path within the X-Plane directory as well as all directory in between. If the path exists it
+will throw an exception, check for existence beforehand.
 
 ##### print [$VAR or ...STRING]
 
 Print a variable or a string.
 
-##### quick [$RESOURCE or RESOURCE_ID]
-
-**TODO**
+##### quick [$RESOURCE or RESOURCE_ID] <u>NOT IMPLEMENTED</u>
 
 This command is largely dependent on the metadata in the head (largely on `script_type` and `package_type`). Different metadata will produce different results. If `OTHER` is selected for either `script_type` or `package_type`. The executor will throw an error. See wiki for more details.
 

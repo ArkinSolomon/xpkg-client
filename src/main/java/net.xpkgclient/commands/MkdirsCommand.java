@@ -15,33 +15,51 @@
 
 package net.xpkgclient.commands;
 
-import net.xpkgclient.Configuration;
 import net.xpkgclient.ExecutionContext;
 import net.xpkgclient.ParseHelper;
 import net.xpkgclient.exceptions.QuickHandles;
 import net.xpkgclient.exceptions.XPkgArgLenException;
 import net.xpkgclient.exceptions.XPkgException;
+import net.xpkgclient.exceptions.XPkgFileExistsException;
 import net.xpkgclient.exceptions.XPkgInternalException;
+import net.xpkgclient.exceptions.XPkgInvalidVarNameException;
 import net.xpkgclient.exceptions.XPkgNotPathLikeException;
+import net.xpkgclient.exceptions.XPkgTypeMismatchException;
+import net.xpkgclient.exceptions.XPkgUndefinedVarException;
+import net.xpkgclient.filesystem.MkdirOperation;
+import net.xpkgclient.vars.VarType;
+import net.xpkgclient.vars.XPkgMutableResource;
+import net.xpkgclient.vars.XPkgVar;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.Arrays;
 
 /**
  * This class creates a directory (and all parent directories) within the X-Plane directory.
  */
 class MkdirsCommand extends Command {
 
-    public static void execute(String @NotNull [] args, ExecutionContext context) throws IOException, XPkgException {
+    public static void execute(String @NotNull [] args, ExecutionContext context) throws XPkgException, IOException {
 
-        // Argument checking
-        if (args.length < 1)
-            throw new XPkgArgLenException(CommandName.MKDIRS, 1, args.length);
+        if (args.length < 2)
+            throw new XPkgArgLenException(CommandName.MKDIRS, 2, args.length);
 
-        // The path of the new directory and parent directory to create
+        // Get the mutable resource
+        String resName = args[0];
+        if (!ParseHelper.isValidVarName(resName))
+            throw new XPkgInvalidVarNameException(CommandName.MKDIRS, resName);
+        if (!context.hasVar(resName))
+            throw new XPkgUndefinedVarException(resName);
+        XPkgVar unknownTVar = context.getVar(resName);
+        VarType type = unknownTVar.getVarType();
+        if (type != VarType.MUTABLERESOURCE)
+            throw new XPkgTypeMismatchException(CommandName.MKDIRS, "first", VarType.MUTABLERESOURCE, type);
+        XPkgMutableResource resource = (XPkgMutableResource) unknownTVar;
+
+        // The path of the new item to create
+        args = Arrays.copyOfRange(args, 1, args.length);
         String pathToCreate;
         try {
             pathToCreate = ParseHelper.getStr(args, context);
@@ -49,7 +67,7 @@ class MkdirsCommand extends Command {
             throw QuickHandles.handleGetStr(CommandName.MKDIRS, e);
         }
 
-        // Check the path name
+        // We want to throw a different exception if the user provided a variable for better feedback
         boolean isVar = args[0].startsWith("$");
         if (!ParseHelper.isValidPath(pathToCreate)) {
             if (isVar)
@@ -58,8 +76,16 @@ class MkdirsCommand extends Command {
                 throw new XPkgNotPathLikeException(CommandName.MKDIRS, pathToCreate);
         }
 
-        // Remove the leading slash and create the directories
-        pathToCreate = pathToCreate.substring(1);
-        Files.createDirectories(Path.of(new File(Configuration.getXpPath(), pathToCreate).toString()));
+        // The MKDIR operation expects that the file doesn't exist
+        File dirToCreate = new File(resource.getValue(), pathToCreate);
+        if (dirToCreate.exists())
+            throw new XPkgFileExistsException(dirToCreate);
+
+        // Run the operation
+        try {
+            context.fileTracker.runOperation(new MkdirOperation(dirToCreate, true));
+        } catch (IOException e) {
+            throw new XPkgException(e);
+        }
     }
 }

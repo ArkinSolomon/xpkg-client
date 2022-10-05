@@ -1,11 +1,12 @@
-package net.xpkgclient;
+package net.xpkgclient.commands;
 
+import net.xpkgclient.ExecutionContext;
 import net.xpkgclient.exceptions.XPkgException;
 
 /**
  * This interface allows creating lambda expressions with a single execution context as the parameter.
  */
-public interface ContextRunner {
+interface ContextRunner {
 
     /**
      * Run something in an execution context.
