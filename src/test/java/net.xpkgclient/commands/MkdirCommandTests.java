@@ -5,12 +5,16 @@ import net.xpkgclient.ExecutionContext;
 import net.xpkgclient.exceptions.XPkgException;
 import net.xpkgclient.vars.XPkgString;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.IOException;
 
 @ExtendWith(ConfigSetupExtension.class)
 public class MkdirCommandTests {
+
+    private ExecutionContext context;
 
     /**
      * Quickly create an execution context with default paths.
@@ -30,18 +34,14 @@ public class MkdirCommandTests {
         }
     }
 
-    /**
-     * Run code within a certain execution context, which is after {@code runner} runs.
-     *
-     * @param runner A lambda with an {@link ExecutionContext} as it's only parameter.
-     * @throws IOException   Thrown when there is an issue creating temporary files in the execution context.
-     * @throws XPkgException Thrown when there's an issue with the tested code.
-     */
-    private static void runInDefaultContext(@NotNull ContextRunner runner) throws XPkgException, IOException {
-        ExecutionContext context = newCtx();
-        runner.run(context);
-        context.close();
+    @BeforeEach
+    void setupContext() throws IOException {
+        context = newCtx();
     }
 
-    //TODO write mkdir and mkdirs tests
+    @AfterEach
+    void closeContext() {
+        context.close();
+    }
 }
+

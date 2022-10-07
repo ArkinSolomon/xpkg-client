@@ -75,6 +75,15 @@ public class ParseHelper {
     }
 
     /**
+     * Check if a resource id is valid.
+     *
+     * @return True if the resource id is valid.
+     */
+    public static boolean isValidResourceId(String resourceId) {
+        return resourceId.matches("\\w{32}");
+    }
+
+    /**
      * Evaluate a list of arguments and determine, based on the current execution context and constants if the expression evaluates to True.
      *
      * @param args    The arguments to check.

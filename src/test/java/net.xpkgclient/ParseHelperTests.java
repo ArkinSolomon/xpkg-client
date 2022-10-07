@@ -540,6 +540,26 @@ public class ParseHelperTests {
     }
 
     @Test
+    void testValidResourceIdNormal() {
+        assertTrue(ParseHelper.isValidResourceId("DuxK5knpABld0Xo1KbtBu4LdmjSNPwjD"));
+    }
+
+    @Test
+    void testValidResourceIdSpace() {
+        assertFalse(ParseHelper.isValidResourceId("DuxK5knpABld0Xo1Kbt u4LdmjSNPwjD"));
+    }
+
+    @Test
+    void testValidResourceIdShort() {
+        assertFalse(ParseHelper.isValidResourceId("DuxK5knpABld0Xo1Kbt"));
+    }
+
+    @Test
+    void testValidResourceIdInvalidChar() {
+        assertFalse(ParseHelper.isValidResourceId("DuxK5knpA*#d0Xo1KbtBu4LdmjSNPwjD"));
+    }
+
+    @Test
     void testGetStrSingleWord() throws XPkgInvalidCallException, XPkgUndefinedVarException, XPkgInternalException {
         assertEquals("foobar", ParseHelper.getStr(new String[]{"foobar"}, context));
     }

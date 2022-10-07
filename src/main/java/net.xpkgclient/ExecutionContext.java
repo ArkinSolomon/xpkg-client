@@ -27,14 +27,12 @@ import net.xpkgclient.vars.XPkgBool;
 import net.xpkgclient.vars.XPkgMutableResource;
 import net.xpkgclient.vars.XPkgString;
 import net.xpkgclient.vars.XPkgVar;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -46,20 +44,21 @@ public class ExecutionContext {
     // All environment variable names
     private static final String[] envVarNames = {"$IS_MAC_OS", "$IS_WINDOWS", "$IS_LINUX", "$IS_OTHER_OS",
             "$XP", "$TMP", "$SPACE"};
-
-    // Store all variables
-    private final HashMap<String, XPkgVar> vars;
     // Track all changes to the file system
     public final FileTracker fileTracker;
+    // Store all variables
+    private final HashMap<String, XPkgVar> vars;
     // Mutable resources exposed to the user
     private final XPkgMutableResource tmp;
     private final XPkgMutableResource xp;
     // The base file for all caches
     private final File baseFile;
     // Where we store downloaded resources
-    private final File resourceDownloadFiles;
+    private final File resourceDownloadLoc;
+    // Where we store unzipped resources
+    private final File resourceStorageLoc;
     // Where we cache overwritten files
-    private final File overwrittenFiles;
+    private final File overwrittenFilesLoc;
 
     // Head or file meta
     private PackageType packageType;
@@ -87,15 +86,17 @@ public class ExecutionContext {
         baseFile = new File(Configuration.getXpPath(), "xpkg/" + contextId);
         xp = new XPkgMutableResource(Configuration.getXpPath());
         tmp = new XPkgMutableResource(new File(baseFile, "tmp"));
-        resourceDownloadFiles = new File(baseFile, "resources");
-        overwrittenFiles = new File(baseFile, "cache");
+        resourceDownloadLoc = new File(baseFile, "downloads");
+        resourceStorageLoc = new File(baseFile, "resources");
+        overwrittenFilesLoc = new File(baseFile, "cache");
 
         fileTracker = new FileTracker();
 
         // Create the directories
-        Files.createDirectories(Path.of(tmp.getValue().toString()));
-        Files.createDirectories(Path.of(resourceDownloadFiles.toString()));
-        Files.createDirectories(Path.of(overwrittenFiles.toString()));
+        Files.createDirectories(tmp.getValue().toPath());
+        Files.createDirectories(resourceDownloadLoc.toPath());
+        Files.createDirectories(resourceStorageLoc.toPath());
+        Files.createDirectories(overwrittenFilesLoc.toPath());
 
         // Set flags for operating system information
         boolean isMacOS = SystemUtils.IS_OS_MAC;
@@ -148,6 +149,14 @@ public class ExecutionContext {
         return false;
     }
 
+    public File getResourceDownloadLoc() {
+        return resourceDownloadLoc;
+    }
+
+    public File getResourceStorageLoc() {
+        return resourceStorageLoc;
+    }
+
     /**
      * Increment the line counter by one.
      */
@@ -171,11 +180,11 @@ public class ExecutionContext {
      */
     public void close() {
         isActive = false;
-        try {
-            FileUtils.deleteDirectory(baseFile);
-        } catch (IOException e) {
-            // Do nothing, it'll be cleared at next start
-        }
+        //        try {
+        //            FileUtils.deleteDirectory(baseFile);
+        //        } catch (IOException e) {
+        //            // Do nothing, it'll be cleared at next start
+        //        }
     }
 
     /**

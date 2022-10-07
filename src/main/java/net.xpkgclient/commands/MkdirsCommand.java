@@ -41,7 +41,7 @@ import java.util.Arrays;
  */
 class MkdirsCommand extends Command {
 
-    public static void execute(String @NotNull [] args, ExecutionContext context) throws XPkgException, IOException {
+    public static void execute(String @NotNull [] args, ExecutionContext context) throws XPkgException {
 
         if (args.length < 2)
             throw new XPkgArgLenException(CommandName.MKDIRS, 2, args.length);

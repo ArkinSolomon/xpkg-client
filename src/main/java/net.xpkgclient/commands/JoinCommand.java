@@ -44,11 +44,9 @@ class JoinCommand extends Command {
      */
     public static void execute(String @NotNull [] args, ExecutionContext context) throws XPkgException {
 
-        // Check arguments
         if (args.length < 2)
             throw new XPkgArgLenException(CommandName.JOIN, 2, args.length);
 
-        // Check if the variable is valid
         if (!ParseHelper.isValidVarName(args[0]))
             throw new XPkgInvalidVarNameException(args[0]);
 

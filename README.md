@@ -24,13 +24,22 @@ do more than enough to modify the X-Plane directory in order to install the most
 All scripting files are written in .xpkgs format. using XPKGS (X-Pkg Script), a custom scripting language built
 specifically for X-Pkg.
 
+#### Terms
+
+##### Packages vs Resources
+
+Resources and packages are very similar. Packages are just resources that are executable, this means that they have
+an `install.xpkgs` in their root.
+
 #### Format
 
-Scripts contain two parts, the head and the body (or the code). The head and body are separated by three hyphens on one line (`---`). This is the only part in the file where these three symbols are to occur (including comments).
+Scripts contain two parts, the head and the body (or the code). The head and body are separated by three hyphens on one
+line (`---`). This is the only part in the file where these three symbols are to occur (including comments).
 
 Lines starting with a `#` are treated as comments and ignored.
 
-The script head contains metadata which can change how the script is executed. The entire head consists of line separated keys (known as *head keys*) and values such as:
+The script head contains metadata which can change how the script is executed. The entire head consists of line
+separated keys (known as *head keys*) and values such as:
 
 ```
 script_type: install
