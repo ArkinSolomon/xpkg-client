@@ -110,7 +110,7 @@ A mutable resource is similar to a resource, however they can be modified.
 #### Files
 
 A file is a path to a single file, or a directory. Files usually point to an item within a resource or a mutable
-resource.
+resource. Unlike resources, `FILE` variables don't need to point to an existing item.
 
 ##### *Directory*
 

@@ -38,7 +38,7 @@ public class XPkgFileExistsException extends XPkgRuntimeException {
      * @param e    The exception that caused this exception.
      */
     public XPkgFileExistsException(File file, Throwable e) {
-        super("The file or directory at '" + file.getAbsolutePath() + "' can not be created as it already exists", e);
+        super("File exists: The file or directory at '" + file.getAbsolutePath() + "' can not be created as it already exists", e);
     }
 
     /**

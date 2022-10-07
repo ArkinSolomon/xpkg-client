@@ -22,6 +22,8 @@ import net.xpkgclient.exceptions.XPkgArgLenException;
 import net.xpkgclient.exceptions.XPkgException;
 import net.xpkgclient.exceptions.XPkgInternalException;
 import net.xpkgclient.exceptions.XPkgInvalidVarNameException;
+import net.xpkgclient.exceptions.XPkgNoFileException;
+import net.xpkgclient.exceptions.XPkgNotDirectoryException;
 import net.xpkgclient.exceptions.XPkgNotPathLikeException;
 import net.xpkgclient.exceptions.XPkgTypeMismatchException;
 import net.xpkgclient.exceptions.XPkgUndefinedVarException;
@@ -36,7 +38,7 @@ import java.util.Arrays;
 /**
  * This command creates a new mutable resource or resource which points to a directory inside a mutable resource or resource.
  */
-public class PointCommand extends Command {
+class PointCommand extends Command {
 
     /**
      * The class execution command.
@@ -74,6 +76,11 @@ public class PointCommand extends Command {
             throw new XPkgNotPathLikeException(CommandName.POINT, addingPath);
 
         File newResourceFile = new File(resourceRoot.getValue(), addingPath);
+        if (!newResourceFile.exists())
+            throw new XPkgNoFileException(newResourceFile);
+        if (newResourceFile.isFile())
+            throw new XPkgNotDirectoryException(newResourceFile);
+
         XPkgVar newResourceVar = new XPkgResource(newResourceFile);
         if (unknownTResourceRoot.getVarType() == VarType.MUTABLERESOURCE)
             newResourceVar = new XPkgMutableResource(newResourceFile);

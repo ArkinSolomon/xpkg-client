@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * This command copies a file from one location to another.
  */
-public class CopyCommand extends Command {
+class CopyCommand extends Command {
 
     /**
      * The class execution command.
