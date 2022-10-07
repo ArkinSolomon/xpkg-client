@@ -25,8 +25,6 @@ import java.util.Scanner;
  */
 public final class ScriptExecutionHandler {
 
-    // Read and execute the whole file
-
     /**
      * Execute a script at a certain path.
      *

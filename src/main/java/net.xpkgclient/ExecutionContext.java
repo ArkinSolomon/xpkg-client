@@ -64,10 +64,9 @@ public class ExecutionContext {
     private PackageType packageType;
     private ScriptType scriptType;
 
-    // If this context is active (true if not closed)
+    // True if this context is not closed
     private boolean isActive;
 
-    // The currently executing line
     private int currentLine = 0;
 
     /**
@@ -79,11 +78,9 @@ public class ExecutionContext {
         isActive = true;
         vars = new HashMap<>();
 
-        // Create a unique id for the temporary folder
         String contextId = UUID.randomUUID().toString();
 
-        // The X-Plane folder and temporary folders
-        baseFile = new File(Configuration.getXpPath(), "xpkg/" + contextId);
+        baseFile = new File(Configuration.getXpPath(), "xpkg/tmp/" + contextId);
         xp = new XPkgMutableResource(Configuration.getXpPath());
         tmp = new XPkgMutableResource(new File(baseFile, "tmp"));
         resourceDownloadLoc = new File(baseFile, "downloads");
@@ -92,19 +89,16 @@ public class ExecutionContext {
 
         fileTracker = new FileTracker();
 
-        // Create the directories
         Files.createDirectories(tmp.getValue().toPath());
         Files.createDirectories(resourceDownloadLoc.toPath());
         Files.createDirectories(resourceStorageLoc.toPath());
         Files.createDirectories(overwrittenFilesLoc.toPath());
 
-        // Set flags for operating system information
         boolean isMacOS = SystemUtils.IS_OS_MAC;
         boolean isWindows = SystemUtils.IS_OS_WINDOWS;
         boolean isLinux = SystemUtils.IS_OS_LINUX;
         boolean isOtherOS = !isMacOS && !isWindows && !isLinux;
 
-        // Set environment variables
         try {
             setInternalVar("$IS_MAC_OS", new XPkgBool(isMacOS));
             setInternalVar("$IS_WINDOWS", new XPkgBool(isWindows));
@@ -239,17 +233,6 @@ public class ExecutionContext {
         scriptType = type;
     }
 
-    //    /**
-    //     * Get the directory for all temporary files created in this execution context.
-    //     *
-    //     * @return The directory for all temporary files created in this execution context.
-    //     * @throws XPkgInvalidCallException Thrown if the execution context is closed.
-    //     */
-    //    public File getTmpDir() throws XPkgInvalidCallException {
-    //        activityCheck();
-    //        return tmp.getValue();
-    //    }
-
     /**
      * Set a variable.
      *
@@ -274,8 +257,6 @@ public class ExecutionContext {
     private void setInternalVar(@NotNull String name, XPkgVar value) {
         vars.put(name, value);
     }
-
-    // Get a variable
 
     /**
      * Get a variable.
@@ -320,7 +301,7 @@ public class ExecutionContext {
                 System.out.println(" - " + k + ": " + getVar(k).toString());
             System.out.println("-----------");
         } catch (Exception e) {
-            // You really should never reach this
+            throw new IllegalStateException(e);
         }
     }
 

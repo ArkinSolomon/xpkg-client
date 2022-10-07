@@ -49,9 +49,38 @@ public class XPkgTypeMismatchException extends XPkgRuntimeException {
      * @param actual   The actual type of the variable.
      * @param cause    The exception that caused this.
      */
-    public XPkgTypeMismatchException(CommandName command, String argC, VarType expected, VarType actual, Exception cause) {
+    public XPkgTypeMismatchException(CommandName command, String argC, VarType expected, VarType actual, Throwable cause) {
         super("The " + command + " command expected the " + argC + " argument to be " + expected + " but got " + actual
                 + " instead", cause);
+    }
+
+    /**
+     * Throw an exception saying that a variable was expected to have one of a few types, but got a variable with a different type instead.
+     *
+     * @param command  The command that is throwing this exception.
+     * @param argC     The ordinal index (first, second, third, fourth, etc.) of the argument which had a type mismatch.
+     * @param expected The expected types of the variable.
+     * @param actual   The actual type of the variable.
+     */
+    public XPkgTypeMismatchException(CommandName command, String argC, VarType[] expected, VarType actual) throws XPkgExecutionException {
+        this(command, argC, expected, actual, null);
+    }
+
+    /**
+     * Throw an exception saying that a variable was expected to have one of a few types, but got a variable with a different type instead, and that another exception caused this one.
+     *
+     * @param command  The command that is throwing this exception.
+     * @param argC     The ordinal index (first, second, third, fourth, etc.) of the argument which had a type mismatch.
+     * @param expected The expected types of the variable.
+     * @param actual   The actual type of the variable.
+     * @param cause    The exception that caused this.
+     */
+    public XPkgTypeMismatchException(CommandName command, String argC, VarType[] expected, VarType actual, Throwable cause) throws XPkgExecutionException {
+        super("The " + command + " expected the " + argC + " variable to be of type " + String.join(" or ") + " but got " + actual + " instead", cause);
+        if (expected.length == 0)
+            throw new XPkgExecutionException("Tried to throw an XPkgTypeMismatchException with expected types, but provided no types");
+        else if (expected.length == 1)
+            throw new XPkgExecutionException("Tried to throw an XPkgTypeMismatchException with expected types, but provided only one type, use a different constructor for this instead");
     }
 
     /**
@@ -83,7 +112,7 @@ public class XPkgTypeMismatchException extends XPkgRuntimeException {
      * @param actual   The actual type of the variable.
      * @param cause    The exception that caused this exception.
      */
-    public XPkgTypeMismatchException(String varName, VarType expected, VarType actual, Exception cause) {
+    public XPkgTypeMismatchException(String varName, VarType expected, VarType actual, Throwable cause) {
         super("Variable '" + varName + "' was expected to be a " + expected + " but got " + actual + " instead", cause);
     }
 

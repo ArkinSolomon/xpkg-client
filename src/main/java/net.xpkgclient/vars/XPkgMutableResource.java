@@ -17,6 +17,9 @@ package net.xpkgclient.vars;
 
 import java.io.File;
 
+/**
+ * A variable which represents a mutable resource.
+ */
 public class XPkgMutableResource extends XPkgResource {
 
     /**

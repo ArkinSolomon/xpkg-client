@@ -35,7 +35,7 @@ public class XPkgNotPathLikeException extends XPkgRuntimeException {
      * @param value The value that was invalid (useful for the script author to debug).
      */
     public XPkgNotPathLikeException(CommandName cmd, String varName, String value) {
-        super(cmd + " expected the variable '" + varName + "' to be a pathlike string, got: " + value);
+        super("Not pathlike:" + cmd + " expected the variable '" + varName + "' to be a pathlike string, got: " + value);
     }
 
     /**
@@ -45,7 +45,7 @@ public class XPkgNotPathLikeException extends XPkgRuntimeException {
      * @param value The value that was invalid.
      */
     public XPkgNotPathLikeException(CommandName cmd, String value) {
-        super(cmd + " expected a pathlike, got: " + value);
+        super("Not pathlike:" + cmd + " expected a pathlike, got: " + value);
     }
 
 

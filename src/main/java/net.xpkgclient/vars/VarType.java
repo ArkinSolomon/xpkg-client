@@ -19,5 +19,5 @@ package net.xpkgclient.vars;
  * The different types a variable can be.
  */
 public enum VarType {
-    STRING, RESOURCE, BOOL, MUTABLERESOURCE
+    STRING, RESOURCE, BOOL, MUTABLERESOURCE, FILE
 }

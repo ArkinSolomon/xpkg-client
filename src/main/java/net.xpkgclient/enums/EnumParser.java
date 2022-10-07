@@ -103,6 +103,9 @@ public class EnumParser {
             case "JOIN" -> CommandName.JOIN;
             case "JOINP" -> CommandName.JOINP;
             case "CONTEXT" -> CommandName.CONTEXT;
+            case "COPY" -> CommandName.COPY;
+            case "RESOLVE" -> CommandName.RESOLVE;
+            case "POINT" -> CommandName.POINT;
             default -> throw new XPkgParseException("Invalid command: '" + command + "' is not a valid command");
         };
     }

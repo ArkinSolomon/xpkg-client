@@ -109,11 +109,18 @@ A mutable resource is similar to a resource, however they can be modified.
 
 #### Files
 
-A file is a path to a single file, as opposed to a directory (which is a resource). Files usually point to an item within a resource or a mutable resource.
+A file is a path to a single file, or a directory. Files usually point to an item within a resource or a mutable
+resource.
+
+##### *Directory*
+
+A directory is just a file where its value points to a directory.
 
 #### Environment variables
 
-Your script by default has variables built in for determining things such as X-Plane version, selected optional dependencies and other prompts given to the user, as well as operating system information. All environment variables and types can be seen in the reference. These variables can not be overwritten.
+Your script by default has variables built in for determining things such as X-Plane version, selected optional
+dependencies and other prompts given to the user, as well as operating system information. All environment variables and
+types can be seen in the reference. These variables can not be overwritten.
 
 ##### *BOOL* `$IS_MAC_OS`
 
@@ -182,25 +189,30 @@ The location of scenery in the `scenery_packs.ini` file.
 
 Print the current execution context for debugging.
 
-##### get [$VAR] [RESOURCE_ID] <u>NOT IMPLEMENTED</u>
+##### copy [$FILE] [$DIRECTORY] <u>NOT IMPLEMENTED</u>
+
+Copy a file from one location to the inside of another.
+
+##### get [$VAR]* [RESOURCE_ID]
 
 Get a resource and store it in a new variable.
 
 ##### if [$BOOL or BOOL] <u>NOT COMMAND; NEEDS TO BE MOVED</u>
 
-Execute code between this if and the next branch control command if the provided variable or statement evaluates to true.
+Execute code between this if and the next branch control command if the provided variable or statement evaluates to
+true.
 
-##### ispl [$BOOL] [$PATHLIKE or ...PATHLIKE]
+##### ispl [$BOOL]* [$PATHLIKE or ...PATHLIKE]
 
 Determine if a variable or path is a valid path.
 
-##### join [$STRING] [$STRING or ...STRING]
+##### join [$STRING]* [$STRING or ...STRING]
 
 Join the second string onto the end of the first one (stored in the first string). If the first variable does not exist,
 it will be created with an empty string as its value. Note that you can only use string variables. Although it can be
-used for pathlike variables, it's not recommended, use `JOINP` instead.
+used for pathlike variables, it's not recommended, use `JOINP` or `RESOLVE` instead.
 
-##### joinp [$PATHLIKE] [$PATHLIKE or ...PATHLIKE]
+##### joinp [$PATHLIKE]* [$PATHLIKE or ...PATHLIKE]
 
 Join and format two paths together, very similar to `JOIN`. Use `JOIN` for regular strings instead.
 
@@ -214,18 +226,28 @@ existence beforehand.
 Create a directory at the path within the X-Plane directory as well as all directory in between. If the path exists it
 will throw an exception, check for existence beforehand.
 
+##### point [$RESOURCE or $MUTABLERESOURCE]* [$RESOURCE or $MUTABLERESOURCE] [$PATHLIKE or ...PATHLIKE] <u>NOT IMPLEMENTED</u>
+
+Create a new resource which points to a directory within a resource.
+
 ##### print [$VAR or ...STRING]
 
 Print a variable or a string.
 
 ##### quick [$RESOURCE or RESOURCE_ID] <u>NOT IMPLEMENTED</u>
 
-This command is largely dependent on the metadata in the head (largely on `script_type` and `package_type`). Different metadata will produce different results. If `OTHER` is selected for either `script_type` or `package_type`. The executor will throw an error. See wiki for more details.
+This command is largely dependent on the metadata in the head (largely on `script_type` and `package_type`). Different
+metadata will produce different results. If `OTHER` is selected for either `script_type` or `package_type`. The executor
+will throw an error. See wiki for more details.
 
-##### set [$VAR] [$VAR or BOOL]
+##### resolve [$FILE]* [$RESOURCE or $MUTABLERESOURCE or $DIRECTORY] [$PATHLIKE or ...PATHLIKE]
+
+Create a file pointer to within a resource, and store them in the first variable.
+
+##### set [$VAR]* [$VAR or BOOL]
 
 Set the value a variable with another variable or a boolean expression.
 
-##### setstr [$VAR] [...STRING]
+##### setstr [$VAR]* [...STRING]
 
 Set the value of a variable with a string.

@@ -57,6 +57,9 @@ public class Command {
         registerCmd(CommandName.JOIN, JoinCommand.class);
         registerCmd(CommandName.JOINP, JoinpCommand.class);
         registerCmd(CommandName.CONTEXT, ContextCommand.class);
+        registerCmd(CommandName.COPY, CopyCommand.class);
+        registerCmd(CommandName.POINT, PointCommand.class);
+        registerCmd(CommandName.RESOLVE, ResolveCommand.class);
     }
 
     /**
