@@ -40,8 +40,6 @@ public class Command {
      * @throws XPkgExecutionException Thrown if a command does not have a static {@code execute} method.
      */
     public static void registerCommands() throws XPkgExecutionException {
-
-        //Only register once
         if (hasRegisteredCommands)
             return;
         hasRegisteredCommands = true;

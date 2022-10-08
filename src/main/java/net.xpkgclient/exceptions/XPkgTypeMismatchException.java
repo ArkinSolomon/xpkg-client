@@ -78,9 +78,9 @@ public class XPkgTypeMismatchException extends XPkgRuntimeException {
     public XPkgTypeMismatchException(CommandName command, String argC, VarType[] expected, VarType actual, Throwable cause) throws XPkgExecutionException {
         super("The " + command + " expected the " + argC + " variable to be of type " + String.join(" or ") + " but got " + actual + " instead", cause);
         if (expected.length == 0)
-            throw new XPkgExecutionException("Tried to throw an XPkgTypeMismatchException with expected types, but provided no types");
+            throw new XPkgExecutionException("Tried to throw an XPkgTypeMismatchException with expected types, but provided no types", this);
         else if (expected.length == 1)
-            throw new XPkgExecutionException("Tried to throw an XPkgTypeMismatchException with expected types, but provided only one type, use a different constructor for this instead");
+            throw new XPkgExecutionException("Tried to throw an XPkgTypeMismatchException with expected types, but provided only one type, use a different constructor for this instead", this);
     }
 
     /**

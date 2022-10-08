@@ -20,6 +20,7 @@ import net.xpkgclient.enums.ScriptType;
 import net.xpkgclient.exceptions.XPkgAlreadySetException;
 import net.xpkgclient.exceptions.XPkgClosedExecutionContextException;
 import net.xpkgclient.exceptions.XPkgImmutableVarException;
+import net.xpkgclient.exceptions.XPkgInternalException;
 import net.xpkgclient.exceptions.XPkgInvalidCallException;
 import net.xpkgclient.exceptions.XPkgNotSetException;
 import net.xpkgclient.filesystem.FileTracker;
@@ -174,11 +175,11 @@ public class ExecutionContext {
      */
     public void close() {
         isActive = false;
-        //        try {
-        //            FileUtils.deleteDirectory(baseFile);
-        //        } catch (IOException e) {
-        //            // Do nothing, it'll be cleared at next start
-        //        }
+//        try {
+//            FileUtils.deleteDirectory(baseFile);
+//        } catch (IOException e) {
+//            // Do nothing, it'll be cleared at next start
+//        }
     }
 
     /**
@@ -283,6 +284,23 @@ public class ExecutionContext {
     }
 
     /**
+     * Check if a variable exists, and get it if it does.
+     *
+     * @param varName The name of the variable to check for existence.
+     * @return The variable, if it exists.
+     * @throws XPkgInternalException    Thrown with the message "invalid" if {@code varName} is invalid, or it's thrown with the message "undef" if {@code varName} is valid, but this execution context does not have a variable with the name. Any time this exception is thrown its data will be of type {@link String} which will hold the name of the variable that was invalid.
+     * @throws XPkgInvalidCallException Thrown if this execution context is closed.
+     */
+    public @NotNull XPkgVar checkExistingVar(String varName) throws XPkgInternalException, XPkgInvalidCallException {
+        activityCheck();
+        if (!ParseHelper.isValidVarName(varName))
+            throw new XPkgInternalException("invalid", varName);
+        if (!hasVar(varName))
+            throw new XPkgInternalException("undef", varName);
+        return getVar(varName);
+    }
+
+    /**
      * Print all execution context data to {@code System.out}.
      */
     public void printContext() {
@@ -298,7 +316,7 @@ public class ExecutionContext {
             System.out.println(" - scriptType: " + scriptType);
             System.out.println("--Vars-----");
             for (String k : vars.keySet())
-                System.out.println(" - " + k + ": " + getVar(k).toString());
+                System.out.println(" - " + k + ": " + vars.get(k).toString());
             System.out.println("-----------");
         } catch (Exception e) {
             throw new IllegalStateException(e);

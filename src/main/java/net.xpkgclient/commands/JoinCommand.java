@@ -73,8 +73,7 @@ class JoinCommand extends Command {
 
         // Update the variable in memory
         XPkgString assigneeVar = (XPkgString) context.getVar(assignee);
-        XPkgString newVar = assigneeVar.copy();
-        newVar.setValue(newVar.getValue() + catString);
+        XPkgString newVar = new XPkgString(assigneeVar.getValue() + catString);
         context.setVar(assignee, newVar);
     }
 }

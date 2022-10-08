@@ -189,9 +189,9 @@ The location of scenery in the `scenery_packs.ini` file.
 
 Print the current execution context for debugging.
 
-##### copy [$FILE] [$DIRECTORY] <u>NOT IMPLEMENTED</u>
+##### copy [$FILE] [$MUTABLERESOURCE] <u>NOT IMPLEMENTED</u>
 
-Copy a file from one location to the inside of another.
+If a file is provided, it will copy a file to a mutable resource, keeping the same name. If a directory is provided, it will copy the entire directory, keeping the same name, to the destination directory.
 
 ##### get [$VAR]* [RESOURCE_ID]
 
@@ -226,7 +226,7 @@ existence beforehand.
 Create a directory at the path within the X-Plane directory as well as all directory in between. If the path exists it
 will throw an exception, check for existence beforehand.
 
-##### point [$RESOURCE or $MUTABLERESOURCE]* [$RESOURCE or $MUTABLERESOURCE] [$PATHLIKE or ...PATHLIKE] <u>NOT IMPLEMENTED</u>
+##### point [$RESOURCE or $MUTABLERESOURCE]* [$RESOURCE or $MUTABLERESOURCE] [$PATHLIKE or ...PATHLIKE]
 
 Create a new resource which points to a directory within a resource.
 
@@ -239,6 +239,10 @@ Print a variable or a string.
 This command is largely dependent on the metadata in the head (largely on `script_type` and `package_type`). Different
 metadata will produce different results. If `OTHER` is selected for either `script_type` or `package_type`. The executor
 will throw an error. See wiki for more details.
+
+##### rename [$FILE] [$STRING or ...STRING] <u>NOT IMPLEMENTED</u>
+
+Rename the file or directory that the first argument points to the value of the second argument, the only valid characters are all alphanumeric. Does not allow names with '/', '\', '%', '..', or '~' in them. It also requires that the parent of the file that is being renamed is a `MUTABLERESOURCE`.
 
 ##### resolve [$FILE]* [$RESOURCE or $MUTABLERESOURCE or $DIRECTORY] [$PATHLIKE or ...PATHLIKE]
 

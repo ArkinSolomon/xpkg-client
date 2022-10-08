@@ -21,7 +21,7 @@ package net.xpkgclient.vars;
 public class XPkgString extends XPkgVar {
 
     // The data that this variable stores
-    private String data;
+    private final String data;
 
     /**
      * Create a new variable with a value.
@@ -69,14 +69,5 @@ public class XPkgString extends XPkgVar {
      */
     public String getValue() {
         return data;
-    }
-
-    /**
-     * Update the value of this variable.
-     *
-     * @param newValue The new string value that this variable will store.
-     */
-    public void setValue(String newValue) {
-        data = newValue;
     }
 }

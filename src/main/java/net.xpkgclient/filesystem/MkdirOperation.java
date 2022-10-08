@@ -52,7 +52,6 @@ public class MkdirOperation extends Operation {
     public void perform() throws IOException {
         if (performed)
             return;
-        performed = true;
 
         lastNonExistentParent = directory.toPath();
         if (recursive) {
@@ -67,6 +66,7 @@ public class MkdirOperation extends Operation {
             Files.createDirectories(directory.toPath());
         } else
             Files.createDirectory(directory.toPath());
+        performed = true;
     }
 
     /**

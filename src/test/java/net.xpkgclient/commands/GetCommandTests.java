@@ -16,7 +16,7 @@ public class GetCommandTests {
     @Test
     void testNormal() throws IOException {
         ExecutionContext context = ExecutionContext.createBlankContext();
-        assertDoesNotThrow(() -> GetCommand.execute(new String[]{"$var", "resource_id"}, context), "GET command threw exception when it was not supposed to");
+        assertDoesNotThrow(() -> GetCommand.execute(new String[]{"$var", "12345678901234567890123456789012"}, context), "GET command threw exception when it was not supposed to");
         context.close();
     }
 }

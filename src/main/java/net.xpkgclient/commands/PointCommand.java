@@ -26,7 +26,6 @@ import net.xpkgclient.exceptions.XPkgNoFileException;
 import net.xpkgclient.exceptions.XPkgNotDirectoryException;
 import net.xpkgclient.exceptions.XPkgNotPathLikeException;
 import net.xpkgclient.exceptions.XPkgTypeMismatchException;
-import net.xpkgclient.exceptions.XPkgUndefinedVarException;
 import net.xpkgclient.vars.VarType;
 import net.xpkgclient.vars.XPkgMutableResource;
 import net.xpkgclient.vars.XPkgResource;
@@ -62,12 +61,14 @@ class PointCommand extends Command {
         }
 
         if (!ParseHelper.isValidVarName(assigneeVarName))
-            throw new XPkgInvalidVarNameException(CommandName.POINT, assigneeVarName);
-        if (!ParseHelper.isValidVarName(resourceRootVarName))
-            throw new XPkgInvalidVarNameException(CommandName.POINT, resourceRootVarName);
-        if (!context.hasVar(resourceRootVarName))
-            throw new XPkgUndefinedVarException(resourceRootVarName);
-        XPkgVar unknownTResourceRoot = context.getVar(resourceRootVarName);
+            throw new XPkgInvalidVarNameException(CommandName.POINT, "first", assigneeVarName);
+
+        XPkgVar unknownTResourceRoot;
+        try {
+            unknownTResourceRoot = context.checkExistingVar(resourceRootVarName);
+        } catch (XPkgInternalException e) {
+            throw QuickHandles.handleCheckExistingVar(CommandName.POINT, "second", e);
+        }
 
         if (!(unknownTResourceRoot instanceof XPkgResource resourceRoot))
             throw new XPkgTypeMismatchException(CommandName.POINT, "second", new VarType[]{VarType.RESOURCE, VarType.MUTABLERESOURCE}, unknownTResourceRoot.getVarType());

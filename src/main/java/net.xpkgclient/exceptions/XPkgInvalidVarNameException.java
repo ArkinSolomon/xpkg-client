@@ -30,20 +30,33 @@ public class XPkgInvalidVarNameException extends XPkgParseException {
     /**
      * Create a new exception with a simple message saying that a name is invalid for a variable.
      *
-     * @param name The name of the variable that is invalid.
+     * @param invalidVarName The name of the variable that is invalid.
      */
-    public XPkgInvalidVarNameException(String name) {
-        super("Invalid variable name: '" + name + "' is not a valid variable");
+    public XPkgInvalidVarNameException(String invalidVarName) {
+        super("Invalid variable name: '" + invalidVarName + "' is not a valid variable");
     }
 
     /**
-     * Create a new exception saying that a command expected a variable as an argument.
+     * Create a new exception saying that a command expected a variable as the nth argument, but instead got something else.
      *
-     * @param cmd  The command that is throwing this exception.
-     * @param name The name of the variable that is invalid.
+     * @param cmd            The command that is throwing this exception.
+     * @param argC           The ordinal index (first, second, third, fourth, etc.) of the argument which was supposed to be a variable.
+     * @param invalidVarName The name of the variable that is invalid.
      */
-    public XPkgInvalidVarNameException(CommandName cmd, String name) {
-        super("Invalid variable name: The command '" + cmd + "' expected a variable as the first argument, but instead got '" + name + "'");
+    public XPkgInvalidVarNameException(CommandName cmd, String argC, String invalidVarName) {
+        this(cmd, argC, invalidVarName, null);
+    }
+
+    /**
+     * Create a new exception saying that a command expected a variable as the nth argument, but instead got something else, and that this exception was caused by another exception.
+     *
+     * @param cmd            The command that is throwing this exception.
+     * @param argC           The ordinal index (first, second, third, fourth, etc.) of the argument which was supposed to be a variable.
+     * @param invalidVarName The name of the variable that is invalid.
+     * @param cause          The exception that caused this one.
+     */
+    public XPkgInvalidVarNameException(CommandName cmd, String argC, String invalidVarName, Throwable cause) {
+        super("Invalid variable name: The " + cmd + " command expected a variable as the " + argC + " argument, but instead got '" + invalidVarName + "'", cause);
     }
 
     /**

@@ -20,8 +20,6 @@ package net.xpkgclient.vars;
  */
 public abstract class XPkgVar {
 
-    //Get the type of variable
-
     /**
      * Get the type of a variable, should be constant and hardcoded within the variable.
      *

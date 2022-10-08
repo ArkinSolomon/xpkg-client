@@ -22,15 +22,19 @@ import java.io.File;
  */
 public class XPkgFile extends XPkgVar {
 
-    private File file;
+    private final File file;
+
+    // We want to keep track of this because we know that this file is always going to be a child of a resource, and sometimes we need to check if the resource is mutable before allowing a user to write to it
+    private final XPkgResource parentResource;
 
     /**
      * Create a new file variable pointing to a file.
      *
      * @param file The file that this variable points to initially.
      */
-    public XPkgFile(File file) {
+    public XPkgFile(File file, XPkgResource parentResource) {
         this.file = file;
+        this.parentResource = parentResource;
     }
 
     /**
@@ -60,7 +64,7 @@ public class XPkgFile extends XPkgVar {
      */
     @Override
     public XPkgFile copy() {
-        return new XPkgFile(file);
+        return new XPkgFile(file, parentResource);
     }
 
     /**
@@ -73,20 +77,20 @@ public class XPkgFile extends XPkgVar {
     }
 
     /**
-     * Set the current value of this variable.
-     *
-     * @param file The {@link File} object that the value this variable will point to.
-     */
-    public void setValue(File file) {
-        this.file = file;
-    }
-
-    /**
      * Check if the value of this variable points to a directory or a file.
      *
      * @return True if this file points to a directory and false if it points to a file.
      */
     public boolean isDirectory() {
         return file.isDirectory();
+    }
+
+    /**
+     * Get the parent resource that this file ultimately derives from
+     *
+     * @return The parent resource that this file ultimately derives from.
+     */
+    public XPkgResource getParentResource() {
+        return parentResource;
     }
 }

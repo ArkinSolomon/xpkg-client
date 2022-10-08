@@ -16,8 +16,20 @@
 package net.xpkgclient.commands;
 
 import net.xpkgclient.ExecutionContext;
+import net.xpkgclient.exceptions.QuickHandles;
 import net.xpkgclient.exceptions.XPkgArgLenException;
+import net.xpkgclient.exceptions.XPkgException;
+import net.xpkgclient.exceptions.XPkgInternalException;
+import net.xpkgclient.exceptions.XPkgTypeMismatchException;
+import net.xpkgclient.filesystem.CopyFileOperation;
+import net.xpkgclient.vars.VarType;
+import net.xpkgclient.vars.XPkgFile;
+import net.xpkgclient.vars.XPkgMutableResource;
+import net.xpkgclient.vars.XPkgVar;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * This command copies a file from one location to another.
@@ -31,8 +43,33 @@ class CopyCommand extends Command {
      * @param context The execution context to print.
      * @throws XPkgArgLenException Thrown if there are more than two arguments provided.
      */
-    public static void execute(String @NotNull [] args, ExecutionContext context) throws XPkgArgLenException {
+    public static void execute(String @NotNull [] args, ExecutionContext context) throws XPkgException, IOException {
         if (args.length != 2)
             throw new XPkgArgLenException(CommandName.COPY, 2, args.length);
+
+        String fileVarName = args[0];
+        String mutResVarName = args[1];
+        String argC = "first";
+        XPkgVar unknownTFileVar, unknownTMutResVar;
+        try {
+            unknownTFileVar = context.checkExistingVar(fileVarName);
+            argC = "second";
+            unknownTMutResVar = context.checkExistingVar(mutResVarName);
+        } catch (XPkgInternalException e) {
+            throw QuickHandles.handleCheckExistingVar(CommandName.COPY, argC, e);
+        }
+
+        if (unknownTFileVar.getVarType() != VarType.FILE)
+            throw new XPkgTypeMismatchException(CommandName.COPY, "first", VarType.FILE, unknownTFileVar.getVarType());
+        if (unknownTMutResVar.getVarType() != VarType.MUTABLERESOURCE)
+            throw new XPkgTypeMismatchException(CommandName.COPY, "second", VarType.MUTABLERESOURCE, unknownTFileVar.getVarType());
+        XPkgFile fileVar = (XPkgFile) unknownTFileVar;
+        XPkgMutableResource mutVar = (XPkgMutableResource) unknownTMutResVar;
+
+        File destDirectory = mutVar.getValue();
+        File initialFile = fileVar.getValue();
+
+//        if (!initialFile.isDirectory())
+            context.fileTracker.runOperation(new CopyFileOperation(initialFile, destDirectory));
     }
 }

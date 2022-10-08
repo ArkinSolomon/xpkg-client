@@ -15,8 +15,6 @@
 
 package net.xpkgclient.vars;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 
 /**
@@ -25,7 +23,7 @@ import java.io.File;
 public class XPkgResource extends XPkgVar {
 
     // The resource directory which this variable is pointing to.
-    private File resourcePath;
+    private final File resourcePath;
 
     /**
      * Create a new resource variable pointing to a directory.
@@ -73,15 +71,6 @@ public class XPkgResource extends XPkgVar {
      */
     public File getValue() {
         return resourcePath;
-    }
-
-    /**
-     * Update the value of this variable.
-     *
-     * @param newDir The path to the directory that this variable will point to.
-     */
-    public void setValue(@NotNull File newDir) {
-        resourcePath = newDir;
     }
 
     /**

@@ -15,11 +15,19 @@
 
 package net.xpkgclient.filesystem;
 
-import java.io.File;
+import java.io.IOException;
 
-public class CopyDirectoryOperation {
+public class RenameOperation extends Operation{
+    @Override
+    public void perform() throws IOException {
+        if (performed)
+            return;
+        performed = true;
+    }
 
-    public CopyDirectoryOperation(File initialDirectory, File destinationDirectory) {
-
+    @Override
+    public void undo() throws IOException {
+        if (!performed) {
+        }
     }
 }

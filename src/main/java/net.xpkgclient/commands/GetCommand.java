@@ -48,7 +48,7 @@ class GetCommand extends Command {
 
         String assigneeVarName = args[0];
         if (!ParseHelper.isValidVarName(assigneeVarName))
-            throw new XPkgInvalidVarNameException(CommandName.GET, assigneeVarName);
+            throw new XPkgInvalidVarNameException(CommandName.GET, "first", assigneeVarName);
 
         args = Arrays.copyOfRange(args, 1, args.length);
         String resourceId;
@@ -79,13 +79,5 @@ class GetCommand extends Command {
 
         XPkgResource res = new XPkgResource(resourceLoc);
         context.setVar(assigneeVarName, res);
-
-        //		// Make sure args[0] is a valid variable
-        //		if (!ParseHelper.isValidVarName(args[0]))
-        //			throw new XPkgTypeMismatchException(CommandName.GET, 'first', , g);
-        //
-        //		// Create the new variable or get it
-        //		XPkgString newVar = new XPkgString(args[1] + "_AS_RESOURCE");
-        //		context.setVar(args[0], newVar);
     }
 }

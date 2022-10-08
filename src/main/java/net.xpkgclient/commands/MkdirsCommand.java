@@ -49,7 +49,7 @@ class MkdirsCommand extends Command {
         // Get the mutable resource
         String resName = args[0];
         if (!ParseHelper.isValidVarName(resName))
-            throw new XPkgInvalidVarNameException(CommandName.MKDIRS, resName);
+            throw new XPkgInvalidVarNameException(CommandName.MKDIRS, "first", resName);
         if (!context.hasVar(resName))
             throw new XPkgUndefinedVarException(resName);
         XPkgVar unknownTVar = context.getVar(resName);

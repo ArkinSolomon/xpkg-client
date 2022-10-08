@@ -20,8 +20,7 @@ package net.xpkgclient.vars;
  */
 public class XPkgBool extends XPkgVar {
 
-    //The value of this variable
-    private boolean data;
+    private final boolean data;
 
     /**
      * Create a new boolean variable with a value.
@@ -69,14 +68,5 @@ public class XPkgBool extends XPkgVar {
      */
     public boolean getValue() {
         return data;
-    }
-
-    /**
-     * Update the value of this variable.
-     *
-     * @param newValue The new value of this variable.
-     */
-    public void setValue(boolean newValue) {
-        data = newValue;
     }
 }

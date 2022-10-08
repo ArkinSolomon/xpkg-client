@@ -59,20 +59,25 @@ class ResolveCommand extends Command {
         }
 
         if (!ParseHelper.isValidVarName(assigneeVarName))
-            throw new XPkgInvalidVarNameException(CommandName.RESOLVE, assigneeVarName);
+            throw new XPkgInvalidVarNameException(CommandName.RESOLVE, "first", assigneeVarName);
+
+        // TODO make into ParseHelper.checkExistingVar()
         if (!ParseHelper.isValidVarName(fileRootVarName))
-            throw new XPkgInvalidVarNameException(CommandName.RESOLVE, fileRootVarName);
+            throw new XPkgInvalidVarNameException(CommandName.RESOLVE, "second", fileRootVarName);
         if (!context.hasVar(fileRootVarName))
             throw new XPkgUndefinedVarException(fileRootVarName);
         XPkgVar unknownTFileRoot = context.getVar(fileRootVarName);
 
         String rootPath;
+        XPkgResource parentResource;
         if (unknownTFileRoot instanceof XPkgResource fileRoot) {
             rootPath = fileRoot.toString();
+            parentResource = fileRoot;
         } else if (unknownTFileRoot instanceof XPkgFile fileRoot) {
             if (!fileRoot.isDirectory())
                 throw new XPkgNotDirectoryException(fileRoot.getValue());
             rootPath = fileRoot.toString();
+            parentResource = fileRoot.getParentResource();
         } else
             throw new XPkgTypeMismatchException(CommandName.RESOLVE, "second", new VarType[]{VarType.RESOURCE, VarType.MUTABLERESOURCE, VarType.FILE}, unknownTFileRoot.getVarType());
 
@@ -80,7 +85,7 @@ class ResolveCommand extends Command {
             throw new XPkgNotPathLikeException(CommandName.RESOLVE, addingPath);
 
         File pointFile = new File(rootPath, addingPath);
-        XPkgFile pointFileVar = new XPkgFile(pointFile);
+        XPkgFile pointFileVar = new XPkgFile(pointFile, parentResource);
         context.setVar(assigneeVarName, pointFileVar);
     }
 }

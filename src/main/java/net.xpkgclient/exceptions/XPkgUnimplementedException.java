@@ -25,14 +25,22 @@ public class XPkgUnimplementedException extends XPkgExecutionException {
     @Serial
     private static final long serialVersionUID = -3064139511429346241L;
 
-    // Provide a message
-
     /**
      * Create a new exception with a message saying that the exception was internal and a problem with X-Pkg.
      *
      * @param message The issue with X-Pkg.
      */
     public XPkgUnimplementedException(String message) {
-        super("Unimplemented exception [not a script issue, but a problem with X-Pkg]:" + message);
+        this(message, null);
+    }
+
+    /**
+     * Create a new exception with a message saying that the exception was internal and a problem with X-Pkg, and that exception was caused by another one.
+     *
+     * @param message The issue with X-Pkg.
+     * @param cause   The exception that caused htis one
+     */
+    public XPkgUnimplementedException(String message, Throwable cause) {
+        super("Unimplemented exception [not a script issue, but a problem with X-Pkg]:" + message, cause);
     }
 }

@@ -22,11 +22,9 @@ import net.xpkgclient.exceptions.XPkgArgLenException;
 import net.xpkgclient.exceptions.XPkgException;
 import net.xpkgclient.exceptions.XPkgFileExistsException;
 import net.xpkgclient.exceptions.XPkgInternalException;
-import net.xpkgclient.exceptions.XPkgInvalidVarNameException;
 import net.xpkgclient.exceptions.XPkgNotPathLikeException;
 import net.xpkgclient.exceptions.XPkgParentDirException;
 import net.xpkgclient.exceptions.XPkgTypeMismatchException;
-import net.xpkgclient.exceptions.XPkgUndefinedVarException;
 import net.xpkgclient.filesystem.MkdirOperation;
 import net.xpkgclient.vars.VarType;
 import net.xpkgclient.vars.XPkgMutableResource;
@@ -49,17 +47,18 @@ class MkdirCommand extends Command {
      * @param context The execution context that this command executes within.
      * @throws XPkgException Can be thrown for multiple reasons such as user error, or a type mismatch, or another reason.
      */
-    public static void execute(String @NotNull [] args, ExecutionContext context) throws XPkgException {
+    public static void execute(String @NotNull [] args, ExecutionContext context) throws XPkgException, IOException {
         if (args.length < 2)
             throw new XPkgArgLenException(CommandName.MKDIR, 2, args.length);
 
         // Get the mutable resource
         String resName = args[0];
-        if (!ParseHelper.isValidVarName(resName))
-            throw new XPkgInvalidVarNameException(CommandName.MKDIR, resName);
-        if (!context.hasVar(resName))
-            throw new XPkgUndefinedVarException(resName);
-        XPkgVar unknownTVar = context.getVar(resName);
+        XPkgVar unknownTVar;
+        try {
+            unknownTVar = context.checkExistingVar(resName);
+        } catch (XPkgInternalException e) {
+            throw QuickHandles.handleCheckExistingVar(CommandName.MKDIR, "first", e);
+        }
         VarType type = unknownTVar.getVarType();
         if (type != VarType.MUTABLERESOURCE)
             throw new XPkgTypeMismatchException(CommandName.MKDIR, "first", VarType.MUTABLERESOURCE, type);
@@ -90,11 +89,6 @@ class MkdirCommand extends Command {
         if (!dirToCreate.getParentFile().exists())
             throw new XPkgParentDirException(dirToCreate);
 
-        // Run the operation
-        try {
-            context.fileTracker.runOperation(new MkdirOperation(dirToCreate, false));
-        } catch (IOException e) {
-            throw new XPkgException(e);
-        }
+        context.fileTracker.runOperation(new MkdirOperation(dirToCreate, false));
     }
 }

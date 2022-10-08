@@ -103,7 +103,7 @@ class PrintCommandTests {
 
     @Test
     void testPrintResource() throws Throwable {
-        assertEquals(Configuration.getXpPath().toString(), printText(new String[]{"$XP_DIR"}, context));
+        assertEquals(Configuration.getXpPath().toString(), printText(new String[]{"$XP"}, context));
     }
 
     @Test

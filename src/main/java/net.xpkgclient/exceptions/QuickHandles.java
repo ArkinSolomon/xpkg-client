@@ -15,6 +15,7 @@
 
 package net.xpkgclient.exceptions;
 
+import net.xpkgclient.ExecutionContext;
 import net.xpkgclient.commands.CommandName;
 import net.xpkgclient.vars.VarType;
 
@@ -23,13 +24,11 @@ import net.xpkgclient.vars.VarType;
  */
 public class QuickHandles {
 
-    // Methods to handle ParseHelper.getStr();
-
     /**
-     * This class handles {@link net.xpkgclient.exceptions.XPkgInternalException}s thrown by
+     * This static method handles any {@link net.xpkgclient.exceptions.XPkgInternalException} that is thrown by {@link net.xpkgclient.ParseHelper#getStr(String[], ExecutionContext)}.
      *
-     * @param cmd The command that had the {@link net.xpkgclient.exceptions.XPkgInternalException} thrown.
-     * @param e   The exception thrown.
+     * @param cmd The command that is handling the exception thrown.
+     * @param e   The {@link net.xpkgclient.exceptions.XPkgInternalException} thrown.
      * @return A clear human-readable exception.
      */
     public static XPkgException handleGetStr(CommandName cmd, XPkgInternalException e) {
@@ -37,6 +36,23 @@ public class QuickHandles {
             return new XPkgArgLenException(cmd, 2, "a variable is the second argument", e);
         else if (e.getMessage().equalsIgnoreCase("mismatch"))
             return new XPkgTypeMismatchException(cmd, "second", VarType.STRING, (VarType) e.getData(), e);
-        return new XPkgException("An unknown exception occurred", e);
+        return new XPkgUnimplementedException("An unknown exception occurred while handling ParseHelper.getStr()", e);
+    }
+
+    /**
+     * This static method handles any {@link net.xpkgclient.exceptions.XPkgInternalException} that is thrown by {@link ExecutionContext#checkExistingVar(String)}.
+     *
+     * @param cmd  The command that is handling the exception thrown.
+     * @param argC The ordinal index (first, second, third, fourth, etc.) of the argument which was supposed to be a variable.
+     * @param e    The {@link net.xpkgclient.exceptions.XPkgInternalException} thrown.
+     * @return A clear human-readable exception.
+     */
+    public static XPkgException handleCheckExistingVar(CommandName cmd, String argC, XPkgInternalException e) {
+        String varName = (String) e.getData();
+        if (e.getMessage().equalsIgnoreCase("invalid"))
+            return new XPkgInvalidVarNameException(cmd, argC, varName, e);
+        else if (e.getMessage().equalsIgnoreCase("undef"))
+            return new XPkgUndefinedVarException(varName, e);
+        return new XPkgUnimplementedException("An unknown exception occurred while handling ExecutionContext.handleCheckExistingVar()", e);
     }
 }
