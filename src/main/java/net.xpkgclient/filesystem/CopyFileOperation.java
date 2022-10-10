@@ -15,6 +15,7 @@
 
 package net.xpkgclient.filesystem;
 
+import net.xpkgclient.vars.XPkgFile;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -23,22 +24,21 @@ import java.nio.file.Files;
 
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 
-public class CopyFileOperation extends Operation{
+public class CopyFileOperation extends Operation {
 
     File file;
     File target;
 
     /**
      * Create a new operation to copy {@code file} from its current position to {@code directory}.
-     * @param file The file to be copied.
+     *
+     * @param file      The file to be copied.
      * @param directory The directory for it to be copied to.
      */
-    public CopyFileOperation(File file, File directory){
+    public CopyFileOperation(XPkgFile fileVar, File directory) {
         super();
-        this.file = file;
-        String name = file.getName();
-        if (file.isDirectory())
-            name = file.getParentFile().getName();
+        this.file = fileVar.getValue();
+        String name = fileVar.getName();
         target = new File(directory, name);
     }
 

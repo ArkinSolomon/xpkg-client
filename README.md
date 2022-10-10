@@ -189,9 +189,15 @@ The location of scenery in the `scenery_packs.ini` file.
 
 Print the current execution context for debugging.
 
-##### copy [$FILE] [$MUTABLERESOURCE] <u>NOT IMPLEMENTED</u>
+##### copy [$FILE] [$MUTABLERESOURCE]
 
-If a file is provided, it will copy a file to a mutable resource, keeping the same name. If a directory is provided, it will copy the entire directory, keeping the same name, to the destination directory.
+If a file is provided, it will copy a file to a mutable resource, keeping the same name. If a directory is provided, it
+will copy the entire directory, keeping the same name, to the destination directory.
+
+##### exists [$BOOL]* [$FILE] <u>NOT IMPLEMENTED</u>
+
+Check if a file or directory exists. Sets the value of the first variable to true if and only if the file or directory
+does exist.
 
 ##### get [$VAR]* [RESOURCE_ID]
 
@@ -201,6 +207,16 @@ Get a resource and store it in a new variable.
 
 Execute code between this if and the next branch control command if the provided variable or statement evaluates to
 true.
+
+##### isfile [$BOOL]* [$FILE] <u>NOT IMPLEMENTED</u>
+
+Determine if a file variable points to a file. Sets the value of the first variable to true if the file exists, and it
+is a file.
+
+##### isdir [$BOOL]* [$FILE] <u>NOT IMPLEMENTED</u>
+
+Determine if a file variable points to a directory. Sets the value of the first variable to true if the file exists, and
+it is a directory.
 
 ##### ispl [$BOOL]* [$PATHLIKE or ...PATHLIKE]
 
@@ -240,7 +256,7 @@ This command is largely dependent on the metadata in the head (largely on `scrip
 metadata will produce different results. If `OTHER` is selected for either `script_type` or `package_type`. The executor
 will throw an error. See wiki for more details.
 
-##### rename [$FILE] [$STRING or ...STRING] <u>NOT IMPLEMENTED</u>
+##### rename [$FILE] [$STRING or ...STRING]
 
 Rename the file or directory that the first argument points to the value of the second argument, the only valid characters are all alphanumeric. Does not allow names with '/', '\', '%', '..', or '~' in them. It also requires that the parent of the file that is being renamed is a `MUTABLERESOURCE`.
 

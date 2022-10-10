@@ -67,9 +67,6 @@ class CopyCommand extends Command {
         XPkgMutableResource mutVar = (XPkgMutableResource) unknownTMutResVar;
 
         File destDirectory = mutVar.getValue();
-        File initialFile = fileVar.getValue();
-
-//        if (!initialFile.isDirectory())
-            context.fileTracker.runOperation(new CopyFileOperation(initialFile, destDirectory));
+        context.fileTracker.runOperation(new CopyFileOperation(fileVar, destDirectory));
     }
 }

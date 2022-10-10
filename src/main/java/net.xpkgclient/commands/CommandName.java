@@ -19,5 +19,5 @@ package net.xpkgclient.commands;
  * The name of all the commands. Also includes a {@code __INTERNAL_TEST_COMMAND} command name, which should be used for testing only, and should not be implemented within the script parsers.
  */
 public enum CommandName {
-    __INTERNAL_TEST_COMMAND, QUICK, GET, PRINT, IF, ELIF, ELSE, ENDIF, SET, SETSTR, MKDIR, MKDIRS, ISPL, JOIN, JOINP, CONTEXT, COPY, RESOLVE, POINT
+    __INTERNAL_TEST_COMMAND, QUICK, GET, PRINT, IF, ELIF, ELSE, ENDIF, SET, SETSTR, MKDIR, MKDIRS, ISPL, JOIN, JOINP, CONTEXT, COPY, RESOLVE, POINT, RENAME, EXISTS, ISFILE, ISDIR
 }

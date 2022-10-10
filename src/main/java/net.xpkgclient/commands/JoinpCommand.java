@@ -39,19 +39,16 @@ import java.util.Arrays;
 class JoinpCommand extends Command {
 
     /**
-     * The class execution command.
+     * The command execution method.
      *
      * @param args    The arguments to the command. See the readme for valid arguments.
      * @param context The execution context that this command executes within.
      * @throws XPkgException Can be thrown for multiple reasons such as user error, or a type mismatch, or another reason.
      */
     public static void execute(String @NotNull [] args, ExecutionContext context) throws XPkgException {
-
-        // Check arguments
         if (args.length < 2)
             throw new XPkgArgLenException(CommandName.JOINP, 2, args.length);
 
-        // Check if the variable is valid
         if (!ParseHelper.isValidVarName(args[0]))
             throw new XPkgInvalidVarNameException(args[0]);
         String assignee = args[0];

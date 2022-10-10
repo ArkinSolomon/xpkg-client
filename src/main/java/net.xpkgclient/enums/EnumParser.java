@@ -20,8 +20,6 @@ import net.xpkgclient.exceptions.XPkgInvalidHeadKeyException;
 import net.xpkgclient.exceptions.XPkgInvalidHeadValException;
 import net.xpkgclient.exceptions.XPkgParseException;
 
-//This class contains static methods for parsing different enumerations
-
 /**
  * This class contains static methods that converts strings to enums.
  */
@@ -77,8 +75,6 @@ public class EnumParser {
         };
     }
 
-    // Get a Command enumeration from a string
-
     /**
      * Get a {@link net.xpkgclient.commands.CommandName} enumeration from a string.
      *
@@ -106,6 +102,7 @@ public class EnumParser {
             case "COPY" -> CommandName.COPY;
             case "RESOLVE" -> CommandName.RESOLVE;
             case "POINT" -> CommandName.POINT;
+            case "RENAME" -> CommandName.RENAME;
             default -> throw new XPkgParseException("Invalid command: '" + command + "' is not a valid command");
         };
     }

@@ -93,4 +93,16 @@ public class XPkgFile extends XPkgVar {
     public XPkgResource getParentResource() {
         return parentResource;
     }
+
+    /**
+     * Get the name of the file that this variable is storing.
+     *
+     * @return The name of the file or directory.
+     */
+    public String getName() {
+        String name = file.getName();
+        if (file.isDirectory())
+            name = file.getParentFile().getName();
+        return name;
+    }
 }

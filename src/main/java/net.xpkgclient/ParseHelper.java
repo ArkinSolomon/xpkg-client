@@ -214,8 +214,7 @@ public class ParseHelper {
      * @param matches The characters to check for in {@code testStr}.
      * @return True if any characters in {@code matches} are inside {@code testStr}.
      */
-    @SuppressWarnings("SameParameterValue")
-    private static boolean stringContains(String testStr, String matches) {
+    public static boolean stringContains(@NotNull String testStr, @NotNull String matches) {
         String[] m = matches.split("");
         return Arrays.stream(m).anyMatch(testStr::contains);
     }

@@ -26,9 +26,8 @@ import java.util.HashMap;
 /**
  * This class is the superclass of all specific commands, it stores all the commands.
  */
-public class Command {
+public abstract class Command {
 
-    // Store all commands
     private static final HashMap<CommandName, Method> cmds = new HashMap<>();
 
     // True if we've registered commands already
@@ -58,6 +57,7 @@ public class Command {
         registerCmd(CommandName.COPY, CopyCommand.class);
         registerCmd(CommandName.POINT, PointCommand.class);
         registerCmd(CommandName.RESOLVE, ResolveCommand.class);
+        registerCmd(CommandName.RENAME, RenameCommand.class);
     }
 
     /**

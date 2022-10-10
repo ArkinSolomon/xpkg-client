@@ -15,19 +15,40 @@
 
 package net.xpkgclient.filesystem;
 
-import java.io.IOException;
+import net.xpkgclient.exceptions.XPkgFileExistsException;
+import net.xpkgclient.vars.XPkgFile;
 
-public class RenameOperation extends Operation{
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class RenameOperation extends Operation {
+
+    private final File originalFile;
+    private final Path newFile;
+
+    public RenameOperation(XPkgFile originalFileVar, String newName) throws XPkgFileExistsException {
+        originalFile = originalFileVar.getValue();
+        newFile = originalFile.toPath().resolveSibling(newName);
+
+        if (Files.exists(newFile))
+            throw new XPkgFileExistsException(newFile.toFile());
+
+    }
+
     @Override
     public void perform() throws IOException {
         if (performed)
             return;
+        Files.move(originalFile.toPath(), newFile);
         performed = true;
     }
 
     @Override
     public void undo() throws IOException {
-        if (!performed) {
-        }
+        if (!performed)
+            return;
+        Files.move(newFile, originalFile.toPath());
     }
 }
