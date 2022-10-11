@@ -34,7 +34,7 @@ import java.io.IOException;
 /**
  * This command copies a file from one location to another.
  */
-class CopyCommand extends Command {
+final class CopyCommand extends Command {
 
     /**
      * The class execution command.

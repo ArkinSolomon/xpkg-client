@@ -36,7 +36,7 @@ import java.util.Arrays;
 /**
  * This class joins two pathlike strings and stores the result.
  */
-class JoinpCommand extends Command {
+final class JoinpCommand extends Command {
 
     /**
      * The command execution method.

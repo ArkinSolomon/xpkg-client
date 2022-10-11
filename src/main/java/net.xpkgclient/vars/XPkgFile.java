@@ -86,6 +86,15 @@ public class XPkgFile extends XPkgVar {
     }
 
     /**
+     * Check if the value of this variable points to an existing directory or file.
+     *
+     * @return True if this file points to an existing directory or variable.
+     */
+    public boolean exists() {
+        return file.exists();
+    }
+
+    /**
      * Get the parent resource that this file ultimately derives from
      *
      * @return The parent resource that this file ultimately derives from.

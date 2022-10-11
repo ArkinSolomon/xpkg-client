@@ -37,7 +37,7 @@ import java.util.Arrays;
 /**
  * Get a resource from a server, and store it into a variable.
  */
-class GetCommand extends Command {
+final class GetCommand extends Command {
 
     private static final File getLoc = new File("/Users/arkinsolomon/Desktop/resources");
 

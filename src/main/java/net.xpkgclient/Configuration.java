@@ -15,13 +15,17 @@
 
 package net.xpkgclient;
 
+import lombok.experimental.UtilityClass;
+
 import java.io.File;
 
 /**
  * This class stores and loads all configuration and settings for the client.
  */
-public class Configuration {
+@UtilityClass
+public final class Configuration {
 
+    // The currently active X-Plane installation
     private static File xpPath = null;
 
     // True if the PRINT command should print using print() instead of println(),

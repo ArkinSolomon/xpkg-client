@@ -15,14 +15,17 @@
 
 package net.xpkgclient.enums;
 
+import lombok.experimental.UtilityClass;
 import net.xpkgclient.commands.CommandName;
 import net.xpkgclient.exceptions.XPkgInvalidHeadKeyException;
 import net.xpkgclient.exceptions.XPkgInvalidHeadValException;
 import net.xpkgclient.exceptions.XPkgParseException;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This class contains static methods that converts strings to enums.
  */
+@UtilityClass
 public class EnumParser {
 
     /**
@@ -32,7 +35,7 @@ public class EnumParser {
      * @return The corresponding HeadKey as an enumeration.
      * @throws XPkgInvalidHeadKeyException Returned if the provided HeadKey does not exist.
      */
-    public static HeadKey getHeadKey(String headKey) throws XPkgInvalidHeadKeyException {
+    public static HeadKey getHeadKey(@NotNull String headKey) throws XPkgInvalidHeadKeyException {
         return switch (headKey.toUpperCase()) {
             case "SCRIPT_TYPE" -> HeadKey.SCRIPT_TYPE;
             case "PACKAGE_TYPE" -> HeadKey.PACKAGE_TYPE;
@@ -47,7 +50,7 @@ public class EnumParser {
      * @return The corresponding ScriptType as an enumeration.
      * @throws XPkgInvalidHeadValException Returned if the provided ScriptType is not valid.
      */
-    public static ScriptType getScriptType(String scriptType) throws XPkgInvalidHeadValException {
+    public static ScriptType getScriptType(@NotNull String scriptType) throws XPkgInvalidHeadValException {
         return switch (scriptType.toUpperCase()) {
             case "OTHER" -> ScriptType.OTHER;
             case "INSTALL" -> ScriptType.INSTALL;
@@ -64,7 +67,7 @@ public class EnumParser {
      * @return The corresponding PackageType as an enumeration.
      * @throws XPkgInvalidHeadValException Returned if the provided PackageType is not valid.
      */
-    public static PackageType getPackageType(String packageType) throws XPkgInvalidHeadValException {
+    public static PackageType getPackageType(@NotNull String packageType) throws XPkgInvalidHeadValException {
         return switch (packageType.toUpperCase()) {
             case "OTHER" -> PackageType.OTHER;
             case "SCENERY" -> PackageType.SCENERY;
@@ -82,7 +85,7 @@ public class EnumParser {
      * @return The corresponding command name as an enumeration.
      * @throws XPkgParseException Returned if the provided command name is not valid.
      */
-    public static CommandName getCommand(String command) throws XPkgParseException {
+    public static CommandName getCommand(@NotNull String command) throws XPkgParseException {
         return switch (command.toUpperCase()) {
             case "QUICK" -> CommandName.QUICK;
             case "GET" -> CommandName.GET;
@@ -103,6 +106,10 @@ public class EnumParser {
             case "RESOLVE" -> CommandName.RESOLVE;
             case "POINT" -> CommandName.POINT;
             case "RENAME" -> CommandName.RENAME;
+            case "EXISTS" -> CommandName.EXISTS;
+            case "GETSTR" -> CommandName.GETSTR;
+            case "ISFILE" -> CommandName.ISFILE;
+            case "ISDIR" -> CommandName.ISDIR;
             default -> throw new XPkgParseException("Invalid command: '" + command + "' is not a valid command");
         };
     }

@@ -199,9 +199,13 @@ will copy the entire directory, keeping the same name, to the destination direct
 Check if a file or directory exists. Sets the value of the first variable to true if and only if the file or directory
 does exist.
 
-##### get [$VAR]* [RESOURCE_ID]
+##### get [$RESOURCE]* [RESOURCE_ID]
 
 Get a resource and store it in a new variable.
+
+##### getstr [$STRING]* [$VAR]
+
+Get the string representation of a variable.
 
 ##### if [$BOOL or BOOL] <u>NOT COMMAND; NEEDS TO BE MOVED</u>
 
@@ -256,9 +260,9 @@ This command is largely dependent on the metadata in the head (largely on `scrip
 metadata will produce different results. If `OTHER` is selected for either `script_type` or `package_type`. The executor
 will throw an error. See wiki for more details.
 
-##### rename [$FILE] [$STRING or ...STRING]
+##### rename [$FILE]* [$STRING or ...STRING]
 
-Rename the file or directory that the first argument points to the value of the second argument, the only valid characters are all alphanumeric. Does not allow names with '/', '\', '%', '..', or '~' in them. It also requires that the parent of the file that is being renamed is a `MUTABLERESOURCE`.
+Rename the file or directory that the first argument's file name changes to that of the second argument. Changes the value of the first argument to point to the renamed file. Does not allow names with '/', '\', '%', '..', or '~' in them. It also requires that a parent of the file that is being renamed is a `MUTABLERESOURCE`.
 
 ##### resolve [$FILE]* [$RESOURCE or $MUTABLERESOURCE or $DIRECTORY] [$PATHLIKE or ...PATHLIKE]
 

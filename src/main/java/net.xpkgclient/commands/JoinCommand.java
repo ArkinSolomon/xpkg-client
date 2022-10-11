@@ -33,7 +33,7 @@ import java.util.Arrays;
 /**
  * This command joins two strings together and stores the result.
  */
-class JoinCommand extends Command {
+final class JoinCommand extends Command {
 
     /**
      * The class execution command.

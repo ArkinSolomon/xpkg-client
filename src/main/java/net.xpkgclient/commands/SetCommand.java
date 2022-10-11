@@ -34,7 +34,7 @@ import java.util.Arrays;
 /**
  * This command sets a variable to another variable or the result of a boolean expression.
  */
-class SetCommand extends Command {
+final class SetCommand extends Command {
 
     /**
      * Set a variable to another variable or the result of a boolean expression.

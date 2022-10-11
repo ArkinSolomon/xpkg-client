@@ -35,7 +35,10 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.Arrays;
 
-class ResolveCommand extends Command {
+/**
+ * This class creates a {@link XPkgFile} variable which points to a specific file within a resource, mutable resource, or another file.
+ */
+final class ResolveCommand extends Command {
 
     /**
      * The class execution command.

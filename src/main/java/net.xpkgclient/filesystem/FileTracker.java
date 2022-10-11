@@ -22,10 +22,9 @@ import java.util.Collections;
 /**
  * An instance of this class tracks all system changes.
  */
-public class FileTracker {
+public final class FileTracker {
 
-    // All operations done by the file tracker
-    ArrayList<Operation> operations = new ArrayList<>();
+    private final ArrayList<Operation> operations = new ArrayList<>();
 
     /**
      * Run an operation, if it fails cat.

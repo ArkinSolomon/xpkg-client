@@ -38,10 +38,10 @@ import java.util.Arrays;
 /**
  * This class creates a single directory (not the parent directories) within the X-Plane directory
  */
-class MkdirCommand extends Command {
+final class MkdirCommand extends Command {
 
     /**
-     * The class execution command.
+     * The command execution method.
      *
      * @param args    The arguments to the command. See the readme for valid arguments.
      * @param context The execution context that this command executes within.

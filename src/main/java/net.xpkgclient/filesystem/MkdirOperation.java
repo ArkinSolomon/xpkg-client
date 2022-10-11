@@ -25,7 +25,7 @@ import java.nio.file.Path;
 /**
  * Create a directory (or directories).
  */
-public class MkdirOperation extends Operation {
+public final class MkdirOperation extends Operation {
 
     private final File directory;
     private final boolean recursive;

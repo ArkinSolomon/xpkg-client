@@ -34,12 +34,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
-//This class parses and executes scripts
-
 /**
  * This class handles and executes script setup and command execution delegation.
  */
-public class ScriptExecutor {
+public final class ScriptExecutor {
 
     // Script execution context
     private final ExecutionContext context;

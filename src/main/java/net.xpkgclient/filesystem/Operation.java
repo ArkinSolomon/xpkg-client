@@ -20,10 +20,13 @@ import java.io.IOException;
 /**
  * An instance of this class is an operation done on the file system which can be undone.
  */
-public abstract class Operation {
+abstract class Operation {
 
     protected boolean performed;
 
+    /**
+     * Default constructor.
+     */
     protected Operation() {
         performed = false;
     }

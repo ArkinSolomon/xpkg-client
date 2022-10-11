@@ -39,8 +39,15 @@ import java.util.Arrays;
 /**
  * This class creates a directory (and all parent directories) within the X-Plane directory.
  */
-class MkdirsCommand extends Command {
+final class MkdirsCommand extends Command {
 
+    /**
+     * The command execution method.
+     *
+     * @param args    The arguments to the command. See the readme for valid arguments.
+     * @param context The execution context that this command executes within.
+     * @throws XPkgException Can be thrown for multiple reasons such as user error, or a type mismatch, or another reason.
+     */
     public static void execute(String @NotNull [] args, ExecutionContext context) throws XPkgException {
 
         if (args.length < 2)

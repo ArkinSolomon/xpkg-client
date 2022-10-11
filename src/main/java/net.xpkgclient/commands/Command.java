@@ -58,6 +58,10 @@ public abstract class Command {
         registerCmd(CommandName.POINT, PointCommand.class);
         registerCmd(CommandName.RESOLVE, ResolveCommand.class);
         registerCmd(CommandName.RENAME, RenameCommand.class);
+        registerCmd(CommandName.EXISTS, ExistsCommand.class);
+        registerCmd(CommandName.ISFILE, IsfileCommand.class);
+        registerCmd(CommandName.ISDIR, IsdirCommand.class);
+        registerCmd(CommandName.GETSTR, GetstrCommand.class);
     }
 
     /**

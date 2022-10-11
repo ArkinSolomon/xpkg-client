@@ -15,6 +15,7 @@
 
 package net.xpkgclient;
 
+import lombok.experimental.UtilityClass;
 import net.xpkgclient.exceptions.XPkgExecutionException;
 import net.xpkgclient.exceptions.XPkgInternalException;
 import net.xpkgclient.exceptions.XPkgInvalidBoolStatement;
@@ -30,12 +31,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
-//This class provides static methods to help parse
-
 /**
  * This class provide methods to easily help commands parse repeating scenarios (such as booleans and getting ...STRING's).
  */
-public class ParseHelper {
+@UtilityClass
+public final class ParseHelper {
 
     /**
      * Check if a variable name is valid.
@@ -75,8 +75,9 @@ public class ParseHelper {
     }
 
     /**
-     * Check if a resource id is valid.
+     * Check if a resource id is valid, does not confirm if the resource exists.
      *
+     * @param resourceId The id of the resource to check for validity.
      * @return True if the resource id is valid.
      */
     public static boolean isValidResourceId(String resourceId) {

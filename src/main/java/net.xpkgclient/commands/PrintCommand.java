@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * This class prints a variable.
  */
-class PrintCommand extends Command {
+final class PrintCommand extends Command {
 
     /**
      * The class execution command.
@@ -44,6 +44,7 @@ class PrintCommand extends Command {
 
         // If the first argument is a variable and that's all there is print it,
         // otherwise print all arguments
+        String printStr  = String.join(" ", args);
         if (ParseHelper.isValidVarName(args[0])) {
 
             // Do some more checks
@@ -53,14 +54,8 @@ class PrintCommand extends Command {
             if (!context.hasVar(args[0]))
                 throw new XPkgUndefinedVarException(args[0]);
 
-            String varValue = context.getVar(args[0]).toString();
-            if (Configuration.getInlinePrint())
-                System.out.print(varValue);
-            else
-                System.out.println(varValue);
-            return;
+            printStr = context.getVar(args[0]).toString();
         }
-        String printStr = String.join(" ", args);
         if (Configuration.getInlinePrint())
             System.out.print(printStr);
         else

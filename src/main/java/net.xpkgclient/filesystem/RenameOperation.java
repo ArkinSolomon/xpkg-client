@@ -17,24 +17,34 @@ package net.xpkgclient.filesystem;
 
 import net.xpkgclient.exceptions.XPkgFileExistsException;
 import net.xpkgclient.vars.XPkgFile;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class RenameOperation extends Operation {
+public final class RenameOperation extends Operation {
 
     private final File originalFile;
     private final Path newFile;
 
-    public RenameOperation(XPkgFile originalFileVar, String newName) throws XPkgFileExistsException {
+    public RenameOperation(@NotNull XPkgFile originalFileVar, String newName) throws XPkgFileExistsException {
         originalFile = originalFileVar.getValue();
         newFile = originalFile.toPath().resolveSibling(newName);
 
         if (Files.exists(newFile))
             throw new XPkgFileExistsException(newFile.toFile());
 
+    }
+
+    /**
+     * Get the path to the new file which the original file was renamed to.
+     *
+     * @return The path to the renamed file.
+     */
+    public Path getNewFile() {
+        return newFile;
     }
 
     @Override

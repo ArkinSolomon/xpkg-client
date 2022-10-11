@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * This command prints the current execution context.
  */
-class ContextCommand extends Command {
+final class ContextCommand extends Command {
 
     /**
      * The class execution command.

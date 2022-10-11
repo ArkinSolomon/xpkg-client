@@ -30,7 +30,7 @@ import java.util.Arrays;
 /**
  * Determine if a string can be considered pathlike, and store the result in a variable.
  */
-class IsplCommand extends Command {
+final class IsplCommand extends Command {
 
     /**
      * The class execution command.

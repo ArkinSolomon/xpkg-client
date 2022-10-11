@@ -30,7 +30,7 @@ import java.util.Arrays;
 /**
  * This command sets a string variable's value.
  */
-class SetstrCommand extends Command {
+final class SetstrCommand extends Command {
 
     /**
      * The class execution command.

@@ -37,7 +37,7 @@ import java.util.Arrays;
 /**
  * This command creates a new mutable resource or resource which points to a directory inside a mutable resource or resource.
  */
-class PointCommand extends Command {
+final class PointCommand extends Command {
 
     /**
      * The class execution command.

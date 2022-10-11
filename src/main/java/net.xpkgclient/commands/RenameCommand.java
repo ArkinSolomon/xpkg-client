@@ -27,12 +27,14 @@ import net.xpkgclient.exceptions.XPkgTypeMismatchException;
 import net.xpkgclient.filesystem.RenameOperation;
 import net.xpkgclient.vars.VarType;
 import net.xpkgclient.vars.XPkgFile;
+import net.xpkgclient.vars.XPkgMutableResource;
 import net.xpkgclient.vars.XPkgVar;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class RenameCommand extends Command {
+final class RenameCommand extends Command {
 
     /**
      * The command execution method.
@@ -70,6 +72,12 @@ public class RenameCommand extends Command {
         if (ParseHelper.stringContains(newName, "~%/\\") || newName.contains(".."))
             throw new XPkgRuntimeException("Invalid filename: The file '" + fileVar + "' can not be renamed to '" + newName + "' since the new name is invalid");
 
-        context.fileTracker.runOperation(new RenameOperation(fileVar, newName));
+        RenameOperation op = new RenameOperation(fileVar, newName);
+        context.fileTracker.runOperation(op);
+
+        File newFile = op.getNewFile().toFile();
+        XPkgMutableResource parent = (XPkgMutableResource) fileVar.getParentResource();
+        XPkgFile newFileVar = new XPkgFile(newFile, parent);
+        context.setVar(assigneeVarName, newFileVar);
     }
 }

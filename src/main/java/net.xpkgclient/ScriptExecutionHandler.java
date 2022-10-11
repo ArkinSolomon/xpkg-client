@@ -15,14 +15,15 @@
 
 package net.xpkgclient;
 
+import lombok.experimental.UtilityClass;
+
 import java.io.File;
 import java.util.Scanner;
-
-//This file provides an interface for executing scripts
 
 /**
  * This class is a simple interface for running scripts.
  */
+@UtilityClass
 public final class ScriptExecutionHandler {
 
     /**

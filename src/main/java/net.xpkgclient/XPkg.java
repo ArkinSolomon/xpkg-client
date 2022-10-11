@@ -22,7 +22,12 @@ import java.io.File;
 /**
  * Main class. XPkg-Client entry point.
  */
-public class XPkg {
+public final class XPkg {
+
+    /**
+     * There should be no instances of this class.
+     */
+    private XPkg() {}
 
     /**
      * Main method. XPkg-Client entry point.

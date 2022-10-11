@@ -24,7 +24,10 @@ import java.nio.file.Files;
 
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 
-public class CopyFileOperation extends Operation {
+/**
+ * This operation copies a file from one location to another.
+ */
+public final class CopyFileOperation extends Operation {
 
     File file;
     File target;
