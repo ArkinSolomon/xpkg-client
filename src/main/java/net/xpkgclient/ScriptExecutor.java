@@ -119,9 +119,6 @@ public final class ScriptExecutor {
                             "There is a key '" + key + "' hasn't been implemented in the parsing of the metadata");
                 }
             }
-
-            // Increase the counter to account for the '---'
-            //            context.incCounter();
         } catch (Exception e) {
             if (e instanceof ILineException)
                 throw ((ILineException<?>) e).setLine(context.getLineCounter());

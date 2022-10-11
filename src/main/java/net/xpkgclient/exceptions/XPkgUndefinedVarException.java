@@ -15,17 +15,10 @@
 
 package net.xpkgclient.exceptions;
 
-import java.io.Serial;
-
-//Exception thrown when a variable is undefined
-
 /**
  * Exception thrown when a variable is undefined.
  */
 public class XPkgUndefinedVarException extends XPkgRuntimeException {
-
-    @Serial
-    private static final long serialVersionUID = -2122679038771821443L;
 
     /**
      * Say that a variable is undefined.

@@ -15,15 +15,10 @@
 
 package net.xpkgclient.exceptions;
 
-import java.io.Serial;
-
 /**
  * Exceptions meant to be caught in order to be thrown later (useful for full stack trace debugging), used mainly in static classes and passing information.
  */
 public class XPkgInternalException extends Exception {
-
-    @Serial
-    private static final long serialVersionUID = -6371838915978668117L;
 
     // Data held by this exception for passing up secondary information.
     Object data;

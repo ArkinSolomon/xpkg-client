@@ -15,15 +15,10 @@
 
 package net.xpkgclient.exceptions;
 
-import java.io.Serial;
-
 /**
  * An exception thrown when a class or method is not registered or implemented.
  */
 public class XPkgUnimplementedException extends XPkgExecutionException {
-
-    @Serial
-    private static final long serialVersionUID = -3064139511429346241L;
 
     /**
      * Create a new exception with a message saying that the exception was internal and a problem with X-Pkg.

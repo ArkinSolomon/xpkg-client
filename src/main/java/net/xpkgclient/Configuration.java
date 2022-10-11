@@ -18,12 +18,15 @@ package net.xpkgclient;
 import lombok.experimental.UtilityClass;
 
 import java.io.File;
+import java.util.prefs.Preferences;
 
 /**
  * This class stores and loads all configuration and settings for the client.
  */
 @UtilityClass
 public final class Configuration {
+
+    private static final Preferences prefs = Preferences.userRoot().node("xpkg-client-root");
 
     // The currently active X-Plane installation
     private static File xpPath = null;
@@ -62,5 +65,28 @@ public final class Configuration {
      */
     public static void setInlinePrint(boolean inlinePrint) {
         Configuration.inlinePrint = inlinePrint;
+    }
+
+    /**
+     * Save the configuration.
+     */
+    public static void save() {
+        prefs.put("xp-config", xpPath.getAbsolutePath());
+        prefs.putBoolean("inline-print", inlinePrint);
+    }
+
+    /**
+     * Load the configuration.
+     */
+    public static void load() {
+        xpPath = new File(prefs.get("xp-config", "NO_XP_INSTALLATION"));
+        inlinePrint = prefs.getBoolean("inline-print", false);
+    }
+
+    /**
+     * Returns true if the user has configured an X-Plane installation directory.
+     */
+    public static boolean hasConfiguredXPInstallation() {
+        return !xpPath.toString().equals("NO_XP_INSTALLATION");
     }
 }

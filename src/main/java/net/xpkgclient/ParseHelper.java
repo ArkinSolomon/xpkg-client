@@ -189,7 +189,6 @@ public final class ParseHelper {
             if (args.length > 1)
                 throw new XPkgInternalException("arglen");
 
-            // Ensure the variable exists
             if (!context.hasVar(args[0]))
                 throw new XPkgUndefinedVarException(args[0]);
 

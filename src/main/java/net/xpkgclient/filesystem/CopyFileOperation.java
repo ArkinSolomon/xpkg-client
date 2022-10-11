@@ -29,8 +29,8 @@ import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
  */
 public final class CopyFileOperation extends Operation {
 
-    File file;
-    File target;
+    private final File file;
+    private final File target;
 
     /**
      * Create a new operation to copy {@code file} from its current position to {@code directory}.
@@ -74,6 +74,6 @@ public final class CopyFileOperation extends Operation {
         if (target.isDirectory())
             FileUtils.deleteDirectory(target);
         else if (!target.delete())
-            throw new IOException("Could not undo operation by deleting target file at " + target.toString());
+            throw new IOException("Could not undo operation by deleting target file at " + target);
     }
 }

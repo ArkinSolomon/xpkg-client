@@ -15,15 +15,10 @@
 
 package net.xpkgclient.exceptions;
 
-import java.io.Serial;
-
 /**
  * Exception thrown when trying to perform actions on a closed {@link net.xpkgclient.ExecutionContext}. Should only originate within the {@code activityCheck()} method of {@link net.xpkgclient.ExecutionContext}.
  */
 public class XPkgClosedExecutionContextException extends XPkgInvalidCallException {
-
-    @Serial
-    private static final long serialVersionUID = 813342998451479620L;
 
     /**
      * Default constructor with a default message saying the execution context has been closed.

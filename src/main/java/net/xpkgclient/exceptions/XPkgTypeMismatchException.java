@@ -18,15 +18,10 @@ package net.xpkgclient.exceptions;
 import net.xpkgclient.commands.CommandName;
 import net.xpkgclient.vars.VarType;
 
-import java.io.Serial;
-
 /**
  * Exception thrown when the XPKGS script runner expects a certain type and gets another.
  */
 public class XPkgTypeMismatchException extends XPkgRuntimeException {
-
-    @Serial
-    private static final long serialVersionUID = -3787777489114171239L;
 
     /**
      * Create a new exception with a message saying that a certain argument for a command required a certain type, but got a different one.

@@ -15,15 +15,10 @@
 
 package net.xpkgclient.exceptions;
 
-import java.io.Serial;
-
 /**
  * This exception is called when a method is called when it shouldn't be.
  */
 public class XPkgInvalidCallException extends XPkgExecutionException {
-
-    @Serial
-    private static final long serialVersionUID = -7391328873326455824L;
 
     /**
      * Create a new exception and show the stack trace.

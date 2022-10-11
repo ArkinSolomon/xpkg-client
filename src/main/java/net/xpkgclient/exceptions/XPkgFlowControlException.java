@@ -15,15 +15,10 @@
 
 package net.xpkgclient.exceptions;
 
-import java.io.Serial;
-
 /**
  * Exception thrown when a user makes an issue with flow control.
  */
 public class XPkgFlowControlException extends XPkgParseException {
-
-    @Serial
-    private static final long serialVersionUID = 2081401572143123366L;
 
     /**
      * Create a new exception with a message.

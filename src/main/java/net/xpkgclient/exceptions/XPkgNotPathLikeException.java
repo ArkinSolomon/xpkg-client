@@ -17,15 +17,10 @@ package net.xpkgclient.exceptions;
 
 import net.xpkgclient.commands.CommandName;
 
-import java.io.Serial;
-
 /**
  * Exception thrown if a variable or string is not a pathlike when a pathlike variable or string was expected.
  */
 public class XPkgNotPathLikeException extends XPkgRuntimeException {
-
-    @Serial
-    private static final long serialVersionUID = -4254373123050488699L;
 
     /**
      * Create a new exception stating that a variable's value was not pathlike.

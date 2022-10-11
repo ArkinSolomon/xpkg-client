@@ -17,17 +17,12 @@ package net.xpkgclient.exceptions;
 
 import net.xpkgclient.commands.CommandName;
 
-import java.io.Serial;
-
 // Used when argument lengths do not match up
 
 /**
  * Thrown when a command expects a certain amount of arguments, but either gets too many or too few.
  */
 public class XPkgArgLenException extends XPkgParseException {
-
-    @Serial
-    private static final long serialVersionUID = 4663186103057388801L;
 
     /**
      * Constructor which is used to throw when a command expects a fixed amount of arguments.

@@ -17,15 +17,10 @@ package net.xpkgclient.exceptions;
 
 import net.xpkgclient.commands.CommandName;
 
-import java.io.Serial;
-
 /**
  * Exception thrown when a variable name is invalid.
  */
 public class XPkgInvalidVarNameException extends XPkgParseException {
-
-    @Serial
-    private static final long serialVersionUID = -2027953150186197578L;
 
     /**
      * Create a new exception with a simple message saying that a name is invalid for a variable.

@@ -15,15 +15,10 @@
 
 package net.xpkgclient.exceptions;
 
-import java.io.Serial;
-
 /**
  * Top level exception for exceptions that are not the script programmers fault, but rather an error with X-Pkg.
  */
 public class XPkgExecutionException extends XPkgScriptRunnerException {
-
-    @Serial
-    private static final long serialVersionUID = 3113973855303520458L;
 
     /**
      * Default constructor. Create a new exception with no message.

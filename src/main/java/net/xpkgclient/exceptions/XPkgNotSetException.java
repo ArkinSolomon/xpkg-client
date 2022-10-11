@@ -15,15 +15,10 @@
 
 package net.xpkgclient.exceptions;
 
-import java.io.Serial;
-
 /**
  * Exception thrown when trying to get an item has not been set.
  */
 public class XPkgNotSetException extends XPkgInvalidCallException {
-
-    @Serial
-    private static final long serialVersionUID = 8964432147160549873L;
 
     //TODO check the index of the callstack
     /**

@@ -17,15 +17,10 @@ package net.xpkgclient.exceptions;
 
 import net.xpkgclient.enums.HeadKey;
 
-import java.io.Serial;
-
 /**
  * Exception thrown if a value is not suitable for a head key.
  */
 public class XPkgInvalidHeadValException extends XPkgParseException {
-
-    @Serial
-    private static final long serialVersionUID = 6072185362526976813L;
 
     /**
      * Create a new exception with a message stating that the head key value is not acceptable.

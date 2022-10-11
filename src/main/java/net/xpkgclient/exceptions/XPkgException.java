@@ -15,15 +15,10 @@
 
 package net.xpkgclient.exceptions;
 
-import java.io.Serial;
-
 /**
  * Top level exception for all custom exceptions.
  */
 public class XPkgException extends Exception {
-
-    @Serial
-    private static final long serialVersionUID = 5674756055664564736L;
 
     /**
      * Default constructor, creates a new exception with no message.

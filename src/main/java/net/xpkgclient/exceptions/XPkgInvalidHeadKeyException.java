@@ -15,17 +15,12 @@
 
 package net.xpkgclient.exceptions;
 
-import java.io.Serial;
-
 // An exception thrown if a head key is invalid
 
 /**
  * Exception thrown when a user inputs a head key that doesn't exist.
  */
 public class XPkgInvalidHeadKeyException extends XPkgParseException {
-
-    @Serial
-    private static final long serialVersionUID = -6211878735670435376L;
 
     /**
      * Create a new exception with a message stating that a key is invalid.

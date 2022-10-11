@@ -15,35 +15,34 @@
 
 package net.xpkgclient;
 
+import lombok.experimental.UtilityClass;
 import net.xpkgclient.commands.Command;
+import net.xpkgclient.exceptions.XPkgExecutionException;
 
 import java.io.File;
 
 /**
  * Main class. XPkg-Client entry point.
  */
+@UtilityClass
 public final class XPkg {
-
-    /**
-     * There should be no instances of this class.
-     */
-    private XPkg() {}
 
     /**
      * Main method. XPkg-Client entry point.
      *
      * @param args Client arguments.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws XPkgExecutionException {
 
-        Configuration.setXpPath(new File("/Users/arkinsolomon/Desktop/X-Plane 12"));
-
-        try {
-            Command.registerCommands();
-        } catch (Exception e) {
-            e.printStackTrace();
+        Configuration.load();
+        if (!Configuration.hasConfiguredXPInstallation()) {
+            Configuration.setXpPath(new File("/Users/arkinsolomon/Desktop/X-Plane 12"));
+            Configuration.save();
         }
+        System.out.println("Using X-Plane installation: " + Configuration.getXpPath());
 
+
+        Command.registerCommands();
         ScriptExecutionHandler.executeFile("/Users/arkinsolomon/Desktop/test.xpkgs");
     }
 }
