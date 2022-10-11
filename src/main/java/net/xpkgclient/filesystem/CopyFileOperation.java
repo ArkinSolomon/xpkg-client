@@ -35,7 +35,7 @@ public final class CopyFileOperation extends Operation {
     /**
      * Create a new operation to copy {@code file} from its current position to {@code directory}.
      *
-     * @param file      The file to be copied.
+     * @param fileVar   The variable of the file to be copied.
      * @param directory The directory for it to be copied to.
      */
     public CopyFileOperation(XPkgFile fileVar, File directory) {
