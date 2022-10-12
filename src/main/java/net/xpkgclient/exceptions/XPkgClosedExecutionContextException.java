@@ -24,6 +24,6 @@ public class XPkgClosedExecutionContextException extends XPkgInvalidCallExceptio
      * Default constructor with a default message saying the execution context has been closed.
      */
     public XPkgClosedExecutionContextException() {
-        super("Execution context has been closed and is not active", 5);
+        super("Execution context has been closed and is not active", 4);
     }
 }

@@ -212,12 +212,12 @@ Get the string representation of a variable.
 Execute code between this if and the next branch control command if the provided variable or statement evaluates to
 true.
 
-##### isfile [$BOOL]* [$FILE] <u>NOT IMPLEMENTED</u>
+##### isfile [$BOOL]* [$FILE]
 
 Determine if a file variable points to a file. Sets the value of the first variable to true if the file exists, and it
 is a file.
 
-##### isdir [$BOOL]* [$FILE] <u>NOT IMPLEMENTED</u>
+##### isdir [$BOOL]* [$FILE]
 
 Determine if a file variable points to a directory. Sets the value of the first variable to true if the file exists, and
 it is a directory.

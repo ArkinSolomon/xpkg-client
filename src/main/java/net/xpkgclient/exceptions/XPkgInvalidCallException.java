@@ -15,6 +15,8 @@
 
 package net.xpkgclient.exceptions;
 
+import java.util.NoSuchElementException;
+
 /**
  * This exception is called when a method is called when it shouldn't be.
  */
@@ -27,7 +29,18 @@ public class XPkgInvalidCallException extends XPkgExecutionException {
      * @param index The index in the callstack
      */
     public XPkgInvalidCallException(String message, int index) {
-        super("Invalid call to method '" + getCallerMethodName(index) + "': " + message);
+        this(message, index, null);
+    }
+
+    /**
+     * Create a new exception and show the stack trace, and say that another exception caused this one.
+     *
+     * @param message The message for the exception.
+     * @param cause The exception that caused this one.
+     * @param index The index in the callstack
+     */
+    public XPkgInvalidCallException(String message, int index, Throwable cause) {
+        super("Invalid call to method '" + getCallerMethodName(index) + "': " + message, cause);
     }
 
     /**
@@ -37,10 +50,14 @@ public class XPkgInvalidCallException extends XPkgExecutionException {
      * @return The name of the method in the call stack.
      */
     private static String getCallerMethodName(int i) {
-        //noinspection OptionalGetWithoutIsPresent
-        return StackWalker.
-                getInstance().
-                walk(stream -> stream.skip(i).findFirst().get()).
-                getMethodName();
+        try {
+            //noinspection OptionalGetWithoutIsPresent
+            return StackWalker.
+                    getInstance().
+                    walk(stream -> stream.skip(i).findFirst().get()).
+                    getMethodName();
+        }catch (NoSuchElementException e){
+            return "INVALID CALLSTACK SIZE";
+        }
     }
 }

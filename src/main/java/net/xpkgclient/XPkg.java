@@ -15,24 +15,25 @@
 
 package net.xpkgclient;
 
-import lombok.experimental.UtilityClass;
 import net.xpkgclient.commands.Command;
 import net.xpkgclient.exceptions.XPkgExecutionException;
+import net.xpkgclient.gui.MainGUI;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Main class. XPkg-Client entry point.
  */
-@UtilityClass
-public final class XPkg {
+public final class XPkg /*extends Application*/ {
 
     /**
      * Main method. XPkg-Client entry point.
      *
      * @param args Client arguments.
      */
-    public static void main(String[] args) throws XPkgExecutionException {
+    public static void main(String[] args) throws XPkgExecutionException, IOException {
+        Properties.init();
 
         Configuration.load();
         if (!Configuration.hasConfiguredXPInstallation()) {
@@ -41,6 +42,7 @@ public final class XPkg {
         }
         System.out.println("Using X-Plane installation: " + Configuration.getXpPath());
 
+        MainGUI.main(args);
 
         Command.registerCommands();
         ScriptExecutionHandler.executeFile("/Users/arkinsolomon/Desktop/test.xpkgs");

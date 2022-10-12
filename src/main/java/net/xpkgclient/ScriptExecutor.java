@@ -90,17 +90,13 @@ public final class ScriptExecutor {
      */
     private void readMeta() throws XPkgException {
         try (Scanner scanner = new Scanner(head)) {
-
-            // Read the head line by line
             while (scanner.hasNext()) {
                 String line = scanner.nextLine().trim();
                 context.incCounter();
 
-                // Ignore comments and blank lines
                 if (line.startsWith("#") || line.isBlank())
                     continue;
 
-                // Try to split the line in two
                 String[] lineParts = line.split(":");
                 if (lineParts.length != 2)
                     throw new XPkgParseException("Too many ':'s in file head");
@@ -277,7 +273,6 @@ public final class ScriptExecutor {
             String subLine = scanner.nextLine().trim();
             context.incCounter();
 
-            // Ignore all lines with comments in them
             if (subLine.startsWith("#") || subLine.isBlank())
                 continue;
 

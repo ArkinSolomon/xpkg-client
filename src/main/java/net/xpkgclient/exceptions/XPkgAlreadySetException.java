@@ -20,13 +20,12 @@ package net.xpkgclient.exceptions;
  */
 public class XPkgAlreadySetException extends XPkgInvalidCallException {
 
-    //TODO check the index of the callstack
     /**
      * Throw with a simple message.
      *
      * @param var The variable that has already been set.
      */
     public XPkgAlreadySetException(String var) {
-        super("'" + var + "' has already been set", 6);
+        super("Variable already set: '" + var + "' has already been set", 4);
     }
 }

@@ -42,7 +42,6 @@ public final class ScriptExecutionHandler {
             while (reader.hasNext())
                 s.append(reader.nextLine()).append("\n");
 
-            // Execute the file
             ScriptExecutor file = new ScriptExecutor(s.toString());
             file.execute();
         } catch (Throwable e) {
@@ -73,15 +72,12 @@ public final class ScriptExecutionHandler {
      * @throws Throwable An exception which can occur for multiple reasons, such as invalid commands.
      */
     public static ExecutionContext executeText(String text, ExecutionContext context) throws Throwable {
-
-        // Create a context if there is none
         if (context == null)
             return executeText(text);
 
         ScriptExecutor script = new ScriptExecutor(text, context);
         script.execute();
 
-        // Return context (without closing) no matter what
         return context;
     }
 }
