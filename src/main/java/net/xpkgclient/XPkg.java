@@ -34,6 +34,7 @@ public final class XPkg {
      */
     public static void main(String[] args) throws XPkgExecutionException, IOException {
         Properties.init();
+        Command.registerCommands();
 
         Configuration.load();
         if (!Configuration.hasConfiguredXPInstallation()) {
@@ -42,8 +43,6 @@ public final class XPkg {
         }
 
         MainGUI.main(args);
-
-        Command.registerCommands();
         ScriptExecutionHandler.executeFile("/Users/arkinsolomon/Desktop/test.xpkgs");
     }
 }

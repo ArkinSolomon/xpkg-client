@@ -17,6 +17,7 @@ package net.xpkgclient.gui;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -30,14 +31,15 @@ import java.io.File;
 
 public class MainController {
 
+    private static boolean hasGottenPackages = false;
     @FXML
     private TableView<Package> packageTable;
-
     @FXML
     private Label statusMessage;
-
     @FXML
     private Label currentInstallation;
+    @FXML
+    private Button refreshButton;
 
     /**
      * Initialize the controller.
@@ -56,14 +58,49 @@ public class MainController {
         columns.get(3).setCellValueFactory(new PropertyValueFactory<>("author"));
         columns.get(4).setCellValueFactory(new PropertyValueFactory<>("description"));
 
-        packageTable.setPlaceholder(new Label("Downloading package information..."));
+        refreshButton.setOnAction(actionEvent -> refreshPackages());
+        refreshPackages();
+    }
+
+    /**
+     * Refresh all data from remote.
+     */
+    public void refreshPackages() {
+        setStatus("Downloading packages...");
+        setTablePlaceholder("Downloading package information...");
+
+        setAllButtonsEnabled(false);
+        packageTable.getItems().clear();
+
         new Thread(() -> Remote.getAllPackages(packages -> {
-            for (final Package p : packages)
-                addPackage(p);
-            setStatus("Initialized! X-Pkg Client v" + Properties.getVersion());
+
+            packageTable.getItems().setAll(packages);
+
+            if (hasGottenPackages)
+                setStatus("Updated packages");
+            else
+                setStatus("Initialized! X-Pkg Client v" + Properties.getVersion());
+            hasGottenPackages = true;
+            setAllButtonsEnabled(true);
         })).start();
+    }
 
+    /**
+     * Change if all the buttons are enabled or disabled.
+     *
+     * @param enabled True if all the buttons should be enabled, or false otherwise.
+     */
+    private void setAllButtonsEnabled(boolean enabled){
+        refreshButton.setDisable(!enabled);
+    }
 
+    /**
+     * Set the text shown briefly in place of the table when downloading packages.
+     *
+     * @param message The message to show.
+     */
+    public void setTablePlaceholder(String message){
+        packageTable.setPlaceholder(new Label(message));
     }
 
     /**
@@ -83,15 +120,5 @@ public class MainController {
             currentInstallation.setText("No X-Plane installation found");
         else
             currentInstallation.setText("Current Installation: " + installation.getAbsolutePath());
-    }
-
-
-    /**
-     * Add a package to the table view.
-     *
-     * @param pkg The package to add.
-     */
-    public void addPackage(Package pkg) {
-        packageTable.getItems().add(pkg);
     }
 }
