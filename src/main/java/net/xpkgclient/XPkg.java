@@ -25,7 +25,7 @@ import java.io.IOException;
 /**
  * Main class. XPkg-Client entry point.
  */
-public final class XPkg /*extends Application*/ {
+public final class XPkg {
 
     /**
      * Main method. XPkg-Client entry point.
@@ -40,7 +40,6 @@ public final class XPkg /*extends Application*/ {
             Configuration.setXpPath(new File("/Users/arkinsolomon/Desktop/X-Plane 12"));
             Configuration.save();
         }
-        System.out.println("Using X-Plane installation: " + Configuration.getXpPath());
 
         MainGUI.main(args);
 

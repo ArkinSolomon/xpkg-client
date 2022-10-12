@@ -48,7 +48,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox minHeight="100.0" minWidth="585.0" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<VBox minHeight="100.0" minWidth="585.0" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.xpkgclient.gui.MainController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -93,13 +93,13 @@
          <items>
             <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0">
                <content>
-                  <TableView prefHeight="439.0" prefWidth="899.0">
+                  <TableView fx:id="packageTable" prefHeight="440.0" prefWidth="900.0">
                     <columns>
-                      <TableColumn maxWidth="125.0" minWidth="125.0" prefWidth="125.0" text="Id" />
-                      <TableColumn maxWidth="125.0" minWidth="125.0" prefWidth="125.0" text="Name" />
-                        <TableColumn maxWidth="85.0" minWidth="85.0" prefWidth="85.0" text="Version" />
-                        <TableColumn minWidth="95.0" prefWidth="95.0" text="Description" />
-                        <TableColumn maxWidth="155.0" minWidth="155.0" prefWidth="155.0" text="Author" />
+                      <TableColumn editable="false" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" text="Package Identifier" />
+                      <TableColumn editable="false" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" text="Name" />
+                        <TableColumn editable="false" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" sortable="false" text="Version" />
+                        <TableColumn editable="false" maxWidth="155.0" minWidth="155.0" prefWidth="155.0" text="Author" />
+                        <TableColumn editable="false" minWidth="95.0" prefWidth="95.0" sortable="false" text="Description" />
                     </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

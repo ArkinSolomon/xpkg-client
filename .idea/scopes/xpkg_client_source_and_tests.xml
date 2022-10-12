@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="xpkg-client-source-and-tests" pattern="file[xpkg-client]:src/main/java//*||file[xpkg-client]:src/test/java//*" />
+</component>

@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2022. XPkg-Client Contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied limitations under the License.
+ */
+
 package net.xpkgclient.gui;
 
 import javafx.application.Application;
@@ -8,22 +23,15 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import net.xpkgclient.Configuration;
-import net.xpkgclient.Properties;
 import net.xpkgclient.XPkg;
 
-import java.io.File;
 import java.net.URL;
 
 /**
  * The main application window.
  */
 public class MainGUI extends Application {
-
-    private static Label status;
-    private static Label currentInstallation;
 
     /**
      * Start the GUI.
@@ -32,25 +40,6 @@ public class MainGUI extends Application {
      */
     public static void main(String[] args) {
         launch();
-    }
-
-    /**
-     * Set the current status;
-     *
-     * @param statusMessage The new status message.
-     */
-    public static void setStatus(String statusMessage) {
-        status.setText(statusMessage);
-    }
-
-    /**
-     * Display the current X-Plane installation.
-     */
-    public static void setCurrentInstallation(File installation) {
-        if (installation == null)
-            currentInstallation.setText("No X-Plane installation found");
-        else
-            currentInstallation.setText("Current Installation: " + installation.getAbsolutePath());
     }
 
     /**
@@ -64,9 +53,6 @@ public class MainGUI extends Application {
         URL resource = XPkg.class.getResource("/xpkg-client.fxml");
         assert resource != null;
         Parent root = FXMLLoader.load(resource);
-
-        status = (Label) root.lookup("#statusMessage");
-        currentInstallation = (Label) root.lookup("#currentInstallation");
 
         Scene scene = new Scene(root, 1000, 900);
 
@@ -85,17 +71,6 @@ public class MainGUI extends Application {
 
         stage.setMinWidth(prefBounds.getWidth() + deltaW);
         stage.setMinHeight(prefBounds.getHeight() + deltaH);
-
-        postInit();
-    }
-
-    /**
-     * Code to be run after the stage is initialized.
-     */
-    private void postInit() {
-
-        setStatus("X-Pkg Client v" + Properties.getVersion());
-        setCurrentInstallation(Configuration.getXpPath());
     }
 
     /**
