@@ -21,7 +21,7 @@ import net.xpkgclient.vars.VarType;
 /**
  * Exception thrown when the XPKGS script runner expects a certain type and gets another.
  */
-public class XPkgTypeMismatchException extends XPkgRuntimeException {
+public class XPkgTypeMismatchException extends XPkgScriptRuntimeException {
 
     /**
      * Create a new exception with a message saying that a certain argument for a command required a certain type, but got a different one.

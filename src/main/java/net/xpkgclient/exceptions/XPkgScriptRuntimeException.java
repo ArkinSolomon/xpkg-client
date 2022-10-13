@@ -18,12 +18,12 @@ package net.xpkgclient.exceptions;
 /**
  * Top level exception for script errors that occur while running.
  */
-public class XPkgRuntimeException extends XPkgScriptRunnerException implements ILineException<XPkgRuntimeException> {
+public class XPkgScriptRuntimeException extends XPkgScriptRunnerException implements ILineException<XPkgScriptRuntimeException> {
 
     /**
      * Default constructor, creates a new exception with no message.
      */
-    public XPkgRuntimeException() {
+    public XPkgScriptRuntimeException() {
         super();
     }
 
@@ -32,7 +32,7 @@ public class XPkgRuntimeException extends XPkgScriptRunnerException implements I
      *
      * @param message The message for the exception.
      */
-    public XPkgRuntimeException(String message) {
+    public XPkgScriptRuntimeException(String message) {
         super(message);
     }
 
@@ -42,7 +42,7 @@ public class XPkgRuntimeException extends XPkgScriptRunnerException implements I
      * @param message The message for the exception.
      * @param cause   The cause of the exception.
      */
-    public XPkgRuntimeException(String message, Throwable cause) {
+    public XPkgScriptRuntimeException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -51,7 +51,7 @@ public class XPkgRuntimeException extends XPkgScriptRunnerException implements I
      *
      * @param cause The cause of the exception.
      */
-    public XPkgRuntimeException(Throwable cause) {
+    public XPkgScriptRuntimeException(Throwable cause) {
         super(cause);
     }
 
@@ -61,7 +61,7 @@ public class XPkgRuntimeException extends XPkgScriptRunnerException implements I
      * @param line The line number at which the exception occurred.
      * @param e    The exception to add the line to.
      */
-    private XPkgRuntimeException(int line, XPkgRuntimeException e) {
+    private XPkgScriptRuntimeException(int line, XPkgScriptRuntimeException e) {
         this("Error at line " + line + ": " + e.getMessage(), e);
     }
 
@@ -71,8 +71,8 @@ public class XPkgRuntimeException extends XPkgScriptRunnerException implements I
      * @param line The line number at which the exception occurred.
      */
     @Override
-    public XPkgRuntimeException setLine(int line) {
-        return new XPkgRuntimeException(line, this);
+    public XPkgScriptRuntimeException setLine(int line) {
+        return new XPkgScriptRuntimeException(line, this);
     }
 
 }

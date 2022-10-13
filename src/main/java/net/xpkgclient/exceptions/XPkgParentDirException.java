@@ -20,7 +20,7 @@ import java.io.File;
 /**
  * This exception is thrown when a user tries to create a file or directory where the parent directory doesn't exist.
  */
-public class XPkgParentDirException extends XPkgRuntimeException {
+public class XPkgParentDirException extends XPkgScriptRuntimeException {
 
     /**
      * Create a new exception saying that the parent directory doesn't exist.

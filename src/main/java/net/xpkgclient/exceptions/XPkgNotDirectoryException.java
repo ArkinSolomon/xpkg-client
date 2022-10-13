@@ -20,7 +20,7 @@ import java.io.File;
 /**
  * Exception thrown if we expected a directory, but got a file instead.
  */
-public class XPkgNotDirectoryException extends XPkgRuntimeException {
+public class XPkgNotDirectoryException extends XPkgScriptRuntimeException {
 
     /**
      * Say the item at the specified was not a directory when it was expected to be.

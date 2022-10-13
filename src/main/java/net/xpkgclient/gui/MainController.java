@@ -15,6 +15,7 @@
 
 package net.xpkgclient.gui;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -24,12 +25,17 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import net.xpkgclient.Configuration;
 import net.xpkgclient.Properties;
+import net.xpkgclient.exceptions.XPkgFetchException;
 import net.xpkgclient.packagemanager.Package;
 import net.xpkgclient.packagemanager.Remote;
 
 import java.io.File;
+import java.io.IOException;
 
-public class MainController {
+/**
+ * This class controls the main GUI elements.
+ */
+public final class MainController {
 
     private static boolean hasGottenPackages = false;
     @FXML
@@ -72,17 +78,31 @@ public class MainController {
         setAllButtonsEnabled(false);
         packageTable.getItems().clear();
 
-        new Thread(() -> Remote.getAllPackages(packages -> {
+        new Thread(() -> {
+            try {
+                Remote.getAllPackages(packages -> {
+                    packageTable.getItems().setAll(packages);
 
-            packageTable.getItems().setAll(packages);
+                    String downloadedPackages = packages.size() + " packages downloaded";
+                    if (hasGottenPackages)
+                        setStatus(downloadedPackages);
+                    else
+                        setStatus("Initialized! X-Pkg Client v" + Properties.getVersion() + " [" + downloadedPackages + "]");
 
-            if (hasGottenPackages)
-                setStatus("Updated packages");
-            else
-                setStatus("Initialized! X-Pkg Client v" + Properties.getVersion());
-            hasGottenPackages = true;
-            setAllButtonsEnabled(true);
-        })).start();
+                    // We need to duplicate this across the try/catch because if we don't the finally block will run before the status is set, meaning that this if statement becomes useless
+                    hasGottenPackages = true;
+                    setAllButtonsEnabled(true);
+                });
+            } catch (IOException | XPkgFetchException e) {
+                Platform.runLater(() -> {
+                    e.printStackTrace();
+                    setStatus("Could not get packages");
+                    setTablePlaceholder("Could not get packages");
+                    hasGottenPackages = true;
+                    setAllButtonsEnabled(true);
+                });
+            }
+        }).start();
     }
 
     /**
@@ -90,7 +110,7 @@ public class MainController {
      *
      * @param enabled True if all the buttons should be enabled, or false otherwise.
      */
-    private void setAllButtonsEnabled(boolean enabled){
+    private void setAllButtonsEnabled(boolean enabled) {
         refreshButton.setDisable(!enabled);
     }
 
@@ -99,7 +119,7 @@ public class MainController {
      *
      * @param message The message to show.
      */
-    public void setTablePlaceholder(String message){
+    public void setTablePlaceholder(String message) {
         packageTable.setPlaceholder(new Label(message));
     }
 

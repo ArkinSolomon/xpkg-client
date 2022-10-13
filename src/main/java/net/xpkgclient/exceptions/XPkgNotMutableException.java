@@ -20,7 +20,7 @@ import java.io.File;
 /**
  * Exception thrown when trying to modify a file or resource that is not mutable.
  */
-public class XPkgNotMutableException extends XPkgRuntimeException {
+public class XPkgNotMutableException extends XPkgScriptRuntimeException {
 
     /**
      * Create a new exception saying that a file is not mutable.

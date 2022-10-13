@@ -20,7 +20,7 @@ import java.io.File;
 /**
  * Exception thrown when we expect file or directory to exist, but it doesn't.
  */
-public class XPkgNoFileException extends XPkgRuntimeException {
+public class XPkgNoFileException extends XPkgScriptRuntimeException {
 
     /**
      * Say the file or directory was not found.

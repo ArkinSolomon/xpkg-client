@@ -22,7 +22,7 @@ import net.xpkgclient.exceptions.XPkgArgLenException;
 import net.xpkgclient.exceptions.XPkgException;
 import net.xpkgclient.exceptions.XPkgInternalException;
 import net.xpkgclient.exceptions.XPkgNotMutableException;
-import net.xpkgclient.exceptions.XPkgRuntimeException;
+import net.xpkgclient.exceptions.XPkgScriptRuntimeException;
 import net.xpkgclient.exceptions.XPkgTypeMismatchException;
 import net.xpkgclient.filesystem.RenameOperation;
 import net.xpkgclient.vars.VarType;
@@ -70,7 +70,7 @@ final class RenameCommand extends Command {
         }
 
         if (ParseHelper.stringContains(newName, "~%/\\") || newName.contains(".."))
-            throw new XPkgRuntimeException("Invalid filename: The file '" + fileVar + "' can not be renamed to '" + newName + "' since the new name is invalid");
+            throw new XPkgScriptRuntimeException("Invalid filename: The file '" + fileVar + "' can not be renamed to '" + newName + "' since the new name is invalid");
 
         RenameOperation op = new RenameOperation(fileVar, newName);
         context.fileTracker.runOperation(op);

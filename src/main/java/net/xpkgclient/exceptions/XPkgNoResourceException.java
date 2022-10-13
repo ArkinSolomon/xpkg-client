@@ -18,7 +18,7 @@ package net.xpkgclient.exceptions;
 /**
  * This exception is thrown when a resource id is valid, but is not found on the remote server.
  */
-public class XPkgNoResourceException extends XPkgRuntimeException {
+public class XPkgNoResourceException extends XPkgScriptRuntimeException {
 
     /**
      * Create a new exception saying that the resource doesn't exist.

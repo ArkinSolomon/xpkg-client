@@ -20,7 +20,7 @@ import net.xpkgclient.commands.CommandName;
 /**
  * Exception thrown if a variable or string is not a pathlike when a pathlike variable or string was expected.
  */
-public class XPkgNotPathLikeException extends XPkgRuntimeException {
+public class XPkgNotPathLikeException extends XPkgScriptRuntimeException {
 
     /**
      * Create a new exception stating that a variable's value was not pathlike.

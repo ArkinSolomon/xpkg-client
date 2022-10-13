@@ -18,7 +18,7 @@ package net.xpkgclient.exceptions;
 /**
  * Exception thrown when a variable is undefined.
  */
-public class XPkgUndefinedVarException extends XPkgRuntimeException {
+public class XPkgUndefinedVarException extends XPkgScriptRuntimeException {
 
     /**
      * Say that a variable is undefined.

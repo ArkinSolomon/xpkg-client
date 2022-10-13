@@ -43,6 +43,5 @@ public final class XPkg {
         }
 
         MainGUI.main(args);
-        ScriptExecutionHandler.executeFile("/Users/arkinsolomon/Desktop/test.xpkgs");
     }
 }

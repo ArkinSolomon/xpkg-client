@@ -20,7 +20,7 @@ import java.io.File;
 /**
  * This exception is thrown when a user tries to create a file or directory that already exists.
  */
-public class XPkgFileExistsException extends XPkgRuntimeException {
+public class XPkgFileExistsException extends XPkgScriptRuntimeException {
 
     /**
      * Create a new exception saying that the file already exists.

@@ -20,7 +20,7 @@ import net.xpkgclient.commands.CommandName;
 /**
  * Exception thrown when a command expects a resource id but got an invalid one.
  */
-public class XPkgInvalidResourceIdException extends XPkgRuntimeException {
+public class XPkgInvalidResourceIdException extends XPkgScriptRuntimeException {
 
     /**
      * Say that a resource id was invalid and that a command expected it as a certain argument.
@@ -42,9 +42,8 @@ public class XPkgInvalidResourceIdException extends XPkgRuntimeException {
      * @param e               The exception that caused this one.
      */
     public XPkgInvalidResourceIdException(CommandName cmd, String argC, String invalidResource, Throwable e) {
-        super("Invalid resource id: The command '" + cmd + "' expected the " + argC + " argument to be a resource id, but instead got the invalid resource id '" + invalidResource + "'");
+        super("Invalid resource id: The command '" + cmd + "' expected the " + argC + " argument to be a resource id, but instead got the invalid resource id '" + invalidResource + "'", e);
     }
-
 
     /**
      * Say that a resource id was invalid.
