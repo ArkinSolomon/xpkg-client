@@ -16,18 +16,24 @@
 package net.xpkgclient.gui;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import net.xpkgclient.Configuration;
 import net.xpkgclient.Properties;
 import net.xpkgclient.exceptions.XPkgFetchException;
 import net.xpkgclient.packagemanager.Package;
 import net.xpkgclient.packagemanager.Remote;
+import net.xpkgclient.packagemanager.Version;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,6 +52,16 @@ public final class MainController {
     private Label currentInstallation;
     @FXML
     private Button refreshButton;
+    @FXML
+    private Button packageDisplayClose;
+    @FXML
+    private Label packageDisplayName;
+    @FXML
+    private Label packageDisplayId;
+    @FXML
+    private TextArea packageDisplayDescription;
+    @FXML
+    private ChoiceBox<Version> packageDisplaySelector;
 
     /**
      * Initialize the controller.
@@ -63,6 +79,25 @@ public final class MainController {
         columns.get(2).setCellValueFactory(new PropertyValueFactory<>("latestVersionStr"));
         columns.get(3).setCellValueFactory(new PropertyValueFactory<>("author"));
         columns.get(4).setCellValueFactory(new PropertyValueFactory<>("description"));
+
+        packageTable.setRowFactory(tv -> {
+            TableRow<Package> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY
+                        && event.getClickCount() == 2) {
+
+                    Package clickedPkg = row.getItem();
+                    packageDisplayName.setText(clickedPkg.getPackageName());
+                    packageDisplayId.setText(clickedPkg.getPackageId());
+                    packageDisplayDescription.setText(clickedPkg.getDescription());
+
+                    ObservableList<Version> versions = FXCollections.observableList(clickedPkg.getVersions().keySet().stream().toList());
+                    packageDisplaySelector.setItems(versions);
+                    packageDisplaySelector.setValue(clickedPkg.getLatestVersion());
+                }
+            });
+            return row;
+        });
 
         refreshButton.setOnAction(actionEvent -> refreshPackages());
         refreshPackages();

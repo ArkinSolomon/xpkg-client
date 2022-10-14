@@ -19,6 +19,8 @@ import lombok.Getter;
 import net.xpkgclient.exceptions.XPkgInvalidVersionException;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * A class to compare different versions and version strings.
  */
@@ -59,10 +61,10 @@ public final class Version {
         if (partsStr.length > 3 || partsStr.length == 0)
             throw new XPkgInvalidVersionException(versionStr);
 
-       for (final String part : partsStr) {
-           if (part.isBlank())
-               throw new XPkgInvalidVersionException(versionStr);
-       }
+        for (final String part : partsStr) {
+            if (part.isBlank())
+                throw new XPkgInvalidVersionException(versionStr);
+        }
 
         try {
             major = Integer.parseInt(partsStr[0]);
@@ -154,5 +156,19 @@ public final class Version {
         if (o == null || getClass() != o.getClass()) return false;
         Version version = (Version) o;
         return major == version.major && minor == version.minor && patch == version.patch;
+    }
+
+    /**
+     * Attempts to generate a unique identifier. It can be either the major, minor, and patch numbers padded to 3 digits put together, but if that fails, it will just return the hash of the three numbers together using {@link Objects#hash(Object...)}.
+     *
+     * @return The unique identifier.
+     */
+    @Override
+    public int hashCode() {
+        try {
+            return major * 1000000 + minor * 1000 + patch;
+        } catch (Throwable e) {
+            return Objects.hash(major, minor, patch);
+        }
     }
 }
