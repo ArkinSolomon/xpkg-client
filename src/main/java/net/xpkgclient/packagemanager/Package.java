@@ -16,6 +16,13 @@
 package net.xpkgclient.packagemanager;
 
 import lombok.Getter;
+import net.xpkgclient.exceptions.XPkgInvalidVersionException;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * An instance of this class represents a single package.
@@ -44,7 +51,15 @@ public final class Package {
      * @return The version of the package.
      */
     @Getter
-    private final String version;
+    private final Version latestVersion;
+
+    /**
+     * The latest version of the package (as a string so that JavaFX can access it when creating rows).
+     *
+     * @return The latest version of the package as a string.
+     */
+    @Getter
+    private final String latestVersionStr;
 
     /**
      * The package description.
@@ -63,17 +78,39 @@ public final class Package {
     private final String author;
 
     /**
+     * All the (published) versions that a package has, indexed by version, with a value of the version hash.
+     *
+     * @return All the (published) versions that a package has, indexed by version, with a value of the version hash.
+     */
+    @Getter
+    Map<String, String> versions;
+
+    /**
      * @param packageId   The package identifier.
      * @param packageName The name of the package.
-     * @param version     The version of the package.
+     * @param versions    The versions of the package, with the .
      * @param description The package description.
      * @param author      The package author.
      */
-    public Package(String packageId, String packageName, String version, String description, String author) {
+    public Package(String packageId, String packageName, @NotNull Map<String, String> versions, String description, String author) {
         this.packageId = packageId;
         this.packageName = packageName;
-        this.version = version;
+        this.versions = versions;
         this.description = description;
         this.author = author;
+
+        ArrayList<String> versionStrings = new ArrayList<>(versions.keySet());
+        List<Version> sortedVersions = new ArrayList<>(versionStrings.stream().map(v -> {
+            try {
+                return new Version(v);
+            } catch (XPkgInvalidVersionException e) {
+                throw new RuntimeException(e);
+            }
+        }).toList());
+        sortedVersions.sort(Comparator.comparingInt(Version::getMajor)
+                .thenComparingInt(Version::getMinor)
+                .thenComparingInt(Version::getPatch));
+        latestVersion = sortedVersions.get(versionStrings.size() - 1);
+        latestVersionStr = latestVersion.toString();
     }
 }

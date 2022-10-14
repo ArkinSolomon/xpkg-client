@@ -33,6 +33,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class handles getting packages from the remote server.
@@ -63,10 +64,13 @@ public class Remote extends Thread {
             JSONObject pkg = (JSONObject) pkgObj;
             String packageId = pkg.getString("packageId");
             String packageName = pkg.getString("packageName");
-            String latestVersion = pkg.getString("latestVersion");
             String authorName = pkg.getString("authorName");
             String description = pkg.getString("description");
-            packages.add(new Package(packageId, packageName, latestVersion, description, authorName));
+
+            @SuppressWarnings("unchecked")
+            Map<String, String> versions = (Map<String, String>)(Map<String, ?>) pkg.getJSONObject("versions").toMap();
+
+            packages.add(new Package(packageId, packageName, versions, description, authorName));
         }
 
         Platform.runLater(() -> cb.execute(packages));
@@ -88,7 +92,6 @@ public class Remote extends Thread {
             while ((cp = rd.read()) != -1)
                 sb.append((char) cp);
             String jsonText = sb.toString();
-            System.out.println(jsonText);
             return new JSONObject(jsonText);
         }
     }

@@ -60,7 +60,7 @@ public final class MainController {
         ObservableList<TableColumn<Package, String>> columns = (ObservableList<TableColumn<Package, String>>) ((Object) packageTable.getColumns());
         columns.get(0).setCellValueFactory(new PropertyValueFactory<>("packageId"));
         columns.get(1).setCellValueFactory(new PropertyValueFactory<>("packageName"));
-        columns.get(2).setCellValueFactory(new PropertyValueFactory<>("version"));
+        columns.get(2).setCellValueFactory(new PropertyValueFactory<>("latestVersionStr"));
         columns.get(3).setCellValueFactory(new PropertyValueFactory<>("author"));
         columns.get(4).setCellValueFactory(new PropertyValueFactory<>("description"));
 
