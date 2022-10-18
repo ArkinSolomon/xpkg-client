@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * This class tests creating versions from strings and comparing them.
  */
-public class VersionTests {
+public final class VersionTests {
 
     @Test
     @SneakyThrows(XPkgInvalidVersionException.class)

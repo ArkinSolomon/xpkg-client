@@ -16,8 +16,8 @@
 package net.xpkgclient.commands;
 
 import net.lingala.zip4j.ZipFile;
-import net.xpkgclient.ExecutionContext;
-import net.xpkgclient.ParseHelper;
+import net.xpkgclient.packagemanager.ExecutionContext;
+import net.xpkgclient.packagemanager.ParseHelper;
 import net.xpkgclient.exceptions.QuickHandles;
 import net.xpkgclient.exceptions.XPkgArgLenException;
 import net.xpkgclient.exceptions.XPkgException;

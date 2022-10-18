@@ -17,6 +17,7 @@ package net.xpkgclient.exceptions;
 
 import net.xpkgclient.commands.CommandName;
 import net.xpkgclient.vars.VarType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Exception thrown when the XPKGS script runner expects a certain type and gets another.
@@ -56,6 +57,7 @@ public class XPkgTypeMismatchException extends XPkgScriptRuntimeException {
      * @param argC     The ordinal index (first, second, third, fourth, etc.) of the argument which had a type mismatch.
      * @param expected The expected types of the variable.
      * @param actual   The actual type of the variable.
+     * @throws XPkgExecutionException Exception thrown if there is one or fewer elements in {@code expected}.
      */
     public XPkgTypeMismatchException(CommandName command, String argC, VarType[] expected, VarType actual) throws XPkgExecutionException {
         this(command, argC, expected, actual, null);
@@ -69,8 +71,9 @@ public class XPkgTypeMismatchException extends XPkgScriptRuntimeException {
      * @param expected The expected types of the variable.
      * @param actual   The actual type of the variable.
      * @param cause    The exception that caused this.
+     * @throws XPkgExecutionException Exception thrown if there is one or fewer elements in {@code expected}.
      */
-    public XPkgTypeMismatchException(CommandName command, String argC, VarType[] expected, VarType actual, Throwable cause) throws XPkgExecutionException {
+    public XPkgTypeMismatchException(CommandName command, String argC, VarType @NotNull [] expected, VarType actual, Throwable cause) throws XPkgExecutionException {
         super("The " + command + " expected the " + argC + " variable to be of type " + String.join(" or ") + " but got " + actual + " instead", cause);
         if (expected.length == 0)
             throw new XPkgExecutionException("Tried to throw an XPkgTypeMismatchException with expected types, but provided no types", this);

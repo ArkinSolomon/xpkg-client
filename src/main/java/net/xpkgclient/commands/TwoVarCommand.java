@@ -15,14 +15,15 @@
 
 package net.xpkgclient.commands;
 
-import net.xpkgclient.ExecutionContext;
-import net.xpkgclient.ParseHelper;
+import net.xpkgclient.packagemanager.ExecutionContext;
+import net.xpkgclient.packagemanager.ParseHelper;
 import net.xpkgclient.exceptions.QuickHandles;
 import net.xpkgclient.exceptions.XPkgArgLenException;
 import net.xpkgclient.exceptions.XPkgException;
 import net.xpkgclient.exceptions.XPkgInternalException;
 import net.xpkgclient.exceptions.XPkgInvalidVarNameException;
 import net.xpkgclient.vars.XPkgVar;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This is a top level command, used to easily parse for commands that only require an assignee, and a variable, where the first argument is the name of a variable, and the second argument is an existing variable.
@@ -38,25 +39,18 @@ abstract class TwoVarCommand extends Command {
      * @param context The execution context to get variables from.
      * @throws XPkgException Exception can be thrown due to user error, like argument length, or invalid variable names, or something else.
      */
-    protected static void updateValues(String[] args, ExecutionContext context) throws XPkgException {
+    protected static void updateValues(CommandName name, String @NotNull [] args, ExecutionContext context) throws XPkgException {
         if (args.length != 2)
-            throw new XPkgArgLenException(CommandName.EXISTS, 2, args.length);
+            throw new XPkgArgLenException(name, 2, args.length);
 
         assigneeName = args[0];
         if (!ParseHelper.isValidVarName(assigneeName))
-            throw new XPkgInvalidVarNameException(CommandName.EXISTS, "first", assigneeName);
+            throw new XPkgInvalidVarNameException(name, "first", assigneeName);
 
         try {
             secondArg = context.checkExistingVar(args[1]);
         } catch (XPkgInternalException e) {
-            throw QuickHandles.handleCheckExistingVar(CommandName.EXISTS, "second", e);
+            throw QuickHandles.handleCheckExistingVar(name, "second", e);
         }
     }
-
-    /**
-     * The name of the command that is using this as a parent class.
-     *
-     * @return The name of the command that is using this as a parent class.
-     */
-    protected abstract CommandName commandName();
 }

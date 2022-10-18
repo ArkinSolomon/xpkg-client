@@ -40,4 +40,25 @@ public class XPkgFetchException extends XPkgException {
     public XPkgFetchException(URL url, Throwable cause){
         super("Request failed: Request to '" + url + "' failed", cause);
     }
+
+    /**
+     * Create a new exception with a message saying that the request failed, and give a status code.
+     *
+     * @param url The URL that we could not fetch successfully.
+     * @param code The status code from the request.
+     */
+    public XPkgFetchException(URL url, int code){
+        this(url, code, null);
+    }
+
+    /**
+     * Create a new exception with a message saying that the request failed, give a status code, and that another exception caused this one.
+     *
+     * @param url The URL that we could not get.
+     * @param code The status code from the request.
+     * @param cause The exception that caused this one.
+     */
+    public XPkgFetchException(URL url, int code, Throwable cause){
+        super("Request failed: Request to '" + url + "' failed (status: " + code + ")", cause);
+    }
 }

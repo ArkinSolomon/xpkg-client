@@ -20,10 +20,9 @@ import net.xpkgclient.exceptions.XPkgInvalidVersionException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * An instance of this class represents a single package.
@@ -79,48 +78,39 @@ public final class Package {
     private final String author;
 
     /**
-     * All the (published) versions that a package has, with a value of the version hash.
+     * All the (published) versions that a package has..
      *
-     * @return All the (published) versions that a package has, with a value of the version hash.
+     * @return All the (published) versions that a package has.
      */
     @Getter
-    Map<Version, String> versions;
+    Version[] versions;
 
     /**
-     * @param packageId   The package identifier.
-     * @param packageName The name of the package.
-     * @param versionStringMap    The versions of the package, with the version string as a key, and it's hash as the value.
-     * @param description The package description.
-     * @param author      The package author.
+     * @param packageId      The package identifier.
+     * @param packageName    The name of the package.
+     * @param versionStrings The versions of the package as version strings.
+     * @param description    The package description.
+     * @param author         The package author.
      */
-    public Package(String packageId, String packageName, @NotNull Map<String, String> versionStringMap, String description, String author) {
+    public Package(String packageId, String packageName, @NotNull String[] versionStrings, String description, String author) {
         this.packageId = packageId;
         this.packageName = packageName;
         this.description = description;
         this.author = author;
 
-        ArrayList<String> versionStrings = new ArrayList<>(versionStringMap.keySet());
-        HashMap<Version, String> versions = new HashMap<>();
-        versionStrings.forEach(v -> {
+        this.versions = Arrays.stream(versionStrings).map(versionStr -> {
             try {
-                versions.put(new Version(v), versionStringMap.get(v));
+                return new Version(versionStr);
             } catch (XPkgInvalidVersionException e) {
                 throw new RuntimeException(e);
             }
-        });
-        this.versions = versions;
+        }).toArray(Version[]::new);
 
-        List<Version> sortedVersions = new ArrayList<>(versionStrings.stream().map(v -> {
-            try {
-                return new Version(v);
-            } catch (XPkgInvalidVersionException e) {
-                throw new RuntimeException(e);
-            }
-        }).toList());
+        List<Version> sortedVersions = new ArrayList<>(List.of(this.versions));
         sortedVersions.sort(Comparator.comparingInt(Version::getMajor)
                 .thenComparingInt(Version::getMinor)
                 .thenComparingInt(Version::getPatch));
-        latestVersion = sortedVersions.get(versionStrings.size() - 1);
+        latestVersion = sortedVersions.get(versionStrings.length - 1);
         latestVersionStr = latestVersion.toString();
     }
 }

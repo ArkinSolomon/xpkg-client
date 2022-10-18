@@ -16,7 +16,7 @@
 package net.xpkgclient.commands;
 
 import net.xpkgclient.ConfigSetupExtension;
-import net.xpkgclient.ExecutionContext;
+import net.xpkgclient.packagemanager.ExecutionContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 

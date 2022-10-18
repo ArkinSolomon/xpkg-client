@@ -15,7 +15,7 @@
 
 package net.xpkgclient.commands;
 
-import net.xpkgclient.ExecutionContext;
+import net.xpkgclient.packagemanager.ExecutionContext;
 import net.xpkgclient.exceptions.XPkgException;
 import net.xpkgclient.exceptions.XPkgTypeMismatchException;
 import net.xpkgclient.vars.VarType;
@@ -35,20 +35,10 @@ final class IsdirCommand extends TwoVarCommand {
      * @throws XPkgException Can be thrown for multiple reasons such as user error, or a type mismatch, or another reason.
      */
     public static void execute(String[] args, ExecutionContext context) throws XPkgException {
-        updateValues(args, context);
+        updateValues(CommandName.ISDIR, args, context);
 
         if (!(secondArg instanceof XPkgFile fileVar))
             throw new XPkgTypeMismatchException(CommandName.ISDIR, "second", VarType.FILE, secondArg.getVarType());
         context.setVar(assigneeName, new XPkgBool(fileVar.exists() && fileVar.isDirectory()));
-    }
-
-    /**
-     * The name of the command that is using this as a parent class.
-     *
-     * @return The name of the command that is using this as a parent class.
-     */
-    @Override
-    protected CommandName commandName() {
-        return CommandName.ISDIR;
     }
 }

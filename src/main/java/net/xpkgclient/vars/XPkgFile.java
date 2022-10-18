@@ -31,6 +31,7 @@ public class XPkgFile extends XPkgVar {
      * Create a new file variable pointing to a file.
      *
      * @param file The file that this variable points to initially.
+     * @param parentResource The resource that this file is within.
      */
     public XPkgFile(File file, XPkgResource parentResource) {
         this.file = file;

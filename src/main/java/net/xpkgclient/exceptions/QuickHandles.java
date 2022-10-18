@@ -15,17 +15,20 @@
 
 package net.xpkgclient.exceptions;
 
-import net.xpkgclient.ExecutionContext;
+import lombok.experimental.UtilityClass;
+import net.xpkgclient.packagemanager.ExecutionContext;
 import net.xpkgclient.commands.CommandName;
+import net.xpkgclient.packagemanager.ParseHelper;
 import net.xpkgclient.vars.VarType;
 
 /**
  * This class provides static methods for quick exception handling of internal exceptions that occur commonly.
  */
+@UtilityClass
 public class QuickHandles {
 
     /**
-     * This static method handles any {@link net.xpkgclient.exceptions.XPkgInternalException} that is thrown by {@link net.xpkgclient.ParseHelper#getStr(String[], ExecutionContext)}.
+     * This static method handles any {@link net.xpkgclient.exceptions.XPkgInternalException} that is thrown by {@link ParseHelper#getStr(String[], ExecutionContext)}.
      *
      * @param cmd The command that is handling the exception thrown.
      * @param e   The {@link net.xpkgclient.exceptions.XPkgInternalException} thrown.

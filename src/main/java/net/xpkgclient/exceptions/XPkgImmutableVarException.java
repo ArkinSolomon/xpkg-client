@@ -17,8 +17,10 @@ package net.xpkgclient.exceptions;
 
 // Exception when trying to change an immutable variable
 
+import net.xpkgclient.packagemanager.ExecutionContext;
+
 /**
- * Exception thrown when trying to change an immutable variable, which is one of the default/environment variables created when the {@link net.xpkgclient.ExecutionContext} is created.
+ * Exception thrown when trying to change an immutable variable, which is one of the default/environment variables created when the {@link ExecutionContext} is created.
  */
 public class XPkgImmutableVarException extends XPkgScriptRuntimeException implements ILineException<XPkgScriptRuntimeException> {
 

@@ -24,18 +24,26 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * This operation renames a file or directory.
+ */
 public final class RenameOperation extends Operation {
 
     private final File originalFile;
     private final Path newFile;
 
+    /**
+     * Create a new operation to rename a file or directory at the location of the value of {@code originalFileVar} with the name of {@code newName}.
+     * @param originalFileVar The variable that contains the original location of the file.
+     * @param newName The new name of the file to rename.
+     * @throws XPkgFileExistsException Exception thrown if the original file or directory is being renamed to a file or directory that exists.
+     */
     public RenameOperation(@NotNull XPkgFile originalFileVar, String newName) throws XPkgFileExistsException {
         originalFile = originalFileVar.getValue();
         newFile = originalFile.toPath().resolveSibling(newName);
 
         if (Files.exists(newFile))
             throw new XPkgFileExistsException(newFile.toFile());
-
     }
 
     /**

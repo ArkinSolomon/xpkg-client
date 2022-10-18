@@ -28,15 +28,19 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import net.xpkgclient.Configuration;
 import net.xpkgclient.Properties;
 import net.xpkgclient.exceptions.XPkgFetchException;
 import net.xpkgclient.packagemanager.Package;
 import net.xpkgclient.packagemanager.Remote;
+import net.xpkgclient.packagemanager.ScriptExecutionHandler;
 import net.xpkgclient.packagemanager.Version;
+import org.apache.commons.io.FileUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * This class controls the main GUI elements.
@@ -62,6 +66,10 @@ public final class MainController {
     private TextArea packageDisplayDescription;
     @FXML
     private ChoiceBox<Version> packageDisplaySelector;
+    @FXML
+    private Button installButton;
+
+    private Package currentPkg;
 
     /**
      * Initialize the controller.
@@ -82,22 +90,11 @@ public final class MainController {
 
         packageTable.setRowFactory(tv -> {
             TableRow<Package> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY
-                        && event.getClickCount() == 2) {
-
-                    Package clickedPkg = row.getItem();
-                    packageDisplayName.setText(clickedPkg.getPackageName());
-                    packageDisplayId.setText(clickedPkg.getPackageId());
-                    packageDisplayDescription.setText(clickedPkg.getDescription());
-
-                    ObservableList<Version> versions = FXCollections.observableList(clickedPkg.getVersions().keySet().stream().toList());
-                    packageDisplaySelector.setItems(versions);
-                    packageDisplaySelector.setValue(clickedPkg.getLatestVersion());
-                }
-            });
+            row.setOnMouseClicked(event -> updatePackageDisplay(event, row));
             return row;
         });
+
+        installButton.setOnAction(ev -> installCurrentPackage());
 
         refreshButton.setOnAction(actionEvent -> refreshPackages());
         refreshPackages();
@@ -128,7 +125,7 @@ public final class MainController {
                     hasGottenPackages = true;
                     setAllButtonsEnabled(true);
                 });
-            } catch (IOException | XPkgFetchException e) {
+            } catch (XPkgFetchException e) {
                 Platform.runLater(() -> {
                     e.printStackTrace();
                     setStatus("Could not get packages");
@@ -138,6 +135,48 @@ public final class MainController {
                 });
             }
         }).start();
+    }
+
+    /**
+     * Update the display with a from a click on the table.
+     *
+     * @param ev  The mouse event of the row that was clicked.
+     * @param row The row of the table that was clicked.
+     */
+    private void updatePackageDisplay(MouseEvent ev, @NotNull TableRow<Package> row) {
+        if (!row.isEmpty() && ev.getButton() == MouseButton.PRIMARY
+                && ev.getClickCount() == 2) {
+
+            currentPkg = row.getItem();
+            packageDisplayName.setText(currentPkg.getPackageName());
+            packageDisplayId.setText(currentPkg.getPackageId());
+            packageDisplayDescription.setText(currentPkg.getDescription());
+
+            ObservableList<Version> versions = FXCollections.observableList(Arrays.stream(currentPkg.getVersions()).toList());
+            packageDisplaySelector.setItems(versions);
+            packageDisplaySelector.setValue(currentPkg.getLatestVersion());
+        }
+    }
+
+    /**
+     * Install the currently displayed package.
+     */
+    private void installCurrentPackage() {
+        new Thread(() -> Remote.downloadPackage(currentPkg, packageDisplaySelector.getValue(), (err, loc) -> {
+            if (err != null) {
+                err.printStackTrace();
+                setStatus("Error occurred while installing package");
+                return;
+            }
+
+            ScriptExecutionHandler.executeFile(new File(loc, "install.xpkgs.txt").getAbsolutePath());
+
+            try {
+                FileUtils.deleteDirectory(loc.getParentFile());
+            }catch(Throwable e){
+                throw new RuntimeException(e);
+            }
+        })).start();
     }
 
     /**

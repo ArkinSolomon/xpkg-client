@@ -23,8 +23,6 @@ public class XPkgInternalException extends Exception {
     // Data held by this exception for passing up secondary information.
     Object data;
 
-    // Basic constructors
-
     /**
      * Create an exception with no message.
      */

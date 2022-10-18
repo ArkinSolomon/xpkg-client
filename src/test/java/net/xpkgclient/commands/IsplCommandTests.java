@@ -16,7 +16,7 @@
 package net.xpkgclient.commands;
 
 import net.xpkgclient.ConfigSetupExtension;
-import net.xpkgclient.ExecutionContext;
+import net.xpkgclient.packagemanager.ExecutionContext;
 import net.xpkgclient.vars.VarType;
 import net.xpkgclient.vars.XPkgBool;
 import net.xpkgclient.vars.XPkgVar;

@@ -15,8 +15,10 @@
 
 package net.xpkgclient.exceptions;
 
+import net.xpkgclient.packagemanager.ExecutionContext;
+
 /**
- * Exception thrown when trying to perform actions on a closed {@link net.xpkgclient.ExecutionContext}. Should only originate within the {@code activityCheck()} method of {@link net.xpkgclient.ExecutionContext}.
+ * Exception thrown when trying to perform actions on a closed {@link ExecutionContext}. Should only originate within the {@code activityCheck()} method of {@link ExecutionContext}.
  */
 public class XPkgClosedExecutionContextException extends XPkgInvalidCallException {
 

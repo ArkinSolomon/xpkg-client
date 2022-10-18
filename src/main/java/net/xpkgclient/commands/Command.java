@@ -15,7 +15,7 @@
 
 package net.xpkgclient.commands;
 
-import net.xpkgclient.ExecutionContext;
+import net.xpkgclient.packagemanager.ExecutionContext;
 import net.xpkgclient.exceptions.XPkgExecutionException;
 import net.xpkgclient.exceptions.XPkgUnimplementedException;
 

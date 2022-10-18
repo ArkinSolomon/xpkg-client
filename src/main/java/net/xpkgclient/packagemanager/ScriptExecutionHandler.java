@@ -13,7 +13,7 @@
  * either express or implied limitations under the License.
  */
 
-package net.xpkgclient;
+package net.xpkgclient.packagemanager;
 
 import lombok.experimental.UtilityClass;
 
@@ -42,7 +42,7 @@ public final class ScriptExecutionHandler {
             while (reader.hasNext())
                 s.append(reader.nextLine()).append("\n");
 
-            ScriptExecutor file = new ScriptExecutor(s.toString());
+            ScriptExecutor file = new ScriptExecutor(s.toString(), f);
             file.execute();
         } catch (Throwable e) {
             e.printStackTrace();

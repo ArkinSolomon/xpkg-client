@@ -13,8 +13,9 @@
  * either express or implied limitations under the License.
  */
 
-package net.xpkgclient;
+package net.xpkgclient.packagemanager;
 
+import net.xpkgclient.Configuration;
 import net.xpkgclient.enums.PackageType;
 import net.xpkgclient.enums.ScriptType;
 import net.xpkgclient.exceptions.XPkgAlreadySetException;
@@ -26,8 +27,10 @@ import net.xpkgclient.exceptions.XPkgNotSetException;
 import net.xpkgclient.filesystem.FileTracker;
 import net.xpkgclient.vars.XPkgBool;
 import net.xpkgclient.vars.XPkgMutableResource;
+import net.xpkgclient.vars.XPkgResource;
 import net.xpkgclient.vars.XPkgString;
 import net.xpkgclient.vars.XPkgVar;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -75,7 +78,7 @@ public class ExecutionContext {
      *
      * @throws IOException Thrown if there was an issue creating the temporary directory.
      */
-    public ExecutionContext() throws IOException {
+    public ExecutionContext(File scriptLoc) throws IOException {
         isActive = true;
         vars = new HashMap<>();
 
@@ -108,6 +111,9 @@ public class ExecutionContext {
             setInternalVar("$XP", xp);
             setInternalVar("$TMP", tmp);
             setInternalVar("$SPACE", new XPkgString(" "));
+
+            if (scriptLoc != null)
+                setInternalVar("$default", new XPkgResource(scriptLoc));
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
@@ -120,7 +126,7 @@ public class ExecutionContext {
      * @throws IOException Thrown if there was an issue creating the temporary directory.
      */
     public static ExecutionContext createBlankContext() throws IOException {
-        ExecutionContext context = new ExecutionContext();
+        ExecutionContext context = new ExecutionContext(null);
         try {
             context.setScriptType(ScriptType.OTHER);
             context.setPackageType(PackageType.OTHER);
@@ -175,11 +181,11 @@ public class ExecutionContext {
      */
     public void close() {
         isActive = false;
-//        try {
-//            FileUtils.deleteDirectory(baseFile);
-//        } catch (IOException e) {
-//            // Do nothing, it'll be cleared at next start
-//        }
+        try {
+            FileUtils.deleteDirectory(baseFile);
+        } catch (IOException e) {
+            // Do nothing, it'll be cleared at next start
+        }
     }
 
     /**

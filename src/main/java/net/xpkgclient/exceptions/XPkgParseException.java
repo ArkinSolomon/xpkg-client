@@ -15,7 +15,9 @@
 
 package net.xpkgclient.exceptions;
 
-// The top level class for exceptions while parsing, like invalid scripts
+/**
+ * The top level class for exceptions while parsing scripts.
+ */
 public class XPkgParseException extends XPkgScriptRunnerException implements ILineException<XPkgParseException> {
 
     /**

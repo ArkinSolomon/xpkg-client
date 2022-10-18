@@ -13,7 +13,7 @@
  * either express or implied limitations under the License.
  */
 
-package net.xpkgclient;
+package net.xpkgclient.packagemanager;
 
 import net.xpkgclient.commands.Command;
 import net.xpkgclient.commands.CommandName;
@@ -30,6 +30,7 @@ import net.xpkgclient.exceptions.XPkgUndefinedVarException;
 import net.xpkgclient.exceptions.XPkgUnimplementedException;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -54,12 +55,13 @@ public final class ScriptExecutor {
      * Load an entire script file and prepare it for execution.
      *
      * @param contents The text that was in the script.
+     * @param loc The location of the script being executed.
      * @throws IOException   Thrown if there was an issue creating a temporary folder within the ExecutionContext constructor.
      * @throws XPkgException Thrown if there was an issue parsing the script.
      */
-    public ScriptExecutor(@NotNull String contents) throws XPkgException, IOException {
+    public ScriptExecutor(@NotNull String contents, File loc) throws XPkgException, IOException {
         contents = contents.trim();
-        context = new ExecutionContext();
+        context = new ExecutionContext(loc);
 
         // Separate the head and body
         String[] parts = contents.split("---");

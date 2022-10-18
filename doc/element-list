@@ -3,4 +3,6 @@ net.xpkgclient.commands
 net.xpkgclient.enums
 net.xpkgclient.exceptions
 net.xpkgclient.filesystem
+net.xpkgclient.gui
+net.xpkgclient.packagemanager
 net.xpkgclient.vars

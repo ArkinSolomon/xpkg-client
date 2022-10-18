@@ -15,7 +15,7 @@
 
 package net.xpkgclient.commands;
 
-import net.xpkgclient.ExecutionContext;
+import net.xpkgclient.packagemanager.ExecutionContext;
 import net.xpkgclient.exceptions.XPkgException;
 import net.xpkgclient.vars.XPkgString;
 
@@ -32,17 +32,7 @@ final class GetstrCommand extends TwoVarCommand {
      * @throws XPkgException Can be thrown for multiple reasons such as user error, or a type mismatch, or another reason.
      */
     public static void execute(String[] args, ExecutionContext context) throws XPkgException {
-        updateValues(args, context);
+        updateValues(CommandName.GETSTR, args, context);
         context.setVar(assigneeName, new XPkgString(secondArg.toString()));
-    }
-
-    /**
-     * The name of the command that is using this as a parent class.
-     *
-     * @return The name of the command that is using this as a parent class.
-     */
-    @Override
-    protected CommandName commandName() {
-        return CommandName.GETSTR;
     }
 }

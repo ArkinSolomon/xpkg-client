@@ -13,7 +13,7 @@
  * either express or implied limitations under the License.
  */
 
-package net.xpkgclient;
+package net.xpkgclient.packagemanager;
 
 import lombok.experimental.UtilityClass;
 import net.xpkgclient.exceptions.XPkgExecutionException;

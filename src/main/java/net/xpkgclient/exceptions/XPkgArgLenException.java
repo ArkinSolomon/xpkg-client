@@ -52,6 +52,7 @@ public class XPkgArgLenException extends XPkgParseException {
      * @param cmd    The command that threw the exception.
      * @param max    The maximum amount of arguments for the given reason.
      * @param reason In what scenario the command expects the maximum (prepended with "if ").
+     * @param cause The exception that caused this one.
      */
     public XPkgArgLenException(CommandName cmd, int max, String reason, Throwable cause) {
         super("Invalid argument length: The " + cmd + " command expects a maximum of" + max + " arguments if " + reason, cause);

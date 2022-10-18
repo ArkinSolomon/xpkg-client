@@ -32,7 +32,8 @@ public class XPkgInvalidBoolStatement extends XPkgParseException {
     /**
      * Create a new exception saying that either multiple {@code &}'s or multiple {@code |}'s are together, with nothing in between.
      *
-     * @param item The
+     * @param item The item that was invalid.
+     * @throws XPkgExecutionException Exception thrown if the char provided is not an {@code &} or an {@code |}.
      */
     public XPkgInvalidBoolStatement(char item) throws XPkgExecutionException {
         super("Invalid item in boolean statement: Multiple '" + item + "'s are together, with nothing in between");

@@ -108,13 +108,14 @@
       <AnchorPane maxHeight="250.0" minHeight="250.0" prefHeight="250.0">
          <children>
             <ChoiceBox fx:id="packageDisplaySelector" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="60.0" />
+            <Button fx:id="installButton" layoutX="124.0" layoutY="59.0" mnemonicParsing="false" text="Install" AnchorPane.leftAnchor="125.0" AnchorPane.topAnchor="60.0" />
             <Label fx:id="packageDisplayName" prefHeight="17.0" prefWidth="398.0" text="Package Name" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0">
                <font>
                   <Font size="21.0" />
                </font>
             </Label>
             <Label fx:id="packageDisplayId" text="person.package.id" textFill="#727272" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="40.0" />
-            <Button fx:id="packagedisplayClose" contentDisplay="CENTER" mnemonicParsing="false" text="X" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0" />
+            <Button fx:id="packageDisplayClose" contentDisplay="CENTER" mnemonicParsing="false" text="X" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0" />
             <TextArea fx:id="packageDisplayDescription" editable="false" maxHeight="100.0" minHeight="100.0" prefHeight="100.0" wrapText="true" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="100.0" />
          </children>
       </AnchorPane>

@@ -146,7 +146,7 @@ The currently working X-Plane directory.
 
 The temporary directory for temporary file storage. This directory will be deleted on script exit.
 
-##### *RESOURCE* `$default` <u>NOT IMPLEMENTED</u>
+##### *RESOURCE* `$default` <u>NEEDS TESTING</u>
 
 The directory for the resource.
 

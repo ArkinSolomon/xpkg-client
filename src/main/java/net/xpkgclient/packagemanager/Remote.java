@@ -18,62 +18,195 @@ package net.xpkgclient.packagemanager;
 import javafx.application.Platform;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import net.lingala.zip4j.ZipFile;
+import net.xpkgclient.Configuration;
 import net.xpkgclient.exceptions.XPkgFetchException;
+import net.xpkgclient.exceptions.XPkgUnablePackageDownloadException;
+import org.apache.commons.codec.binary.Hex;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * This class handles getting packages from the remote server.
  */
 @UtilityClass
-public class Remote extends Thread {
+public class Remote {
 
     /**
      * Get all packages from the server.
      *
      * @param cb The callback to execute after downloading all packages from the server. Run within {@link Platform#runLater(Runnable)} so that JavaFX calls can be made from within the new thread.
-     * @throws XPkgFetchException Exception thrown if there was an error getting the URL
+     * @throws XPkgFetchException Exception thrown if there was an error getting the data from the server, or if there was an issue reading the JSON.
      */
     @SneakyThrows(MalformedURLException.class)
-    public synchronized static void getAllPackages(PackageRetrieveCallback cb) throws IOException, XPkgFetchException {
+    public synchronized static void getAllPackages(PackageRetrieveCallback cb) throws XPkgFetchException {
         ArrayList<Package> packages = new ArrayList<>();
 
         final URL url = new URL("http://localhost:5020/packages/");
         JSONObject json;
         try {
             json = readJsonFromUrl(url);
+
+            JSONArray packagesArray = (JSONArray) json.get("data");
+            for (Object pkgObj : packagesArray) {
+                JSONObject pkg = (JSONObject) pkgObj;
+                String packageId = pkg.getString("packageId");
+                String packageName = pkg.getString("packageName");
+                String authorName = pkg.getString("authorName");
+                String description = pkg.getString("description");
+
+                JSONArray vJsonArr = pkg.getJSONArray("versions");
+                String[] versions = new String[vJsonArr.length()];
+                for (int i = 0; i < vJsonArr.length(); ++i)
+                    versions[i] = vJsonArr.getString(i);
+
+                packages.add(new Package(packageId, packageName, versions, description, authorName));
+            }
+
+            Platform.runLater(() -> cb.execute(packages));
         } catch (Throwable e) {
             throw new XPkgFetchException(url, e);
         }
+    }
 
-        JSONArray packagesArray = (JSONArray) json.get("data");
-        for (Object pkgObj : packagesArray){
-            JSONObject pkg = (JSONObject) pkgObj;
-            String packageId = pkg.getString("packageId");
-            String packageName = pkg.getString("packageName");
-            String authorName = pkg.getString("authorName");
-            String description = pkg.getString("description");
+    /**
+     * Download a package.
+     *
+     * @param pkg     The package to download.
+     * @param version The version of the package to download.
+     * @param cb      The callback function which runs after the file has been downloaded and unzipped, with the second parameter as the location of the root of the package downloaded. If there is an exception downloading the package, the file will be null and the first parameter will have the error that caused the download to fail.
+     */
+    public synchronized static void downloadPackage(@NotNull Package pkg, Version version, FileDownloadedCallback cb) {
+        File downloadFile = Path.of(Configuration.getXpPath().getAbsolutePath(), "xpkg", "tmp", "downloads", pkg.getPackageId() + ".xpkg").toFile();
 
-            @SuppressWarnings("unchecked")
-            Map<String, String> versions = (Map<String, String>)(Map<String, ?>) pkg.getJSONObject("versions").toMap();
+        //noinspection ResultOfMethodCallIgnored
+        downloadFile.getParentFile().mkdirs();
 
-            packages.add(new Package(packageId, packageName, versions, description, authorName));
+        // To prevent callback hell
+        CompletableFuture<PackageLocData> res = new CompletableFuture<>();
+        Thread t = new Thread(() -> {
+            try {
+                getPackageLocData(pkg, version, res::complete);
+            } catch (XPkgFetchException e) {
+                Platform.runLater(() -> cb.execute(e, null));
+            }
+        });
+
+        res.thenAccept(data -> {
+
+            if (data.loc.equalsIgnoreCase("NOT_PUBLISHED")) {
+                try {
+                    throw new XPkgUnablePackageDownloadException(pkg, version);
+                } catch (XPkgUnablePackageDownloadException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            URL packageLoc;
+            try (FileOutputStream f = new FileOutputStream(downloadFile);
+                 ZipFile zipFile = new ZipFile(downloadFile)) {
+                packageLoc = new URL(data.loc);
+                ReadableByteChannel zipStream = Channels.newChannel(packageLoc.openStream());
+                f.getChannel().transferFrom(zipStream, 0, Long.MAX_VALUE);
+
+                if (!checkFileHash(downloadFile, data.hash))
+                    throw new SecurityException("Downloaded file hash does not match expected hash from server");
+
+                File destFile = Path.of(downloadFile.getParentFile().getAbsolutePath(), pkg.getPackageId()).toFile();
+                zipFile.extractAll(destFile.getAbsolutePath());
+
+                // We duplicate this code since we don't want any weird behaviour if we decide to do something in the callback (which will execute before any finally block)
+                if (downloadFile.exists())
+                    //noinspection ResultOfMethodCallIgnored
+                    downloadFile.delete();
+
+
+                File[] children = destFile.listFiles();
+                assert children != null;
+                Optional<File> child = Arrays.stream(children).filter(File::isDirectory).findFirst();
+                if (child.isEmpty())
+                    throw new IllegalStateException("Directory doesn't exist after unzipping package");
+
+                Platform.runLater(() -> cb.execute(null, child.get()));
+            } catch (Throwable e) {
+
+                if (downloadFile.exists())
+                    //noinspection ResultOfMethodCallIgnored
+                    downloadFile.delete();
+                Platform.runLater(() -> cb.execute(new XPkgUnablePackageDownloadException(pkg, version, e), null));
+            }
+        });
+
+        t.start();
+    }
+
+    /**
+     * Get the location data for a package.
+     *
+     * @param pkg     The package to get the location data of.
+     * @param version The version of the package to get the location data of.
+     * @param cb      The callback to execute after getting the location data. Run within {@link Platform#runLater(Runnable)} so that JavaFX calls can be made from within the new thread.
+     * @throws XPkgFetchException Exception thrown if there was an error making the request.
+     */
+    @SneakyThrows(MalformedURLException.class)
+    public synchronized static void getPackageLocData(@NotNull Package pkg, @NotNull Version version, LocDataDownloadedCallback cb) throws XPkgFetchException {
+        URL url = new URL(String.format("http://localhost:5020/packages/%s/%s", pkg.getPackageId(), version));
+        JSONObject obj;
+        try {
+            obj = readJsonFromUrl(url);
+        } catch (Throwable e) {
+            throw new XPkgFetchException(url, e);
         }
+        Platform.runLater(() -> cb.execute(new PackageLocData(obj.getString("loc"), obj.getString("hash"))));
+    }
 
-        Platform.runLater(() -> cb.execute(packages));
+    /**
+     * Check to see if a file's 256sum matches it's expected 256sum. See <a href="https://stackoverflow.com/questions/32032851/how-to-calculate-hash-value-of-a-file-in-java">this answer</a> for where the digest is created, and <a href="https://stackoverflow.com/questions/9655181/how-to-convert-a-byte-array-to-a-hex-string-in-java">chooban's answer</a> to see how to convert the hex using Apache's {@link Hex}.
+     *
+     * @param fileName     The file to check the 256sum.
+     * @param expectedHash The expected file 256sum.
+     * @return True if the file's hash checksum the expected checksum.
+     * @throws IOException Exception thrown if the file does not exist, or if there was an error reading it.
+     */
+    @SneakyThrows(NoSuchAlgorithmException.class)
+    public static boolean checkFileHash(File fileName, String expectedHash) throws IOException {
+
+        byte[] buffer = new byte[8192];
+        int count;
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fileName));
+        while ((count = bis.read(buffer)) > 0) {
+            digest.update(buffer, 0, count);
+        }
+        bis.close();
+
+        byte[] hash = digest.digest();
+        String actualHash = Hex.encodeHexString(hash);
+        return actualHash.equalsIgnoreCase(expectedHash);
     }
 
     /**
@@ -97,9 +230,51 @@ public class Remote extends Thread {
     }
 
     /**
-     * This callback is used to run something after downloading a list from remote.
+     * This callback is used to run something after downloading the list of packages from remote.
      */
     public interface PackageRetrieveCallback {
+
+        /**
+         * The callback to execute after downloading the list of packages from remote.
+         *
+         * @param packages The list of all published and approved packages from remote.
+         */
         void execute(List<Package> packages);
+    }
+
+    /**
+     * Callback used to run something after downloading file from remote.
+     */
+    public interface FileDownloadedCallback {
+
+        /**
+         * The callback to execute after a file has been downloaded from a remote location. The parameter {@code e} is null if the operation successfully, or else {@code e} is the error that caused the download to fail.
+         *
+         * @param e The error that caused the download to fail.
+         * @param f The location of the downloaded file. Is null if e is not null.
+         */
+        void execute(Throwable e, File f);
+    }
+
+    /**
+     * Callback used to run something after getting package location data for a version of a package.
+     */
+    public interface LocDataDownloadedCallback {
+
+        /**
+         * The callback to execute after getting the package location data for a version of a package.
+         *
+         * @param data The data returned from the server.
+         */
+        void execute(PackageLocData data);
+    }
+
+    /**
+     * The data returned from the server when looking up a specific package and version.
+     *
+     * @param loc  The location of the package, or 'NOT_PUBLISHED', if the package version is not published or approved.
+     * @param hash The SHA256 hash of the zip file of the package.
+     */
+    public record PackageLocData(String loc, String hash) {
     }
 }

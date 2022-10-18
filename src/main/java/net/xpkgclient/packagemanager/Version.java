@@ -54,7 +54,7 @@ public final class Version {
      * Parse a version string in the form of {@code major.minor.patch}.
      *
      * @param versionStr The string to parse.
-     * @throws XPkgInvalidVersionException Exception thrown if the version string is invalid
+     * @throws XPkgInvalidVersionException Exception thrown if the version string is invalid.
      */
     public Version(@NotNull String versionStr) throws XPkgInvalidVersionException {
         String[] partsStr = versionStr.split("\\.", -1);
@@ -75,17 +75,18 @@ public final class Version {
         } catch (Throwable e) {
             throw new XPkgInvalidVersionException(versionStr, e);
         }
-        checkVersionValid(versionStr);
+        checkVersionValidity(versionStr);
     }
 
     /**
      * Create a new version from only the major number, set the minor and patch numbers to zero.
      *
      * @param major The major number of the version.
+     *              @throws XPkgInvalidVersionException Exception thrown if the version is not valid.
      */
     public Version(int major) throws XPkgInvalidVersionException {
         this.major = major;
-        checkVersionValid();
+        checkVersionValidity();
     }
 
     /**
@@ -93,11 +94,12 @@ public final class Version {
      *
      * @param major The major number of the version.
      * @param minor The minor number of the version.
+     * @throws XPkgInvalidVersionException Exception thrown if the version is not valid.
      */
     public Version(int major, int minor) throws XPkgInvalidVersionException {
         this.major = major;
         this.minor = minor;
-        checkVersionValid();
+        checkVersionValidity();
     }
 
     /**
@@ -106,12 +108,13 @@ public final class Version {
      * @param major The major number of the version.
      * @param minor The minor number of the version.
      * @param patch The patch number of the version.
+     * @throws XPkgInvalidVersionException Exception thrown if the version is not valid.
      */
     public Version(int major, int minor, int patch) throws XPkgInvalidVersionException {
         this.major = major;
         this.minor = minor;
         this.patch = patch;
-        checkVersionValid();
+        checkVersionValidity();
     }
 
     /**
@@ -119,8 +122,8 @@ public final class Version {
      *
      * @throws XPkgInvalidVersionException Exception thrown if this version is not valid.
      */
-    private void checkVersionValid() throws XPkgInvalidVersionException {
-        checkVersionValid(null);
+    private void checkVersionValidity() throws XPkgInvalidVersionException {
+        checkVersionValidity(null);
     }
 
     /**
@@ -129,7 +132,7 @@ public final class Version {
      * @param v The version string that was provided at creation.
      * @throws XPkgInvalidVersionException Exception thrown if this version is not valid.
      */
-    private void checkVersionValid(String v) throws XPkgInvalidVersionException {
+    private void checkVersionValidity(String v) throws XPkgInvalidVersionException {
         if (major < 0 || minor < 0 || patch < 0 || (major | minor | patch) == 0)
             throw new XPkgInvalidVersionException(v == null ? toString() : v);
     }

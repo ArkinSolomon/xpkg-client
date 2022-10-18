@@ -17,7 +17,7 @@ package net.xpkgclient.commands;
 
 import net.xpkgclient.ConfigSetupExtension;
 import net.xpkgclient.Configuration;
-import net.xpkgclient.ExecutionContext;
+import net.xpkgclient.packagemanager.ExecutionContext;
 import net.xpkgclient.exceptions.XPkgArgLenException;
 import net.xpkgclient.exceptions.XPkgException;
 import net.xpkgclient.exceptions.XPkgImmutableVarException;

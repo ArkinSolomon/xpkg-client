@@ -15,7 +15,7 @@
 
 package net.xpkgclient.commands;
 
-import net.xpkgclient.ExecutionContext;
+import net.xpkgclient.packagemanager.ExecutionContext;
 import net.xpkgclient.exceptions.XPkgArgLenException;
 import org.jetbrains.annotations.NotNull;
 

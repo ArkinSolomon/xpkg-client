@@ -26,6 +26,8 @@ import net.xpkgclient.exceptions.XPkgInvalidCallException;
 import net.xpkgclient.exceptions.XPkgParseException;
 import net.xpkgclient.exceptions.XPkgTypeMismatchException;
 import net.xpkgclient.exceptions.XPkgUndefinedVarException;
+import net.xpkgclient.packagemanager.ExecutionContext;
+import net.xpkgclient.packagemanager.ParseHelper;
 import net.xpkgclient.vars.XPkgBool;
 import net.xpkgclient.vars.XPkgString;
 import org.junit.jupiter.api.AfterAll;
