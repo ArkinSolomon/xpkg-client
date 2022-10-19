@@ -29,6 +29,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import net.xpkgclient.Configuration;
 import net.xpkgclient.Properties;
 import net.xpkgclient.exceptions.XPkgFetchException;
@@ -69,6 +70,9 @@ public final class MainController {
     @FXML
     private Button installButton;
 
+    @FXML
+    private AnchorPane packageDisplayPane;
+
     private Package currentPkg;
 
     /**
@@ -78,6 +82,7 @@ public final class MainController {
     public void initialize() {
 
         setCurrentInstallation(Configuration.getXpPath());
+        setPackageDisplayEnabled(false);
 
         // No idea why it thinks it's type is TableColumn<Package, ?> and won't let me cast the ? to a String
         @SuppressWarnings("unchecked")
@@ -95,9 +100,20 @@ public final class MainController {
         });
 
         installButton.setOnAction(ev -> installCurrentPackage());
+        packageDisplayClose.setOnAction(ev -> setPackageDisplayEnabled(false));
 
         refreshButton.setOnAction(actionEvent -> refreshPackages());
         refreshPackages();
+    }
+
+    /**
+     * Set if the package display pane is shown.
+     *
+     * @param enabled True in order to set if the package display is enabled.
+     */
+    public void setPackageDisplayEnabled(boolean enabled){
+        packageDisplayPane.setVisible(enabled);
+        packageDisplayPane.setManaged(enabled);
     }
 
     /**
@@ -146,6 +162,8 @@ public final class MainController {
     private void updatePackageDisplay(MouseEvent ev, @NotNull TableRow<Package> row) {
         if (!row.isEmpty() && ev.getButton() == MouseButton.PRIMARY
                 && ev.getClickCount() == 2) {
+
+            setPackageDisplayEnabled(true);
 
             currentPkg = row.getItem();
             packageDisplayName.setText(currentPkg.getPackageName());
