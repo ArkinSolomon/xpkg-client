@@ -45,9 +45,7 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -144,14 +142,7 @@ public class Remote {
                     //noinspection ResultOfMethodCallIgnored
                     downloadFile.delete();
 
-
-                File[] children = destFile.listFiles();
-                assert children != null;
-                Optional<File> child = Arrays.stream(children).filter(File::isDirectory).findFirst();
-                if (child.isEmpty())
-                    throw new IllegalStateException("Directory doesn't exist after unzipping package");
-
-                Platform.runLater(() -> cb.execute(null, child.get()));
+                Platform.runLater(() -> cb.execute(null, destFile));
             } catch (Throwable e) {
 
                 if (downloadFile.exists())

@@ -111,7 +111,7 @@ public final class MainController {
      *
      * @param enabled True in order to set if the package display is enabled.
      */
-    public void setPackageDisplayEnabled(boolean enabled){
+    public void setPackageDisplayEnabled(boolean enabled) {
         packageDisplayPane.setVisible(enabled);
         packageDisplayPane.setManaged(enabled);
     }
@@ -130,6 +130,8 @@ public final class MainController {
             try {
                 Remote.getAllPackages(packages -> {
                     packageTable.getItems().setAll(packages);
+
+                    setTablePlaceholder("No packages found");
 
                     String downloadedPackages = packages.size() + " packages downloaded";
                     if (hasGottenPackages)
@@ -191,7 +193,7 @@ public final class MainController {
 
             try {
                 FileUtils.deleteDirectory(loc.getParentFile());
-            }catch(Throwable e){
+            } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
         })).start();
