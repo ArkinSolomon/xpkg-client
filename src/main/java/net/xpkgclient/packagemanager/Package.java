@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. XPkg-Client Contributors.
+ * Copyright (c) 2022-2023. XPkg-Client Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package net.xpkgclient.packagemanager;
 
 import lombok.Getter;
-import net.xpkgclient.exceptions.XPkgInvalidVersionException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -70,12 +69,28 @@ public final class Package {
     private final String description;
 
     /**
-     * The package author.
+     * The package author's name.
      *
-     * @return The package author.
+     * @return The package author's name.
      */
     @Getter
-    private final String author;
+    private final String authorName;
+
+    /**
+     * The package author's id.
+     *
+     * @return The package author's id.
+     */
+    @Getter
+    private final String authorId;
+
+    /**
+     * The type of the package.
+     *
+     * @return The type of the package.
+     */
+    @Getter
+    private final PackageType packageType;
 
     /**
      * All the (published) versions that a package has..
@@ -88,20 +103,24 @@ public final class Package {
     /**
      * @param packageId      The package identifier.
      * @param packageName    The name of the package.
+     * @param packageType  The type of the package.
      * @param versionStrings The versions of the package as version strings.
-     * @param description    The package description.
-     * @param author         The package author.
+     * @param description    The package's description.
+     * @param authorName         The package author's name.
+     * @param authorId The id of the author.
      */
-    public Package(String packageId, String packageName, @NotNull String[] versionStrings, String description, String author) {
+    public Package(String packageId, String packageName, PackageType packageType, @NotNull String[] versionStrings, String description, String authorName, String authorId) {
         this.packageId = packageId;
         this.packageName = packageName;
+        this.packageType = packageType;
         this.description = description;
-        this.author = author;
+        this.authorName = authorName;
+        this.authorId = authorId;
 
         this.versions = Arrays.stream(versionStrings).map(versionStr -> {
             try {
                 return new Version(versionStr);
-            } catch (XPkgInvalidVersionException e) {
+            } catch (InvalidVersionException e) {
                 throw new RuntimeException(e);
             }
         }).toArray(Version[]::new);

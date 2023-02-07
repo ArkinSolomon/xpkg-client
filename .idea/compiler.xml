@@ -11,7 +11,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="xpkg-client" target="18" />
+      <module name="xpkg-client" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

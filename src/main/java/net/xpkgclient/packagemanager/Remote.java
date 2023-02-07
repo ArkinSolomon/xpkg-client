@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. XPkg-Client Contributors.
+ * Copyright (c) 2022-2023. XPkg-Client Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import net.lingala.zip4j.ZipFile;
 import net.xpkgclient.Configuration;
-import net.xpkgclient.exceptions.XPkgFetchException;
-import net.xpkgclient.exceptions.XPkgUnablePackageDownloadException;
 import org.apache.commons.codec.binary.Hex;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -58,10 +56,9 @@ public class Remote {
      * Get all packages from the server.
      *
      * @param cb The callback to execute after downloading all packages from the server. Run within {@link Platform#runLater(Runnable)} so that JavaFX calls can be made from within the new thread.
-     * @throws XPkgFetchException Exception thrown if there was an error getting the data from the server, or if there was an issue reading the JSON.
      */
     @SneakyThrows(MalformedURLException.class)
-    public synchronized static void getAllPackages(PackageRetrieveCallback cb) throws XPkgFetchException {
+    public synchronized static void getAllPackages(PackageRetrieveCallback cb) {
         ArrayList<Package> packages = new ArrayList<>();
 
         final URL url = new URL("http://localhost:5020/packages/");
@@ -74,7 +71,9 @@ public class Remote {
                 JSONObject pkg = (JSONObject) pkgObj;
                 String packageId = pkg.getString("packageId");
                 String packageName = pkg.getString("packageName");
+                String packageTypeStr = pkg.getString("packageType");
                 String authorName = pkg.getString("authorName");
+                String authorId = pkg.getString("authorId");
                 String description = pkg.getString("description");
 
                 JSONArray vJsonArr = pkg.getJSONArray("versions");
@@ -82,12 +81,20 @@ public class Remote {
                 for (int i = 0; i < vJsonArr.length(); ++i)
                     versions[i] = vJsonArr.getString(i);
 
-                packages.add(new Package(packageId, packageName, versions, description, authorName));
+                PackageType packageType = switch (packageTypeStr) {
+                    case "aircraft" -> PackageType.AIRCRAFT;
+                    case "executable" -> PackageType.EXECUTABLE;
+                    case "other" -> PackageType.OTHER;
+                    default ->
+                            throw new RuntimeException("Unexpected package type: \"%s\"".formatted(packageTypeStr));
+                };
+
+                packages.add(new Package(packageId, packageName, packageType, versions, description, authorName, authorId));
             }
 
             Platform.runLater(() -> cb.execute(packages));
         } catch (Throwable e) {
-            throw new XPkgFetchException(url, e);
+            throw new RuntimeException("Could not get all packages from %s".formatted(url), e);
         }
     }
 
@@ -107,21 +114,13 @@ public class Remote {
         // To prevent callback hell
         CompletableFuture<PackageLocData> res = new CompletableFuture<>();
         Thread t = new Thread(() -> {
-            try {
-                getPackageLocData(pkg, version, res::complete);
-            } catch (XPkgFetchException e) {
-                Platform.runLater(() -> cb.execute(e, null));
-            }
+            getPackageLocData(pkg, version, res::complete);
         });
 
         res.thenAccept(data -> {
 
             if (data.loc.equalsIgnoreCase("NOT_PUBLISHED")) {
-                try {
-                    throw new XPkgUnablePackageDownloadException(pkg, version);
-                } catch (XPkgUnablePackageDownloadException e) {
-                    throw new RuntimeException(e);
-                }
+                throw new RuntimeException("");
             }
 
             URL packageLoc;
@@ -142,13 +141,25 @@ public class Remote {
                     //noinspection ResultOfMethodCallIgnored
                     downloadFile.delete();
 
-                Platform.runLater(() -> cb.execute(null, destFile));
+                Platform.runLater(() -> {
+                    try {
+                        cb.execute(null, destFile);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
             } catch (Throwable e) {
 
                 if (downloadFile.exists())
                     //noinspection ResultOfMethodCallIgnored
                     downloadFile.delete();
-                Platform.runLater(() -> cb.execute(new XPkgUnablePackageDownloadException(pkg, version, e), null));
+                Platform.runLater(() -> {
+                    try {
+                        cb.execute(new RuntimeException("Could not download the package %s@%s".formatted(pkg, version), e), null);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                });
             }
         });
 
@@ -161,16 +172,15 @@ public class Remote {
      * @param pkg     The package to get the location data of.
      * @param version The version of the package to get the location data of.
      * @param cb      The callback to execute after getting the location data. Run within {@link Platform#runLater(Runnable)} so that JavaFX calls can be made from within the new thread.
-     * @throws XPkgFetchException Exception thrown if there was an error making the request.
      */
     @SneakyThrows(MalformedURLException.class)
-    public synchronized static void getPackageLocData(@NotNull Package pkg, @NotNull Version version, LocDataDownloadedCallback cb) throws XPkgFetchException {
+    public synchronized static void getPackageLocData(@NotNull Package pkg, @NotNull Version version, LocDataDownloadedCallback cb) {
         URL url = new URL(String.format("http://localhost:5020/packages/%s/%s", pkg.getPackageId(), version));
         JSONObject obj;
         try {
             obj = readJsonFromUrl(url);
         } catch (Throwable e) {
-            throw new XPkgFetchException(url, e);
+            throw new RuntimeException("Could not fetch package from remote: %s".formatted(url), e);
         }
         Platform.runLater(() -> cb.execute(new PackageLocData(obj.getString("loc"), obj.getString("hash"))));
     }
@@ -244,7 +254,7 @@ public class Remote {
          * @param e The error that caused the download to fail.
          * @param f The location of the downloaded file. Is null if e is not null.
          */
-        void execute(Throwable e, File f);
+        void execute(Throwable e, File f) throws IOException;
     }
 
     /**

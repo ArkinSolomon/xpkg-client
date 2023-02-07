@@ -1,0 +1,15 @@
+net/xpkgclient/packagemanager/Remote$LocDataDownloadedCallback.class
+net/xpkgclient/packagemanager/PackageType.class
+net/xpkgclient/packagemanager/Remote$FileDownloadedCallback.class
+net/xpkgclient/XPkg.class
+net/xpkgclient/packagemanager/Remote$PackageRetrieveCallback.class
+net/xpkgclient/packagemanager/Remote$PackageLocData.class
+net/xpkgclient/gui/MainGUI.class
+net/xpkgclient/packagemanager/InvalidVersionException.class
+net/xpkgclient/packagemanager/Package.class
+net/xpkgclient/packagemanager/Remote.class
+net/xpkgclient/gui/MainController$1.class
+net/xpkgclient/Configuration.class
+net/xpkgclient/packagemanager/Version.class
+net/xpkgclient/gui/MainController.class
+net/xpkgclient/Properties.class

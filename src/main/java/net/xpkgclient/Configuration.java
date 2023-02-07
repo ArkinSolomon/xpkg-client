@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. XPkg-Client Contributors.
+ * Copyright (c) 2022-2023. XPkg-Client Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,22 +52,6 @@ public final class Configuration {
     }
 
     /**
-     * Get whether printing done by the print command are printed on a single line.
-     *
-     * @return True if printing done by the print command is printed on a single line.
-     */
-    public static boolean getInlinePrint() {
-        return inlinePrint;
-    }
-
-    /**
-     * Set whether printing done by the print command are printed on a single line.
-     */
-    public static void setInlinePrint(boolean inlinePrint) {
-        Configuration.inlinePrint = inlinePrint;
-    }
-
-    /**
      * Save the configuration.
      */
     public static void save() {
@@ -80,7 +64,6 @@ public final class Configuration {
      */
     public static void load() {
         xpPath = new File(prefs.get("xp-config", "NO_XP_INSTALLATION"));
-        inlinePrint = prefs.getBoolean("inline-print", false);
     }
 
     /**
