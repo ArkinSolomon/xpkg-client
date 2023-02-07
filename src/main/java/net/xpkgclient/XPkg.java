@@ -17,7 +17,6 @@ package net.xpkgclient;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import net.xpkgclient.commands.Command;
 import net.xpkgclient.gui.MainGUI;
 
 import java.io.File;
@@ -36,9 +35,8 @@ public final class XPkg {
     @SneakyThrows
     public static void main(String[] args) {
         Properties.init();
-        Command.registerCommands();
-
         Configuration.load();
+
         if (!Configuration.hasConfiguredXPInstallation()) {
             Configuration.setXpPath(new File("/Users/arkinsolomon/Desktop/X-Plane 12"));
             Configuration.save();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. XPkg-Client Contributors.
+ * Copyright (c) 2022-2023. XPkg-Client Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package net.xpkgclient.packagemanager;
 
 import lombok.Getter;
-import net.xpkgclient.exceptions.XPkgInvalidVersionException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -70,12 +69,12 @@ public final class Version {
      * Parse a version string in the form of {@code major.minor.patch}.
      *
      * @param versionStr The string to parse.
-     * @throws XPkgInvalidVersionException Exception thrown if the version string is invalid.
+     * @throws InvalidVersionException Exception thrown if the version string is invalid.
      */
-    public Version(@NotNull String versionStr) throws XPkgInvalidVersionException {
+    public Version(@NotNull String versionStr) throws InvalidVersionException {
         versionStr = versionStr.toLowerCase();
         if (versionStr.length() < 1 || versionStr.length() > 15)
-            throw new XPkgInvalidVersionException(versionStr);
+            throw new InvalidVersionException(versionStr);
 
         String semanticPart = versionStr;
 
@@ -86,7 +85,7 @@ public final class Version {
 
             String[] parts = versionStr.split(String.valueOf(alphaOrBeta), -1);
             if (parts.length != 2)
-                throw new XPkgInvalidVersionException(versionStr);
+                throw new InvalidVersionException(versionStr);
 
             semanticPart = parts[0];
             String preReleasePart = parts[1];
@@ -94,18 +93,18 @@ public final class Version {
             try {
                 preReleaseVersion = Integer.parseInt(preReleasePart, 10);
             } catch (Throwable e) {
-                throw new XPkgInvalidVersionException(versionStr, e);
+                throw new InvalidVersionException(versionStr, e);
             }
         }
 
         // Parse the semantic part
         String[] partsStr = semanticPart.split("\\.", -1);
         if (partsStr.length > 3 || partsStr.length == 0)
-            throw new XPkgInvalidVersionException(versionStr);
+            throw new InvalidVersionException(versionStr);
 
         for (final String part : partsStr) {
             if (part.isBlank())
-                throw new XPkgInvalidVersionException(versionStr);
+                throw new InvalidVersionException(versionStr);
         }
 
         try {
@@ -115,7 +114,7 @@ public final class Version {
             if (partsStr.length > 2)
                 patch = Integer.parseInt(partsStr[2], 10);
         } catch (Throwable e) {
-            throw new XPkgInvalidVersionException(versionStr, e);
+            throw new InvalidVersionException(versionStr, e);
         }
         checkVersionValidity(versionStr);
     }
@@ -124,9 +123,9 @@ public final class Version {
      * Create a new version from only the major number, set the minor and patch numbers to zero.
      *
      * @param major The major number of the version.
-     * @throws XPkgInvalidVersionException Exception thrown if the version is not valid.
+     * @throws InvalidVersionException Exception thrown if the version is not valid.
      */
-    public Version(int major) throws XPkgInvalidVersionException {
+    public Version(int major) throws InvalidVersionException {
         this.major = major;
         checkVersionValidity();
     }
@@ -136,9 +135,9 @@ public final class Version {
      *
      * @param major The major number of the version.
      * @param minor The minor number of the version.
-     * @throws XPkgInvalidVersionException Exception thrown if the version is not valid.
+     * @throws InvalidVersionException Exception thrown if the version is not valid.
      */
-    public Version(int major, int minor) throws XPkgInvalidVersionException {
+    public Version(int major, int minor) throws InvalidVersionException {
         this.major = major;
         this.minor = minor;
         checkVersionValidity();
@@ -150,9 +149,9 @@ public final class Version {
      * @param major The major number of the version.
      * @param minor The minor number of the version.
      * @param patch The patch number of the version.
-     * @throws XPkgInvalidVersionException Exception thrown if the version is not valid.
+     * @throws InvalidVersionException Exception thrown if the version is not valid.
      */
-    public Version(int major, int minor, int patch) throws XPkgInvalidVersionException {
+    public Version(int major, int minor, int patch) throws InvalidVersionException {
         this.major = major;
         this.minor = minor;
         this.patch = patch;
@@ -167,9 +166,9 @@ public final class Version {
      * @param patch         The patch number of the version.
      * @param alphaOrBeta   Whether this version is an alpha or beta prerelease.
      * @param preReleaseNum The pre-release version.
-     * @throws XPkgInvalidVersionException Exception thrown if the version is not valid.
+     * @throws InvalidVersionException Exception thrown if the version is not valid.
      */
-    public Version(int major, int minor, int patch, char alphaOrBeta, int preReleaseNum) throws XPkgInvalidVersionException {
+    public Version(int major, int minor, int patch, char alphaOrBeta, int preReleaseNum) throws InvalidVersionException {
         this.major = major;
         this.minor = minor;
         this.patch = patch;
@@ -190,9 +189,9 @@ public final class Version {
     /**
      * Check to make sure that a version is valid, which means that the major minor and version numbers are greater than or equal zero, and that all three of them do not equal zero. Create a new version string for the exception if it is not.
      *
-     * @throws XPkgInvalidVersionException Exception thrown if this version is not valid.
+     * @throws InvalidVersionException Exception thrown if this version is not valid.
      */
-    private void checkVersionValidity() throws XPkgInvalidVersionException {
+    private void checkVersionValidity() throws InvalidVersionException {
         checkVersionValidity(null);
     }
 
@@ -200,9 +199,9 @@ public final class Version {
      * Check to make sure that a version is valid, which means that the major minor and version numbers are greater than or equal zero, and that all three of them do not equal zero. Use the provided version string for the exception if it is not. If the provided version string is null, create a new one for the exception.
      *
      * @param v The version string that was provided at creation.
-     * @throws XPkgInvalidVersionException Exception thrown if this version is not valid.
+     * @throws InvalidVersionException Exception thrown if this version is not valid.
      */
-    private void checkVersionValidity(String v) throws XPkgInvalidVersionException {
+    private void checkVersionValidity(String v) throws InvalidVersionException {
         if (major < 0 ||
                 minor < 0 ||
                 patch < 0 ||
@@ -211,7 +210,7 @@ public final class Version {
                 patch > 999 ||
                 (major | minor | patch) == 0 ||
                 (isPreRelease() && (preReleaseVersion > 999 || preReleaseVersion < 1)))
-            throw new XPkgInvalidVersionException(v == null ? toString() : v);
+            throw new InvalidVersionException(v == null ? toString() : v);
     }
 
     /**

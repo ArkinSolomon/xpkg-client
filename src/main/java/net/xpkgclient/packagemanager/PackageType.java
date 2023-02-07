@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. XPkg-Client Contributors.
+ * Copyright (c) 2023. XPkg-Client Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,10 @@
  * either express or implied limitations under the License.
  */
 
-package net.xpkgclient.vars;
+package net.xpkgclient.packagemanager;
 
-/**
- * The different types a variable can be.
- */
-public enum VarType {
-    STRING, RESOURCE, BOOL, MUTABLERESOURCE, FILE
+public enum PackageType {
+    AIRCRAFT,
+    EXECUTABLE,
+    OTHER
 }

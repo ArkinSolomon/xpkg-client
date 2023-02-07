@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. XPkg-Client Contributors.
+ * Copyright (c) 2022-2023. XPkg-Client Contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,16 +32,19 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import net.xpkgclient.Configuration;
 import net.xpkgclient.Properties;
-import net.xpkgclient.exceptions.XPkgFetchException;
 import net.xpkgclient.packagemanager.Package;
 import net.xpkgclient.packagemanager.Remote;
-import net.xpkgclient.packagemanager.ScriptExecutionHandler;
 import net.xpkgclient.packagemanager.Version;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 
+import net.arkinsolomon.sakurainterpreter.SakuraInterpreter;
+import net.arkinsolomon.sakurainterpreter.InterpreterOptions;
+
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class controls the main GUI elements.
@@ -90,7 +93,7 @@ public final class MainController {
         columns.get(0).setCellValueFactory(new PropertyValueFactory<>("packageId"));
         columns.get(1).setCellValueFactory(new PropertyValueFactory<>("packageName"));
         columns.get(2).setCellValueFactory(new PropertyValueFactory<>("latestVersionStr"));
-        columns.get(3).setCellValueFactory(new PropertyValueFactory<>("author"));
+        columns.get(3).setCellValueFactory(new PropertyValueFactory<>("authorName"));
         columns.get(4).setCellValueFactory(new PropertyValueFactory<>("description"));
 
         packageTable.setRowFactory(tv -> {
@@ -143,7 +146,7 @@ public final class MainController {
                     hasGottenPackages = true;
                     setAllButtonsEnabled(true);
                 });
-            } catch (XPkgFetchException e) {
+            } catch (Throwable e) {
                 Platform.runLater(() -> {
                     e.printStackTrace();
                     setStatus("Could not get packages");
@@ -189,12 +192,44 @@ public final class MainController {
                 return;
             }
 
-            ScriptExecutionHandler.executeFile(new File(loc, "install.xpkgs.txt").getAbsolutePath());
+            InterpreterOptions options = new InterpreterOptions("xpkg");
+
+            File[] xpChildren = Configuration.getXpPath().listFiles();
+            assert xpChildren != null;
+            List<File> readableFiles = new ArrayList<>(Arrays.stream(xpChildren).filter(file -> file.isDirectory() && !file.getName().equals("xpkg")).toList());
+
+            File[] resources = loc.listFiles();
+            assert resources != null;
+            readableFiles.addAll(Arrays.stream(resources).filter(File::isDirectory).toList());
+
+            options.allowRead(readableFiles);
+
+            File tmp = FileUtils.getTempDirectory();
+
+            options.setRoot(Configuration.getXpPath());
+
+            options.defineEnvVar("default", new File(loc, currentPkg.getPackageId()));
+            options.defineEnvVar("packageName", currentPkg.getPackageName());
+            options.defineEnvVar("packageId", currentPkg.getPackageId());
+
+            switch (currentPkg.getPackageType()) {
+                case AIRCRAFT -> {
+                    File aircraftFile = new File(Configuration.getXpPath(), "Aircraft");
+                    options.allowWrite(aircraftFile);
+                    options.disallowWrite(new File(aircraftFile, "Laminar Research"));
+                }
+                case OTHER, EXECUTABLE -> {
+
+                }
+            }
 
             try {
-                FileUtils.deleteDirectory(loc.getParentFile());
-            } catch (Throwable e) {
+                SakuraInterpreter interpreter = new SakuraInterpreter(options);
+                interpreter.executeFile(new File(loc, "install.ska"));
+            } catch (Throwable e){
                 throw new RuntimeException(e);
+            } finally {
+//                FileUtils.deleteDirectory(loc.getParentFile());
             }
         })).start();
     }
