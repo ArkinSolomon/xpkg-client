@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. XPkg-Client Contributors.
+ * Copyright (c) 2022-2023. Arkin Solomon.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 package net.xpkgclient.packagemanager;
 
 import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -28,25 +30,31 @@ public final class Version {
     /**
      * The major number of this version.
      *
+     * @param major The new major of this version.
      * @return The major number of this version.
      */
     @Getter
-    private final int major;
+    @Setter
+    private int major;
 
     /**
      * The minor number of this version.
      *
+     * @param minor The new minor version number
      * @return The minor number of this version.
      */
     @Getter
+    @Setter
     private int minor = 0;
 
     /**
      * The patch number of this version.
      *
+     * @param patch The new patch number of this version.
      * @return The patch number of this version.
      */
     @Getter
+    @Setter
     private int patch = 0;
 
     /**
@@ -58,9 +66,9 @@ public final class Version {
     private Character alphaOrBeta = null;
 
     /**
-     * Pre-release version. Null if {@code alphaOrBeta} is null.
+     * Pre-release number. Null if {@code alphaOrBeta} is null.
      *
-     * @return The Pre-release version, or null if {@code alphaOrBeta} is null.
+     * @return The pre-release number, or null if {@code alphaOrBeta} is null.
      */
     @Getter
     private Integer preReleaseVersion = null;
@@ -120,6 +128,20 @@ public final class Version {
     }
 
     /**
+     * Create a version object from a version string, except don't throw an error if the version is invalid.
+     *
+     * @param versionStr The version string.
+     * @return A version object representation of {@code versionStr}, or {@code null} if {@code versionStr} is invalid.
+     */
+    public static Version fromString(String versionStr) {
+        try {
+            return new Version(versionStr);
+        }catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
      * Create a new version from only the major number, set the minor and patch numbers to zero.
      *
      * @param major The major number of the version.
@@ -175,6 +197,50 @@ public final class Version {
         this.alphaOrBeta = alphaOrBeta;
         this.preReleaseVersion = preReleaseNum;
         checkVersionValidity();
+    }
+
+    /**
+     * Turn {@code num} into a string and return as a 3-digit (character) string, prepending zeros.
+     *
+     * @param num The number to turn to a three-digit string.
+     * @return The number as a three-digit string.
+     */
+    private static String toThreeDigits(int num) {
+        String numStr = String.valueOf(num);
+
+        if (numStr.length() == 1)
+            numStr = "00" + numStr;
+        else if (numStr.length() == 2)
+            numStr = "0" + numStr;
+        else if (numStr.length() != 3)
+            throw new UnsupportedOperationException("Can not convert an integer that is longer than three digits to a three-digit string.");
+
+        return numStr;
+    }
+
+    /**
+     * Change the pre-release number. Only update if {@link Version#alphaOrBeta} is set.
+     *
+     * @param preReleaseVersion The new pre-release version number.
+     */
+    private void setPreReleaseVersion(Integer preReleaseVersion) {
+        if (isPreRelease())
+            this.preReleaseVersion = preReleaseVersion;
+
+    }
+
+    /**
+     * Set the new alpha or beta version. Use 'a' for alpha, or 'b' for beta, or null if it's a release version. Sets {@link Version#preReleaseVersion} to 1 if it is zero or not set.
+     *
+     * @param alphaOrBeta The new alpha or beta version.
+     */
+    public void setAlphaOrBeta(Character alphaOrBeta) throws InvalidVersionException {
+        if (alphaOrBeta != null && alphaOrBeta != 'a' && alphaOrBeta != 'b')
+            throw new InvalidVersionException("Alpha or beta version must be set by either \"a\" or \"b\" or must be null, not \"%c\"".formatted(alphaOrBeta));
+
+        this.alphaOrBeta = alphaOrBeta;
+        if (this.preReleaseVersion == null || this.preReleaseVersion == 0)
+            this.preReleaseVersion = 1;
     }
 
     /**
@@ -256,5 +322,38 @@ public final class Version {
     @Override
     public int hashCode() {
         return Objects.hash(major, minor, patch, alphaOrBeta, preReleaseVersion);
+    }
+
+    /**
+     * Create a copy of this version.
+     *
+     * @return A copy of this version.
+     */
+    @SneakyThrows
+    public Version copy() {
+        return new Version(major, minor, patch, alphaOrBeta, preReleaseVersion);
+    }
+
+    /**
+     * Compute and retrieve the number representation of this version.
+     *
+     * @return The number representation of this version.
+     */
+    public long getVersionNum() {
+        String longStr = "%s%s%s".formatted(major, toThreeDigits(minor), toThreeDigits(patch));
+
+        long semverFloat = Long.parseLong(longStr);
+        if (!isPreRelease())
+            return semverFloat;
+
+        int preReleaseNum = 999 - preReleaseVersion;
+        String preReleaseFloatStr;
+        if (alphaOrBeta == 'a')
+            preReleaseFloatStr = "999%s".formatted(toThreeDigits(preReleaseNum));
+        else
+            preReleaseFloatStr = "%s999".formatted(toThreeDigits(preReleaseNum));
+        long preReleaseFloat = Long.parseLong(preReleaseFloatStr);
+
+        return semverFloat - preReleaseFloat;
     }
 }

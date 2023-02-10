@@ -9,6 +9,7 @@ net/xpkgclient/packagemanager/InvalidVersionException.class
 net/xpkgclient/packagemanager/Package.class
 net/xpkgclient/packagemanager/Remote.class
 net/xpkgclient/gui/MainController$1.class
+net/xpkgclient/packagemanager/DependencyTree.class
 net/xpkgclient/Configuration.class
 net/xpkgclient/packagemanager/Version.class
 net/xpkgclient/gui/MainController.class

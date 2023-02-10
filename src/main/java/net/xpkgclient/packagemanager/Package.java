@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023. XPkg-Client Contributors.
+ * Copyright (c) 2022-2023. Arkin Solomon.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,7 +93,7 @@ public final class Package {
     private final PackageType packageType;
 
     /**
-     * All the (published) versions that a package has..
+     * All the (published) versions that a package has.
      *
      * @return All the (published) versions that a package has.
      */
@@ -109,7 +109,7 @@ public final class Package {
      * @param authorName         The package author's name.
      * @param authorId The id of the author.
      */
-    public Package(String packageId, String packageName, PackageType packageType, @NotNull String[] versionStrings, String description, String authorName, String authorId) {
+    public Package(String packageId, String packageName, PackageType packageType, @NotNull String[] versionStrings, String description, String authorName, String authorId, String[][] dependencies, String[][] optionalDependencies, String[][] incompatibilities) {
         this.packageId = packageId;
         this.packageName = packageName;
         this.packageType = packageType;
