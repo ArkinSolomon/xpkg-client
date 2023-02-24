@@ -15,9 +15,15 @@
 
 package net.xpkgclient;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import net.xpkgclient.packagemanager.DependencyTree;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.prefs.Preferences;
 
 /**
@@ -26,44 +32,59 @@ import java.util.prefs.Preferences;
 @UtilityClass
 public final class Configuration {
 
+    private static final String NO_XP_INSTALLATION = "NO_XP_INSTALLATION";
+
     private static final Preferences prefs = Preferences.userRoot().node("xpkg-client-root");
 
-    // The currently active X-Plane installation
-    private static File xpPath = null;
-
-    // True if the PRINT command should print using print() instead of println(),
-    // used for testing
-    private static boolean inlinePrint = false;
-
     /**
-     * Get the location of the currently configured X-Plane directory.
+     * The currently active X-Plane installation.
      *
+     * @param xpPath Set the location of the currently configured X-Plane directory.
      * @return The File object which refers to the configured X-Plane directory.
      */
-    public static File getXpPath() {
-        return xpPath;
-    }
+    @Getter
+    @Setter
+    private File xpPath = null;
 
     /**
-     * Set the location of the currently configured X-Plane directory.
+     * The path to the temporary directory.
+     *
+     * @return The file which points to the root temporary directory.
      */
-    public static void setXpPath(File xpPath) {
-        Configuration.xpPath = xpPath;
-    }
+    @Getter
+    private File tmpDir;
+
+    /**
+     * The dependency tree for the current configuration.
+     *
+     * @returns The dependency tree for this configuration.
+     */
+    @Getter
+    private DependencyTree dependencyTree;
 
     /**
      * Save the configuration.
      */
     public static void save() {
         prefs.put("xp-config", xpPath.getAbsolutePath());
-        prefs.putBoolean("inline-print", inlinePrint);
     }
 
     /**
      * Load the configuration.
      */
+    @SneakyThrows(IOException.class)
     public static void load() {
-        xpPath = new File(prefs.get("xp-config", "NO_XP_INSTALLATION"));
+        String xpPathStr = prefs.get("xp-config", NO_XP_INSTALLATION);
+        xpPath = new File(xpPathStr);
+
+        tmpDir = Files.createTempDirectory("xpkg-temp-").toFile();
+        tmpDir.deleteOnExit();
+
+        if (xpPathStr.equals(NO_XP_INSTALLATION))
+            return;
+
+        File xpkgPath = new File(xpPath, "xpkg");
+        dependencyTree = new DependencyTree(new File(xpkgPath, "dependencies.xpkg.json"));
     }
 
     /**

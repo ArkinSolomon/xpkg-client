@@ -32,19 +32,17 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import net.xpkgclient.Configuration;
 import net.xpkgclient.Properties;
+import net.xpkgclient.packagemanager.Installer;
 import net.xpkgclient.packagemanager.Package;
 import net.xpkgclient.packagemanager.Remote;
-import net.xpkgclient.packagemanager.Version;
-import org.apache.commons.io.FileUtils;
+import net.xpkgclient.versioning.Version;
 import org.jetbrains.annotations.NotNull;
 
-import net.arkinsolomon.sakurainterpreter.SakuraInterpreter;
-import net.arkinsolomon.sakurainterpreter.InterpreterOptions;
-
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * This class controls the main GUI elements.
@@ -52,14 +50,20 @@ import java.util.List;
 public final class MainController {
 
     private static boolean hasGottenPackages = false;
+    private boolean isTreeDisplayed = false;
+
     @FXML
     private TableView<Package> packageTable;
     @FXML
     private Label statusMessage;
     @FXML
     private Label currentInstallation;
+
     @FXML
     private Button refreshButton;
+    @FXML
+    private Button treeViewButton;
+
     @FXML
     private Button packageDisplayClose;
     @FXML
@@ -107,6 +111,22 @@ public final class MainController {
 
         refreshButton.setOnAction(actionEvent -> refreshPackages());
         refreshPackages();
+
+        treeViewButton.setOnAction(actionEvent -> {
+            if (isTreeDisplayed)
+                return;
+
+            isTreeDisplayed = true;
+            DependencyTreeRenderer treeRenderer = new DependencyTreeRenderer(Configuration.getDependencyTree());
+
+            treeRenderer.getFrame().addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    isTreeDisplayed = false;
+                    super.windowOpened(e);
+                }
+            });
+        });
     }
 
     /**
@@ -184,54 +204,17 @@ public final class MainController {
     /**
      * Install the currently displayed package.
      */
-    private void installCurrentPackage() {
-        new Thread(() -> Remote.downloadPackage(currentPkg, packageDisplaySelector.getValue(), (err, loc) -> {
-            if (err != null) {
-                err.printStackTrace();
-                setStatus("Error occurred while installing package");
-                return;
-            }
-
-            InterpreterOptions options = new InterpreterOptions("xpkg");
-
-            File[] xpChildren = Configuration.getXpPath().listFiles();
-            assert xpChildren != null;
-            List<File> readableFiles = new ArrayList<>(Arrays.stream(xpChildren).filter(file -> file.isDirectory() && !file.getName().equals("xpkg")).toList());
-
-            File[] resources = loc.listFiles();
-            assert resources != null;
-            readableFiles.addAll(Arrays.stream(resources).filter(File::isDirectory).toList());
-
-            options.allowRead(readableFiles);
-
-            File tmp = FileUtils.getTempDirectory();
-
-            options.setRoot(Configuration.getXpPath());
-
-            options.defineEnvVar("default", new File(loc, currentPkg.getPackageId()));
-            options.defineEnvVar("packageName", currentPkg.getPackageName());
-            options.defineEnvVar("packageId", currentPkg.getPackageId());
-
-            switch (currentPkg.getPackageType()) {
-                case AIRCRAFT -> {
-                    File aircraftFile = new File(Configuration.getXpPath(), "Aircraft");
-                    options.allowWrite(aircraftFile);
-                    options.disallowWrite(new File(aircraftFile, "Laminar Research"));
-                }
-                case OTHER, EXECUTABLE -> {
-
-                }
-            }
+    private synchronized void installCurrentPackage() {
+        new Thread(() -> {
+            CompletableFuture<Void> installationFuture = Installer.installPackage(currentPkg, packageDisplaySelector.getValue());
 
             try {
-                SakuraInterpreter interpreter = new SakuraInterpreter(options);
-                interpreter.executeFile(new File(loc, "install.ska"));
-            } catch (Throwable e){
+                installationFuture.get();
+                Platform.runLater(() -> setStatus("Installed package " + currentPkg.getPackageId()));
+            } catch (Throwable e) {
                 throw new RuntimeException(e);
-            } finally {
-//                FileUtils.deleteDirectory(loc.getParentFile());
             }
-        })).start();
+        }).start();
     }
 
     /**

@@ -13,7 +13,7 @@
  * either express or implied limitations under the License.
  */
 
-package net.xpkgclient.packagemanager;
+package net.xpkgclient.versioning;
 
 /**
  * An exception thrown when a version is invalid.

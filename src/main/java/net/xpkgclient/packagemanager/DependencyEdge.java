@@ -15,22 +15,16 @@
 
 package net.xpkgclient.packagemanager;
 
-import net.xpkgclient.versioning.Version;
+import net.xpkgclient.versioning.VersionSelect;
 
-import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
- * A single node for a package in the dependency tree.
+ * An edge of the dependency graph. Read as: "The package {@code dependent} depends on {@code dependency} within the version {@code selection}."
+ *
+ * @param dependent The id of the package that the edge is from.
+ * @param dependency The id of the package that the edge is to.
+ * @param selection The version selection that the dependency id needs to depend on.
  */
-public record PackageNode(String packageId, Version version) {
-
-    /**
-     * Get the hash code for this package node. Any other node with the same package id will have the same hash code.
-     *
-     * @return The hash code for this package node.
-     */
-    @Override
-    public int hashCode() {
-        return packageId.hashCode();
-    }
+public record DependencyEdge(PackageNode dependent, PackageNode dependency, VersionSelect selection) {
 }

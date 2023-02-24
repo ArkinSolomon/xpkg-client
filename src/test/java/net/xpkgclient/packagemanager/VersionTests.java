@@ -16,6 +16,8 @@
 package net.xpkgclient.packagemanager;
 
 import lombok.SneakyThrows;
+import net.xpkgclient.versioning.InvalidVersionException;
+import net.xpkgclient.versioning.Version;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

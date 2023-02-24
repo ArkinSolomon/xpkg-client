@@ -13,7 +13,7 @@
  * either express or implied limitations under the License.
  */
 
-package net.xpkgclient.packagemanager;
+package net.xpkgclient.versioning;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +25,19 @@ import java.util.Objects;
 /**
  * A class to compare different versions and version strings.
  */
-public final class Version {
+public final class Version implements Comparable<Version> {
+
+    public static final Version MIN_VERSION;
+    public static final Version MAX_VERSION;
+
+    static {
+        try {
+            MIN_VERSION = new Version(0, 0, 1, 'a', 1);
+            MAX_VERSION = new Version(999, 999, 999);
+        } catch (InvalidVersionException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     /**
      * The major number of this version.
@@ -128,20 +140,6 @@ public final class Version {
     }
 
     /**
-     * Create a version object from a version string, except don't throw an error if the version is invalid.
-     *
-     * @param versionStr The version string.
-     * @return A version object representation of {@code versionStr}, or {@code null} if {@code versionStr} is invalid.
-     */
-    public static Version fromString(String versionStr) {
-        try {
-            return new Version(versionStr);
-        }catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
      * Create a new version from only the major number, set the minor and patch numbers to zero.
      *
      * @param major The major number of the version.
@@ -197,6 +195,20 @@ public final class Version {
         this.alphaOrBeta = alphaOrBeta;
         this.preReleaseVersion = preReleaseNum;
         checkVersionValidity();
+    }
+
+    /**
+     * Create a version object from a version string, except don't throw an error if the version is invalid.
+     *
+     * @param versionStr The version string.
+     * @return A version object representation of {@code versionStr}, or {@code null} if {@code versionStr} is invalid.
+     */
+    public static Version fromString(String versionStr) {
+        try {
+            return new Version(versionStr);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -331,6 +343,8 @@ public final class Version {
      */
     @SneakyThrows
     public Version copy() {
+        if (!isPreRelease())
+            return new Version(major, minor, patch);
         return new Version(major, minor, patch, alphaOrBeta, preReleaseVersion);
     }
 
@@ -340,11 +354,12 @@ public final class Version {
      * @return The number representation of this version.
      */
     public long getVersionNum() {
-        String longStr = "%s%s%s".formatted(major, toThreeDigits(minor), toThreeDigits(patch));
+        String longStr = "%s%s%s000000".formatted(major, toThreeDigits(minor), toThreeDigits(patch));
 
-        long semverFloat = Long.parseLong(longStr);
-        if (!isPreRelease())
-            return semverFloat;
+        long semverNum = Long.parseLong(longStr);
+        if (!isPreRelease()){
+            return semverNum;
+        }
 
         int preReleaseNum = 999 - preReleaseVersion;
         String preReleaseFloatStr;
@@ -354,6 +369,17 @@ public final class Version {
             preReleaseFloatStr = "%s999".formatted(toThreeDigits(preReleaseNum));
         long preReleaseFloat = Long.parseLong(preReleaseFloatStr);
 
-        return semverFloat - preReleaseFloat;
+        return semverNum - preReleaseFloat;
+    }
+
+    /**
+     * Compare two versions together.
+     *
+     * @param other The other version to be compared.
+     * @return Zero if {@code other} is equal to this version, a negative value if {@code other} is greater than this version, or a positive otherwise.
+     */
+    @Override
+    public int compareTo(@NotNull Version other) {
+        return Long.compare(getVersionNum(), other.getVersionNum());
     }
 }

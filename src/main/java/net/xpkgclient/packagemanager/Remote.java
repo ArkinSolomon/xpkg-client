@@ -16,10 +16,12 @@
 package net.xpkgclient.packagemanager;
 
 import javafx.application.Platform;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import net.lingala.zip4j.ZipFile;
 import net.xpkgclient.Configuration;
+import net.xpkgclient.versioning.Version;
 import org.apache.commons.codec.binary.Hex;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -53,12 +55,20 @@ import java.util.concurrent.CompletableFuture;
 public class Remote {
 
     /**
+     * All the packages retrieved from the server. May not be up-to-date.
+     *
+     * @returns The list of the packages retrieved from the server. Original list, do not modify.
+     */
+    @Getter
+    private List<Package> packages;
+
+    /**
      * Get all packages from the server.
      *
      * @param cb The callback to execute after downloading all packages from the server. Run within {@link Platform#runLater(Runnable)} so that JavaFX calls can be made from within the new thread.
      */
     @SneakyThrows(MalformedURLException.class)
-    public synchronized static void getAllPackages(PackageRetrieveCallback cb) {
+    public synchronized void getAllPackages(PackageRetrieveCallback cb) {
         ArrayList<Package> packages = new ArrayList<>();
 
         final URL url = new URL("http://localhost:5020/packages/");
@@ -105,7 +115,7 @@ public class Remote {
      * @param version The version of the package to download.
      * @param cb      The callback function which runs after the file has been downloaded and unzipped, with the second parameter as the location of the root of the package downloaded. If there is an exception downloading the package, the file will be null and the first parameter will have the error that caused the download to fail.
      */
-    public synchronized static void downloadPackage(@NotNull Package pkg, Version version, FileDownloadedCallback cb) {
+    public void downloadPackage(@NotNull Package pkg, Version version, FileDownloadedCallback cb) {
         File downloadFile = Path.of(Configuration.getXpPath().getAbsolutePath(), "xpkg", "tmp", "downloads", pkg.getPackageId() + ".xpkg").toFile();
 
         //noinspection ResultOfMethodCallIgnored
@@ -174,7 +184,7 @@ public class Remote {
      * @param cb      The callback to execute after getting the location data. Run within {@link Platform#runLater(Runnable)} so that JavaFX calls can be made from within the new thread.
      */
     @SneakyThrows(MalformedURLException.class)
-    public synchronized static void getPackageLocData(@NotNull Package pkg, @NotNull Version version, LocDataDownloadedCallback cb) {
+    public synchronized void getPackageLocData(@NotNull Package pkg, @NotNull Version version, LocDataDownloadedCallback cb) {
         URL url = new URL(String.format("http://localhost:5020/packages/%s/%s", pkg.getPackageId(), version));
         JSONObject obj;
         try {
@@ -194,7 +204,7 @@ public class Remote {
      * @throws IOException Exception thrown if the file does not exist, or if there was an error reading it.
      */
     @SneakyThrows(NoSuchAlgorithmException.class)
-    public static boolean checkFileHash(File fileName, String expectedHash) throws IOException {
+    public boolean checkFileHash(File fileName, String expectedHash) throws IOException {
 
         byte[] buffer = new byte[8192];
         int count;
@@ -214,7 +224,7 @@ public class Remote {
      * Read JSON from URL. See <a href="https://stackoverflow.com/questions/4308554/simplest-way-to-read-json-from-a-url-in-java">answer on Stack Overflow</a>.
      *
      * @param url The URL to get the JSON data from.
-     * @return the JSON data downloaded from the URL.
+     * @return The JSON data downloaded from the URL.
      * @throws IOException   Exception thrown when there is an issue getting the data from the remote server.
      * @throws JSONException Exception thrown when there is an issue parsing the JSON returned.
      */

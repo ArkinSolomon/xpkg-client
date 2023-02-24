@@ -13,10 +13,9 @@
  * either express or implied limitations under the License.
  */
 
-package net.xpkgclient.packagemanager;
+package net.xpkgclient.versioning;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +33,7 @@ public class VersionSelect {
      */
     @Getter
     private boolean isValid = true;
-    private List<RangeSet> ranges = new ArrayList<>();
+    private List<VersionRange> ranges = new ArrayList<>();
 
     /**
      * Create a new selection checker from a string.
@@ -46,9 +45,9 @@ public class VersionSelect {
 
         try {
             for (String selection : selectionSections) {
-                RangeSet range = new RangeSet(
-                        new Version(0, 0, 1, 'a', 1),
-                        new Version(999, 999, 999)
+                VersionRange range = new VersionRange(
+                        Version.MIN_VERSION,
+                        Version.MAX_VERSION
                 );
 
                 selection = selection.trim();
@@ -79,7 +78,7 @@ public class VersionSelect {
                             minVersion.setAlphaOrBeta('a');
                     }
 
-                    ranges.add(new RangeSet(minVersion, maxVersion));
+                    ranges.add(new VersionRange(minVersion, maxVersion));
                     continue;
                 } else if (versionParts.length != 2) {
                     isValid = false;
@@ -105,8 +104,7 @@ public class VersionSelect {
                     if (!lowerVersion.isPreRelease())
                         lowerVersion = new Version(lowerVersionStr + "a1");
 
-                    range.setMinVersion(lowerVersion);
-                    range.setMinVersionNum(lowerVersion.getVersionNum());
+                    range.setMin(lowerVersion);
                 }
 
                 if (hasUpper) {
@@ -122,22 +120,57 @@ public class VersionSelect {
                         if (partLen < 3)
                             upperVersion.setPatch(999);
                     }
-
-                    range.setMaxVersion(upperVersion);
-                    range.setMaxVersionNum(upperVersion.getVersionNum());
+                    range.setMax(upperVersion);
                 }
 
                 if (range.getMinVersionNum() > range.getMaxVersionNum()) {
                     isValid = false;
                     break;
                 }
-
                 ranges.add(range);
             }
+
+            if (!isValid)
+                return;
+            ranges = simplify(ranges);
         } catch (InvalidVersionException e) {
             isValid = false;
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Create a new version selection from a version ranges. Does not copy {@code ranges}.
+     *
+     * @param ranges The ranges for this version selection.
+     */
+    public VersionSelect(List<VersionRange> ranges){
+        this.ranges = ranges;
+    }
+
+    /**
+     * Simplify the list of ranges.
+     *
+     * @param ranges The ranges to simplify.
+     * @return A new deep copy of the ranges simplified.
+     */
+    public static List<VersionRange> simplify(List<VersionRange> ranges) {
+
+        // Create a deep copy of the list
+        ranges = ranges.stream().map(r -> new VersionRange(r.getMinVersion().copy(), r.getMaxVersion().copy())).sorted().toList();
+
+        int curr = 0;
+        while (ranges.size() > 1 && curr < ranges.size() - 1) {
+            VersionRange r = VersionRange.tryMerge(ranges.get(curr), ranges.get(curr + 1));
+            if (r == null)
+                ++curr;
+            else {
+                ranges.set(curr, r);
+                ranges.remove(curr + 1);
+            }
+        }
+
+        return ranges;
     }
 
     /**
@@ -146,8 +179,8 @@ public class VersionSelect {
      * @param version Check if a version falls within a version selection.
      * @return True if the number is within the selection.
      */
-    boolean containsVersion(Version version) {
-        for (RangeSet range : ranges) {
+    public boolean containsVersion(Version version) {
+        for (VersionRange range : ranges) {
             long versionNum = version.getVersionNum();
 
             if (versionNum >= range.getMinVersionNum() && versionNum <= range.getMaxVersionNum())
@@ -161,66 +194,32 @@ public class VersionSelect {
      *
      * @return A copy of the simplified ranges.
      */
-    public RangeSet[] getRanges() {
-        return ranges.toArray(RangeSet[]::new);
+    public VersionRange[] getRanges() {
+        return ranges.toArray(VersionRange[]::new);
     }
 
     /**
-     * This class is used to store sets of version selection.
+     * Get the string that can be used to create this version selection.
+     *
+     * @return The string representation of this selection.
      */
-    private static class RangeSet {
+    @Override
+    public String toString() {
+        ArrayList<String> rangeStrings = new ArrayList<>(ranges.size());
 
-        /**
-         * The maximum version number.
-         *
-         * @param maxVersionNum The new maximum version number.
-         * @return The maximum version number.
-         */
-        @Getter
-        @Setter
-        private long maxVersionNum;
-
-        /**
-         * The minimum version number.
-         *
-         * @param minVersionNum The new maximum version number.
-         * @return The maximum version number.
-         */
-        @Getter
-        @Setter
-        private long minVersionNum;
-
-        /**
-         * The maximum version object.
-         *
-         * @param maxVersion The new maximum version object.
-         * @return The maximum version object.
-         */
-        @Getter
-        @Setter
-        private Version maxVersion;
-
-        /**
-         * The minimum version object.
-         *
-         * @param minVersion The new maximum version object.
-         * @return The maximum version object.
-         */
-        @Getter
-        @Setter
-        private Version minVersion;
-
-        /**
-         * Create a new range set from two numbers.
-         *
-         * @param minVersion The minimum version of the range.
-         * @param maxVersion The maximum version of the range.
-         */
-        public RangeSet(Version minVersion, Version maxVersion) {
-            this.minVersion = minVersion;
-            this.maxVersion = maxVersion;
-            this.minVersionNum = minVersion.getVersionNum();
-            this.maxVersionNum = maxVersion.getVersionNum();
+        for (VersionRange range : ranges) {
+            if (range.getMinVersionNum() == range.getMaxVersionNum())
+                rangeStrings.add(range.getMinVersion().toString());
+            else if (range.getMinVersion().equals(Version.MIN_VERSION) && range.getMaxVersion().equals(Version.MAX_VERSION))
+                return "*";
+            else if (range.getMinVersion().equals(Version.MIN_VERSION))
+                return "-%s".formatted(range.getMaxVersion());
+            else if (range.getMaxVersion().equals(Version.MAX_VERSION))
+                return "%s-".formatted(range.getMinVersion());
+            else
+                rangeStrings.add("%s-%s".formatted(range.getMinVersion(), range.getMaxVersion()));
         }
+
+        return String.join(",", rangeStrings);
     }
 }

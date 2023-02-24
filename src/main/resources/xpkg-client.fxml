@@ -66,6 +66,18 @@
                   <Tooltip text="Refresh" />
                </tooltip>
             </Button>
+            <Button fx:id="treeViewButton" accessibleText="Dependency Tree" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="40.0" maxWidth="40.0" minHeight="40.0" minWidth="40.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="View Tree" textOverrun="CLIP">
+               <graphic>
+                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" scaleX="0.2" scaleY="0.2" scaleZ="0.2">
+                     <image>
+                        <Image url="@images/tree-button.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Refresh" />
+               </tooltip>
+            </Button>
          </children>
       </FlowPane>
     <SplitPane focusTraversable="true" maxHeight="9999999.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">

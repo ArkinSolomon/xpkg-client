@@ -16,6 +16,8 @@
 package net.xpkgclient.packagemanager;
 
 import lombok.Getter;
+import net.xpkgclient.versioning.InvalidVersionException;
+import net.xpkgclient.versioning.Version;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -109,7 +111,7 @@ public final class Package {
      * @param authorName         The package author's name.
      * @param authorId The id of the author.
      */
-    public Package(String packageId, String packageName, PackageType packageType, @NotNull String[] versionStrings, String description, String authorName, String authorId, String[][] dependencies, String[][] optionalDependencies, String[][] incompatibilities) {
+    public Package(String packageId, String packageName, PackageType packageType, @NotNull String[] versionStrings, String description, String authorName, String authorId) {
         this.packageId = packageId;
         this.packageName = packageName;
         this.packageType = packageType;
