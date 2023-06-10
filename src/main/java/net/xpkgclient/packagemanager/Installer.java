@@ -19,30 +19,60 @@ import lombok.experimental.UtilityClass;
 import net.arkinsolomon.sakurainterpreter.InterpreterOptions;
 import net.arkinsolomon.sakurainterpreter.SakuraInterpreter;
 import net.xpkgclient.Configuration;
+import net.xpkgclient.packagemanager.actions.InstallerAction;
 import net.xpkgclient.versioning.Version;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @UtilityClass
 public class Installer {
 
     /**
-     * Install a package at a specified version. Does not check for compatibility.
+     * Install a package at a specified version. Only use for fresh installations, do not use for updates.
      *
      * @param pkg            The package to install.
      * @param packageVersion The version of the package to install.
      * @return A future which completes when the package is installed.
      */
     public CompletableFuture<Void> installPackage(Package pkg, Version packageVersion) {
+        DependencyTree dependencyTree = Configuration.getDependencyTree();
         CompletableFuture<Void> future = new CompletableFuture<>();
 
-        // We can't use supplyAsync here since downloading the package already takes a callback
-        Remote.downloadPackage(pkg, packageVersion, (err, loc) -> {
+        Thread t = new Thread(() -> {
+            Optional<List<InstallerAction>> actions = dependencyTree.getActions(pkg.getPackageId(), packageVersion);
+
+            if (actions.isEmpty()) {
+                future.completeExceptionally(new UnablePackageInstallException(pkg.getPackageId(), packageVersion));
+                return;
+            }
+
+            for (InstallerAction action : actions.get()) {
+                System.out.println(action);
+                action.perform();
+            }
+
+            future.complete(null);
+        });
+
+        t.start();
+
+        return future;
+    }
+
+    /**
+     * Run the installation script for a specific package.
+     *
+     * @param pkg                The package to install.
+     * @param version            The version of the package to install.
+     * @param packageVersionData The data for a package version.
+     * @return A future which completes when the installation script is done running.
+     */
+    private CompletableFuture<Void> runInstallScript(Package pkg, Version version, Remote.VersionData packageVersionData) {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+
+        Remote.downloadPackage(pkg, version, packageVersionData, (err, loc) -> {
             if (err != null)
                 throw new RuntimeException(err);
 
@@ -80,17 +110,23 @@ public class Installer {
                 }
             }
 
-            try {
-                SakuraInterpreter interpreter = new SakuraInterpreter(options);
-                interpreter.executeFile(new File(loc, "install.ska"));
-                future.complete(null);
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
-            } finally {
-                // FileUtils.deleteDirectory(loc.getParentFile());
-            }
+            SakuraInterpreter interpreter = new SakuraInterpreter(options);
+            interpreter.executeFile(new File(loc, "install.ska"));
+            future.complete(null);
+            // FileUtils.deleteDirectory(loc.getParentFile());
         });
 
         return future;
+    }
+
+    /**
+     * Install the latest possible versions of a package.
+     *
+     * @param pkg The package to install.
+     * @return A future which completes when the package and all of its dependencies have been installed.
+     * @throws UnablePackageInstallException Exception thrown when the package or any of its dependencies can not be installed.
+     */
+    public CompletableFuture<Void> installLatestVersion(Package pkg) throws UnablePackageInstallException {
+        return null;
     }
 }

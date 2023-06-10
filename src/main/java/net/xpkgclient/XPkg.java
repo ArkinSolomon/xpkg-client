@@ -18,7 +18,6 @@ package net.xpkgclient;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import net.xpkgclient.gui.MainGUI;
-import net.xpkgclient.versioning.VersionSelect;
 
 import java.io.File;
 

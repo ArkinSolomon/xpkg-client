@@ -19,13 +19,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -206,7 +200,8 @@ public final class MainController {
      */
     private synchronized void installCurrentPackage() {
         new Thread(() -> {
-            CompletableFuture<Void> installationFuture = Installer.installPackage(currentPkg, packageDisplaySelector.getValue());
+            CompletableFuture<Void> installationFuture;
+            installationFuture = Installer.installPackage(currentPkg, packageDisplaySelector.getValue());
 
             try {
                 installationFuture.get();

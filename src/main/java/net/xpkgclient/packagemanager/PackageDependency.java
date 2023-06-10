@@ -17,14 +17,16 @@ package net.xpkgclient.packagemanager;
 
 import net.xpkgclient.versioning.VersionSelect;
 
-import java.util.function.Supplier;
-
 /**
  * An edge of the dependency graph. Read as: "The package {@code dependent} depends on {@code dependency} within the version {@code selection}."
  *
- * @param dependent The id of the package that the edge is from.
+ * @param dependent  The id of the package that the edge is from.
  * @param dependency The id of the package that the edge is to.
- * @param selection The version selection that the dependency id needs to depend on.
+ * @param selection  The version selection that the dependency id needs to depend on.
  */
-public record DependencyEdge(PackageNode dependent, PackageNode dependency, VersionSelect selection) {
+public record PackageDependency(PackageNode dependent, PackageNode dependency, VersionSelect selection) {
+    @Override
+    public String toString() {
+        return dependent + " is dependent on " + dependency + " versions " + selection;
+    }
 }

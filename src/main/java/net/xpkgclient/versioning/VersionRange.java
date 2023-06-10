@@ -16,12 +16,15 @@
 package net.xpkgclient.versioning;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * This class is used to store a single set of a version selection.
  */
-public final class VersionRange implements Comparable<VersionRange> {
+public final class VersionRange implements Comparable<VersionRange>, Cloneable {
 
     /**
      * The maximum version number.
@@ -56,6 +59,72 @@ public final class VersionRange implements Comparable<VersionRange> {
     private Version minVersion;
 
     /**
+     * Create a new range set from two numbers.
+     *
+     * @param minVersion The minimum version of the range.
+     * @param maxVersion The maximum version of the range.
+     */
+    public VersionRange(Version minVersion, Version maxVersion) {
+        setMin(minVersion);
+        setMax(maxVersion);
+    }
+
+    /**
+     * Try merging two version ranges. Note that {@code r1} must be less than or equal to {@code r2}.
+     *
+     * @param r1 The first range to try merging.
+     * @param r2 The second range to try merging.
+     * @return Null if the two range sets can not be merged, {@code r1} if {@code r2} fits inside {@code r1}, or a new merged range set.
+     */
+    public static VersionRange tryMerge(VersionRange r1, VersionRange r2) {
+        if (r1.compareTo(r2) > 0)
+            throw new RuntimeException("r1 must be less than r2 in order to merge");
+
+        if (r1.maxVersionNum < r2.minVersionNum)
+            return null;
+
+        if (r1.maxVersionNum < r2.maxVersionNum)
+            return new VersionRange(r1.minVersion, r2.maxVersion);
+
+        return r1;
+    }
+
+    /**
+     * Create a deep copy of a list of version ranges.
+     *
+     * @param ranges The ranges to create a deep copy of.
+     * @returns A new list that is a deep copy of all the ranges.
+     */
+    public static List<VersionRange> deepCopy(List<VersionRange> ranges) {
+        return ranges.stream().map(VersionRange::clone).toList();
+    }
+
+    /**
+     * Simplify the list of ranges.
+     *
+     * @param ranges The ranges to simplify.
+     * @return A new deep copy of the ranges simplified.
+     */
+    public static List<VersionRange> simplify(List<VersionRange> ranges) {
+
+        // Create a deep copy of the list
+        ranges = deepCopy(ranges);
+
+        int curr = 0;
+        while (ranges.size() > 1 && curr < ranges.size() - 1) {
+            VersionRange r = VersionRange.tryMerge(ranges.get(curr), ranges.get(curr + 1));
+            if (r == null)
+                ++curr;
+            else {
+                ranges.set(curr, r);
+                ranges.remove(curr + 1);
+            }
+        }
+
+        return ranges;
+    }
+
+    /**
      * Change the minimum version.
      *
      * @param minVersion The new minimum version.
@@ -73,17 +142,6 @@ public final class VersionRange implements Comparable<VersionRange> {
     public void setMax(Version maxVersion) {
         this.maxVersion = maxVersion;
         this.maxVersionNum = maxVersion.getVersionNum();
-    }
-
-    /**
-     * Create a new range set from two numbers.
-     *
-     * @param minVersion The minimum version of the range.
-     * @param maxVersion The maximum version of the range.
-     */
-    public VersionRange(Version minVersion, Version maxVersion) {
-        setMin(minVersion);
-        setMax(maxVersion);
     }
 
     /**
@@ -149,22 +207,26 @@ public final class VersionRange implements Comparable<VersionRange> {
     }
 
     /**
-     * Try merging two version ranges. Note that {@code r1} must be less than or equal to {@code r2}.
+     * True if this version range completely contains another version range.
      *
-     * @param r1 The first range to try merging.
-     * @param r2 The second range to try merging.
-     * @return Null if the two range sets can not be merged, {@code r1} if {@code r2} fits inside {@code r1}, or a new merged range set.
+     * @param other The other version range to check.
+     * @return True if this version range completely contains {@code other}.
      */
-    public static VersionRange tryMerge(VersionRange r1, VersionRange r2) {
-        if (r1.compareTo(r2) > 0)
-            throw new RuntimeException("r1 must be less than r2 in order to merge");
+    public boolean containsRange(@NotNull VersionRange other) {
+        return minVersionNum <= other.minVersionNum && maxVersionNum >= other.maxVersionNum;
+    }
 
-        if (r1.maxVersionNum < r2.minVersionNum)
-            return null;
-
-        if (r1.maxVersionNum < r2.maxVersionNum)
-            return new VersionRange(r1.minVersion, r2.maxVersion);
-
-        return r1;
+    /**
+     * Create a deep copy of this version range.
+     *
+     * @return A new copy of this version range.
+     */
+    @Override
+    @SneakyThrows(CloneNotSupportedException.class)
+    public VersionRange clone() {
+        VersionRange clone = (VersionRange) super.clone();
+        clone.setMin(minVersion.clone());
+        clone.setMax(maxVersion.clone());
+        return clone;
     }
 }

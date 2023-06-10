@@ -15,31 +15,23 @@
 
 package net.xpkgclient.packagemanager;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import net.xpkgclient.versioning.InvalidVersionException;
+import net.xpkgclient.packagemanager.actions.InstallAction;
+import net.xpkgclient.packagemanager.actions.InstallerAction;
+import net.xpkgclient.packagemanager.actions.SetupDependencyAction;
+import net.xpkgclient.packagemanager.actions.VersionChangeAction;
 import net.xpkgclient.versioning.Version;
-import net.xpkgclient.versioning.VersionRange;
 import net.xpkgclient.versioning.VersionSelect;
 import org.jgrapht.graph.DirectedAcyclicGraph;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * The dependency tree for all packages.
  */
-public final class DependencyTree {
+public final class DependencyTree implements Cloneable {
 
     /**
      * The directed acyclic graph of the package tree.
@@ -47,212 +39,310 @@ public final class DependencyTree {
      * @returns The directed acyclic graph of the package tree. Do not modify.
      */
     @Getter
-    private final DirectedAcyclicGraph<PackageNode, DependencyEdge> graph;
+    private DirectedAcyclicGraph<PackageNode, PackageDependency> graph;
 
-    private final File storeFile;
+    private File storeFile;
 
     // Top level installed packages
-    private final Set<PackageNode> installed = new HashSet<>();
+    private Set<PackageNode> userInstalledPackages = new HashSet<>();
 
-    // All incompatibilities currently kept track of, indexed by packageId, with the value of all the versions that it is incompatible with
-    private final Map<String, List<Incompatibility>> incompatibilities;
+    // Packages installed automatically as dependencies
+    private Set<PackageNode> autoInstalledPackages = new HashSet<>();
+
+    // A map of all the dependencies indexed by the dependency package id, with the PackageDependency objects as values
+    private HashMap<String, List<PackageDependency>> dependencies = new HashMap<>();
+
+    // A map of all the package nodes
+    private HashMap<String, PackageNode> treeNodes = new HashMap<>();
 
     /**
      * Create a dependency tree at the file location. Load if it exists, or create if it doesn't.
      *
      * @param storeFile The file of the dependency tree.
      */
-    @SneakyThrows(InvalidVersionException.class)
     public DependencyTree(File storeFile) {
         this.storeFile = storeFile;
 
-        graph = new DirectedAcyclicGraph<>(DependencyEdge.class);
-        incompatibilities = new HashMap<>();
+        graph = new DirectedAcyclicGraph<>(PackageDependency.class);
+    }
 
-        Random random = new Random();
-        List<PackageNode> nodes = new ArrayList<>();
-        for (int i = 1; i <= 50; ++i) {
-            PackageNode newNode = new PackageNode(UUID.randomUUID().toString(), new Version(random.nextInt(0, 1000), random.nextInt(0, 1000), random.nextInt(1, 1000)));
-            nodes.add(newNode);
-            graph.addVertex(newNode);
-            if (random.nextFloat() < .01 || i < 5) {
-                installed.add(newNode);
-            } else {
-                try {
-                    int randIndex1 = random.nextInt(nodes.size());
-                    int randIndex2 = random.nextInt(nodes.size());
-                    if (randIndex1 == randIndex2 )
-                        continue;
-                    PackageNode dependency = nodes.get(randIndex1);
-                    PackageNode dependent = nodes.get(randIndex2);
-                    DependencyEdge edge = new DependencyEdge(dependent, dependency, new VersionSelect("*"));
-                    graph.addEdge(dependent, dependency, edge);
-                } catch (IllegalArgumentException e) {
-                    continue;
+    /**
+     * Add a new package node to the tree and to the node index.
+     *
+     * @param packageId The id of the package to add.
+     * @param version   The version of the package to add.
+     */
+    public PackageNode addPackageNode(String packageId, Version version) {
+        PackageNode newNode = new PackageNode(packageId, version);
+        graph.addVertex(newNode);
+        treeNodes.put(packageId, newNode);
+        return newNode;
+    }
+
+    /**
+     * Change the version of a {@link PackageNode} in the tree.
+     *
+     * @param packageId  The id of the package to change.
+     * @param newVersion The new version of the package.
+     * @throws PackageNotInstalledException An exception thrown if the package is not installed.
+     */
+    public void changeVersion(String packageId, Version newVersion) throws PackageNotInstalledException {
+        PackageNode changeNode = treeNodes.get(packageId);
+        if (changeNode == null)
+            throw new PackageNotInstalledException(packageId);
+        changeNode.setVersion(newVersion);
+    }
+
+    /**
+     * Add a package node to the list of manually installed packages.
+     *
+     * @param node The node to add.
+     */
+    public void addUserInstalledPackage(PackageNode node) {
+        userInstalledPackages.add(node);
+    }
+
+    /**
+     * Add a package node to the list of automatically installed packages.
+     *
+     * @param node The node to add.
+     */
+    public void addAutoInstalledPackage(PackageNode node) {
+        autoInstalledPackages.add(node);
+    }
+
+    /**
+     * Get the {@link PackageNode} of a package in the dependency tree by its id.
+     *
+     * @param packageId The id of the package to get the node of.
+     * @return A reference to the node, or null if the node does not exist.
+     */
+    public PackageNode getTreeNode(String packageId) {
+        return treeNodes.get(packageId);
+    }
+
+    /**
+     * Create a new package dependency between two package nodes.
+     *
+     * @param dependent           The node of the package that is dependent on {@code dependency}.
+     * @param dependency          The node of the package that dependent is dependent on.
+     * @param dependencySelection The version selection that the installed version of {@code dependency} must satisfy.
+     * @return The edge created on the graph.
+     */
+    public PackageDependency addPackageDependency(PackageNode dependent, PackageNode dependency, VersionSelect dependencySelection) {
+        PackageDependency packageDependency = new PackageDependency(dependent, dependency, dependencySelection);
+        graph.addEdge(dependent, dependency, packageDependency);
+
+        if (dependencies.containsKey(dependency.getPackageId())) {
+            dependencies.get(dependency.getPackageId()).add(packageDependency);
+        } else {
+            List<PackageDependency> dependencyList = new LinkedList<>();
+            dependencyList.add(packageDependency);
+            dependencies.put(dependency.getPackageId(), dependencyList);
+        }
+
+        return packageDependency;
+    }
+
+    /**
+     * Get the actions to be performed for the package to be installed.
+     *
+     * @param packageId      The id of the package to be installed.
+     * @param packageVersion The version of the package to be installed.
+     * @return An optional, which is present if the package can be installed at the specified version, otherwise it's empty.
+     */
+    public Optional<List<InstallerAction>> getActions(String packageId, Version packageVersion) {
+        DependencyTree tempTree = clone();
+        PackageNode newNode = tempTree.addPackageNode(packageId, packageVersion);
+        tempTree.userInstalledPackages.add(newNode);
+
+        Optional<List<InstallerAction>> actionsOpt = tempTree.getActions(packageId, packageVersion, new LinkedList<>(), true);
+        if (actionsOpt.isEmpty())
+            return Optional.empty();
+
+        List<InstallerAction> actions = actionsOpt.get();
+        int endIndex = actions.size() - 1;
+        for (int i = 0; i <= endIndex; ++i) {
+            InstallerAction action = actions.get(i);
+            if (action instanceof SetupDependencyAction) {
+                actions.remove(action);
+                actions.add(action);
+                --endIndex;
+                --i;
+            }
+        }
+        return Optional.of(actions);
+    }
+
+    /**
+     * Internally attempt to resolve the dependency tree and get a list of actions to perform in order to install a package at a specified version.
+     *
+     * @param packageId      The id of the package to install.
+     * @param packageVersion The version of the package to install.
+     * @param actions        The list of actions to perform, passed on through recursive calls.
+     * @return An optional, which is present if the package can be installed at the specified version, otherwise it's empty.
+     */
+    Optional<List<InstallerAction>> getActions(String packageId, Version packageVersion, List<InstallerAction> actions, boolean manualInstall) {
+        Remote.VersionData data = Remote.getVersionData(packageId, packageVersion);
+
+        // The unresolved incompatibilities of the package, indexed by package id, with a value of the version selection
+        HashMap<String, VersionSelect> unresolvedIncompatibilities = new HashMap<>();
+        for (String[] incompatibility : data.incompatibilities()) {
+            unresolvedIncompatibilities.put(incompatibility[0], new VersionSelect(incompatibility[1]));
+        }
+
+        for (Map.Entry<String, VersionSelect> incompatibility : unresolvedIncompatibilities.entrySet()) {
+
+            String incompatibilityId = incompatibility.getKey();
+            VersionSelect incompatibilitySelection = incompatibility.getValue();
+
+            // Check if the package is installed at the top level
+            if (userInstalledPackages.stream().anyMatch(p -> p.getPackageId().equals(incompatibilityId) && incompatibilitySelection.containsVersion(p.getVersion()))) {
+                // Unable to continue, incompatible
+                return Optional.empty();
+            }
+            if (autoInstalledPackages.stream().anyMatch(p -> p.getPackageId().equals(incompatibilityId) && incompatibilitySelection.containsVersion(p.getVersion()))) {
+                //noinspection OptionalGetWithoutIsPresent
+                Version currentIncompatibilityVersion = getInstalledVersion(incompatibilityId).get();
+
+                // Get the selection of packages that depend on the incompatibility
+                List<VersionSelect> dependencySelections = new ArrayList<>(dependencies.get(incompatibilityId).stream().map(PackageDependency::selection).toList());
+                VersionSelect dependencySelection = VersionSelect.intersection(dependencySelections.toArray(VersionSelect[]::new));
+
+                Package incompatiblePkg = Remote.getPackage(incompatibilityId);
+                List<Version> versions = new ArrayList<>(List.of(incompatiblePkg.getVersions()));
+                Collections.reverse(versions);
+
+                boolean incompatibilityResolved = false;
+                for (Version version : versions) {
+                    if (dependencySelection.containsVersion(version) && !incompatibilitySelection.containsVersion(version)) {
+                        try {
+                            changeVersion(incompatibilityId, version);
+
+                            Optional<List<InstallerAction>> incompatibilityActions = getActions(incompatibilityId, version, actions, false);
+
+                            if (incompatibilityActions.isEmpty()) {
+                                incompatibilityResolved = true;
+
+                                actions.set(actions.size() - 1, new VersionChangeAction(incompatibilityId, currentIncompatibilityVersion, version));
+                                break;
+                            }
+
+                        } catch (PackageNotInstalledException e) {
+                            throw new AssertionError("Incompatibility not installed (couldn't change version), but we're trying to resolve an installed incompatibility", e);
+                        }
+
+                    }
+                }
+
+                if (!incompatibilityResolved) {
+                    return Optional.empty();
                 }
             }
         }
-    }
 
-    /**
-     * Save the dependency tree to the file provided at instantiation.
-     */
-    public void write() {
+        // The unresolved dependencies, indexed similarly to unresolvedIncompatibilities
+        HashMap<String, VersionSelect> unresolvedDependencies = new HashMap<>();
+        for (String[] dependency : data.dependencies()) {
+            unresolvedDependencies.put(dependency[0], new VersionSelect(dependency[1]));
+        }
 
-    }
+        for (Map.Entry<String, VersionSelect> dependency : unresolvedDependencies.entrySet()) {
+            String dependencyId = dependency.getKey();
+            VersionSelect dependencySelection = dependency.getValue();
 
-    /**
-     * Say that a top-level package has been installed.
-     *
-     * @param packageId The id of the package that has been installed.
-     * @param version   The version of the package that has been installed.
-     */
-    public void addTopLevelPackage(String packageId, Version version) {
-        PackageNode newNode = new PackageNode(packageId, version);
-        graph.addVertex(newNode);
-        installed.add(newNode);
-    }
+            // TODO: can't resolve if it's a user-installed package
+            // If the dependency is already installed a version selection is the intersection of all the version selections AND the installed packages
+            Optional<Version> currentlyInstalledVersion = getInstalledVersion(dependencyId);
+            if (currentlyInstalledVersion.isPresent()) {
+                List<VersionSelect> dependencySelections = new ArrayList<>(dependencies.get(dependencyId).stream().map(PackageDependency::selection).toList());
+                dependencySelections.add(dependencySelection);
+                dependencySelection = VersionSelect.intersection(dependencySelections.toArray(VersionSelect[]::new));
 
-    /**
-     * Declare an incompatibility.
-     *
-     * @param incompatibleId    The id of the package that declares the incompatibility.
-     * @param incompatibilityId The id of the package that was declared as an incompatibility.
-     * @param versions          The versions of {@code incompatibilityId} that are incompatible, as declared by {@code incompatibleId}.
-     */
-    public void addIncompatibility(String incompatibleId, String incompatibilityId, VersionSelect versions) {
-        Incompatibility incompatibility = new Incompatibility(incompatibleId, versions);
-        List<Incompatibility> packageIncompatibilities = incompatibilities.getOrDefault(incompatibilityId, new ArrayList<>());
-        packageIncompatibilities.add(incompatibility);
-        incompatibilities.put(incompatibilityId, packageIncompatibilities);
-    }
+                // If the already installed dependency satisfies all the version selections, move on
+                if (dependencySelection.containsVersion(currentlyInstalledVersion.get())) {
+                    actions.add(new SetupDependencyAction(packageId, dependencyId, dependency.getValue()));
+                    continue;
+                }
+            }
 
-    /**
-     * Declare a dependency.
-     *
-     * @param dependentId  The identifier of the dependent package.
-     * @param dependencyId The identifier of the package that {@code dependent} depends on.
-     * @param versions     The versions of {@code dependencyId} that {@code dependent} depends on.
-     */
-    public void addDependency(String dependentId, String dependencyId, VersionSelect versions) throws PackageNotInstalledException {
-        Version dependentVersion = isInstalled(dependentId);
-        Version dependencyVersion = isInstalled(dependencyId);
+            Package dependencyPkg = Remote.getPackage(dependencyId);
 
-        if (dependentVersion == null)
-            throw new PackageNotInstalledException(dependentId);
-        else if (dependencyVersion == null)
-            throw new PackageNotInstalledException(dependencyId);
+            // If the package isn't present on the registry, we have a huge problem
+            if (dependencyPkg == null)
+                throw new RuntimeException("Dependency does not exist " + dependencyId);
 
-        PackageNode dependent = getPackageNode(dependentId, dependentVersion);
-        PackageNode dependency = getPackageNode(dependencyId, dependencyVersion);
+            List<Version> availDepVersions = new java.util.ArrayList<>(Arrays.stream(dependencyPkg.getVersions()).toList());
+            Collections.reverse(availDepVersions);
 
-        DependencyEdge edge = new DependencyEdge(dependent, dependency, versions);
-        graph.addEdge(dependent, dependency, edge);
-        installed.add(dependency);
-    }
+            boolean depInstalled = false;
+            for (Version depTestVersion : availDepVersions) {
+                if (dependencySelection.containsVersion(depTestVersion)) {
 
-    /**
-     * Check if we can install a package with the specified id at the specified version.
-     *
-     * @param packageId The id of the package to determine if we can install.
-     * @param version   The version of the package.
-     * @return True if we can install the package
-     */
-    @SneakyThrows(PackageNotInstalledException.class)
-    public boolean canInstall(String packageId, Version version) {
-        if (incompatibilities.containsKey(packageId)) {
-            List<Incompatibility> packageIncompatibilities = incompatibilities.get(packageId);
-            for (Incompatibility incompatibility : packageIncompatibilities) {
-                boolean isCompatible = !incompatibility.versions().containsVersion(version);
-                if (!isCompatible)
-                    return false;
+                    PackageNode dependentNode = treeNodes.get(packageId);
+                    PackageNode dependencyNode = addPackageNode(dependencyId, depTestVersion);
+                    PackageDependency dependencyEdge = addPackageDependency(dependentNode, dependencyNode, dependency.getValue());
+
+                    addAutoInstalledPackage(dependencyNode);
+                    Optional<List<InstallerAction>> dependencyActions = getActions(dependencyId, depTestVersion, actions, false);
+                    actions.add(new SetupDependencyAction(packageId, dependencyId, dependency.getValue()));
+
+                    if (dependencyActions.isPresent()) {
+                        depInstalled = true;
+                        break;
+                    }
+
+                    graph.removeEdge(dependencyEdge);
+                    graph.removeVertex(dependencyNode);
+                    autoInstalledPackages.remove(dependencyNode);
+                }
+            }
+
+            if (!depInstalled) {
+                return Optional.empty();
             }
         }
 
-        Version installedVersion = isInstalled(packageId);
-        if (installedVersion != null) {
-            PackageNode node = getPackageNode(packageId, installedVersion);
-
-            Set<DependencyEdge> dependencies = graph.incomingEdgesOf(node);
-
-            List<VersionRange> ranges = dependencies.stream().flatMap(e -> Arrays.stream(e.selection().getRanges())).toList();
-            ranges = VersionSelect.simplify(ranges);
-            VersionSelect selection = new VersionSelect(ranges);
-
-            return selection.containsVersion(version);
-        }
-
-        return true;
+        actions.add(new InstallAction(packageId, packageVersion, manualInstall));
+        return Optional.of(actions);
     }
 
     /**
-     * Get the id of the package if it is installed, or null if it's not.
-     *
-     * @param packageId The id of the package to check if it's installed.
-     * @return The version of the installed package, or null if there is none.
-     */
-    public Version isInstalled(String packageId) {
-
-        // We could check this.installed before checking all vertexes, but then we might just have to check all the edges again, which is just inefficient
-        Set<PackageNode> allPackages = graph.vertexSet();
-        Optional<PackageNode> pkg = allPackages.stream().findFirst();
-
-        return pkg.isEmpty() ? null : pkg.get().version();
-    }
-
-    /**
-     * Get an installed package.
+     * Get the version of an installed package.
      *
      * @param packageId The id of the package to get.
-     * @param version   The version of the package to get.
-     * @throws PackageNotInstalledException If the package is not installed.
+     * @return An optional which is present with the installed version of the package if it is installed, or an empty optional otherwise.
      */
-    public PackageNode getPackageNode(String packageId, Version version) throws PackageNotInstalledException {
-        Set<PackageNode> allPackages = graph.vertexSet();
-        Optional<PackageNode> optPkg = allPackages.stream().findFirst();
-        if (optPkg.isEmpty())
-            throw new PackageNotInstalledException(packageId);
-        PackageNode pkg = optPkg.get();
+    private Optional<Version> getInstalledVersion(String packageId) {
+        Optional<PackageNode> userInstalledPackage = userInstalledPackages.stream().filter(i -> i.getPackageId().equals(packageId)).findFirst();
+        if (userInstalledPackage.isPresent())
+            return Optional.of(userInstalledPackage.get().getVersion());
 
-        if (!pkg.version().equals(version))
-            throw new PackageNotInstalledException(packageId, version);
-
-        return pkg;
+        Optional<PackageNode> autoInstalledPackage = autoInstalledPackages.stream().filter(i -> i.getPackageId().equals(packageId)).findFirst();
+        return autoInstalledPackage.map(PackageNode::getVersion);
     }
 
-    /**
-     * Print the dependency tree for all packages.
-     */
-    public void printGraph() {
-        for (PackageNode pkg : installed) {
-            System.out.printf("%s@%s%n", pkg.packageId(), pkg.version());
-            printGraph(pkg, 1);
-        }
-    }
+    @Override
+    @SneakyThrows(CloneNotSupportedException.class)
+    protected DependencyTree clone() {
+        DependencyTree clone = (DependencyTree) super.clone();
 
-    /**
-     * Print the dependency tree for a specific package.
-     *
-     * @param pkg         The package to print the dependency of.
-     * @param indentCount The indent for the dependency tree.
-     */
-    private void printGraph(PackageNode pkg, int indentCount) {
-        String indent = "\t│".repeat(indentCount - 1) + "\t├ ";
+        //noinspection unchecked
+        clone.graph = (DirectedAcyclicGraph<PackageNode, PackageDependency>) graph.clone();
+        clone.storeFile = storeFile;
+        clone.userInstalledPackages = new HashSet<>(userInstalledPackages);
+        clone.autoInstalledPackages = new HashSet<>(autoInstalledPackages);
 
-        Set<DependencyEdge> children = graph.outgoingEdgesOf(pkg);
-        for (DependencyEdge edge : children) {
-            System.out.printf(indent + "requires %s %s, installed: %s@%s%n", edge.dependency().packageId(), edge.selection(), edge.dependency().packageId(), edge.dependency().version());
-            printGraph(edge.dependency(), indentCount + 1);
-        }
-    }
+        HashMap<String, List<PackageDependency>> cloneDependencies = new HashMap<>();
+        for (Map.Entry<String, List<PackageDependency>> entry : dependencies.entrySet())
+            cloneDependencies.put(entry.getKey(), new LinkedList<>(entry.getValue()));
 
-    /**
-     * A single incompatibility for a package.
-     *
-     * @param incompatibleId The id of the package that is not compatible.
-     * @param versions       The version selection of the incompatible package.
-     */
-    private record Incompatibility(String incompatibleId,
-                                   VersionSelect versions) {
+        clone.dependencies = cloneDependencies;
+
+        clone.treeNodes = new HashMap<>();
+        for (Map.Entry<String, PackageNode> nodeEntry : treeNodes.entrySet())
+            clone.treeNodes.put(nodeEntry.getKey(), nodeEntry.getValue().clone());
+
+        return clone;
     }
 }

@@ -25,7 +25,7 @@ import java.util.Objects;
 /**
  * A class to compare different versions and version strings.
  */
-public final class Version implements Comparable<Version> {
+public final class Version implements Comparable<Version>, Cloneable {
 
     public static final Version MIN_VERSION;
     public static final Version MAX_VERSION;
@@ -231,6 +231,32 @@ public final class Version implements Comparable<Version> {
     }
 
     /**
+     * Compare two versions, and pick the larger one.
+     *
+     * @param v1 The first version to compare.
+     * @param v2 The second version to compare.
+     * @return The larger version.
+     */
+    public static Version max(@NotNull Version v1, @NotNull Version v2) {
+        if (v1.compareTo(v2) < 0)
+            return v2;
+        return v1;
+    }
+
+    /**
+     * Compare two versions, and pick the smaller one.
+     *
+     * @param v1 The first version to compare.
+     * @param v2 The second version to compare.
+     * @return The smaller version.
+     */
+    public static Version min(@NotNull Version v1, @NotNull Version v2) {
+        if (v1.compareTo(v2) > 0)
+            return v2;
+        return v1;
+    }
+
+    /**
      * Change the pre-release number. Only update if {@link Version#alphaOrBeta} is set.
      *
      * @param preReleaseVersion The new pre-release version number.
@@ -341,11 +367,18 @@ public final class Version implements Comparable<Version> {
      *
      * @return A copy of this version.
      */
-    @SneakyThrows
-    public Version copy() {
-        if (!isPreRelease())
-            return new Version(major, minor, patch);
-        return new Version(major, minor, patch, alphaOrBeta, preReleaseVersion);
+    @Override
+    @SneakyThrows({CloneNotSupportedException.class, InvalidVersionException.class})
+    public Version clone() {
+        Version clone = (Version) super.clone();
+        clone.setMajor(major);
+        clone.setMinor(minor);
+        clone.setPatch(patch);
+        if (isPreRelease()) {
+            clone.setAlphaOrBeta(alphaOrBeta);
+            clone.setPreReleaseVersion(preReleaseVersion);
+        }
+        return clone;
     }
 
     /**
@@ -357,7 +390,7 @@ public final class Version implements Comparable<Version> {
         String longStr = "%s%s%s000000".formatted(major, toThreeDigits(minor), toThreeDigits(patch));
 
         long semverNum = Long.parseLong(longStr);
-        if (!isPreRelease()){
+        if (!isPreRelease()) {
             return semverNum;
         }
 

@@ -28,14 +28,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -45,8 +38,11 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * This class handles getting packages from the remote server.
@@ -60,7 +56,7 @@ public class Remote {
      * @returns The list of the packages retrieved from the server. Original list, do not modify.
      */
     @Getter
-    private List<Package> packages;
+    private List<Package> packages = new ArrayList<>();
 
     /**
      * Get all packages from the server.
@@ -102,6 +98,7 @@ public class Remote {
                 packages.add(new Package(packageId, packageName, packageType, versions, description, authorName, authorId));
             }
 
+            Remote.packages = packages;
             Platform.runLater(() -> cb.execute(packages));
         } catch (Throwable e) {
             throw new RuntimeException("Could not get all packages from %s".formatted(url), e);
@@ -109,29 +106,43 @@ public class Remote {
     }
 
     /**
+     * Get a package. Tries to get the most up to date from remote.
+     *
+     * @param packageId the id of the package to get.
+     * @returns The package object of the package. Null if the package is not found.
+     */
+    public Package getPackage(String packageId) {
+        Optional<Package> pkg = packages.stream().filter(p -> p.getPackageId().equals(packageId)).findFirst();
+        return pkg.orElse(null);
+    }
+
+    /**
      * Download a package.
      *
-     * @param pkg     The package to download.
-     * @param version The version of the package to download.
-     * @param cb      The callback function which runs after the file has been downloaded and unzipped, with the second parameter as the location of the root of the package downloaded. If there is an exception downloading the package, the file will be null and the first parameter will have the error that caused the download to fail.
+     * @param pkg        The package to download.
+     * @param version    The version of the package to download.
+     * @param pkgLocData The package location data of the package, or {@code null} if the package loc data has not yet been downloaded. If it is null the data will be downloaded.
+     * @param cb         The callback function which runs after the file has been downloaded and unzipped, with the second parameter as the location of the root of the package downloaded. If there is an exception downloading the package, the file will be null and the first parameter will have the error that caused the download to fail.
      */
-    public void downloadPackage(@NotNull Package pkg, Version version, FileDownloadedCallback cb) {
+    public void downloadPackage(@NotNull Package pkg, Version version, VersionData pkgLocData, FileDownloadedCallback cb) {
         File downloadFile = Path.of(Configuration.getXpPath().getAbsolutePath(), "xpkg", "tmp", "downloads", pkg.getPackageId() + ".xpkg").toFile();
 
         //noinspection ResultOfMethodCallIgnored
         downloadFile.getParentFile().mkdirs();
 
         // To prevent callback hell
-        CompletableFuture<PackageLocData> res = new CompletableFuture<>();
+        CompletableFuture<VersionData> res = new CompletableFuture<>();
         Thread t = new Thread(() -> {
-            getPackageLocData(pkg, version, res::complete);
+            if (pkgLocData == null)
+                getVersionData(pkg.getPackageId(), version, res::complete);
+            else
+                res.complete(pkgLocData);
         });
 
         res.thenAccept(data -> {
 
-            if (data.loc.equalsIgnoreCase("NOT_PUBLISHED")) {
+            if (data.loc.equalsIgnoreCase("NOT_PUBLISHED"))
                 throw new RuntimeException("");
-            }
 
             URL packageLoc;
             try (FileOutputStream f = new FileOutputStream(downloadFile);
@@ -154,19 +165,20 @@ public class Remote {
                 Platform.runLater(() -> {
                     try {
                         cb.execute(null, destFile);
-                    } catch (IOException e) {
+                    } catch (Throwable e) {
                         throw new RuntimeException(e);
                     }
                 });
             } catch (Throwable e) {
 
                 if (downloadFile.exists())
+
                     //noinspection ResultOfMethodCallIgnored
                     downloadFile.delete();
                 Platform.runLater(() -> {
                     try {
                         cb.execute(new RuntimeException("Could not download the package %s@%s".formatted(pkg, version), e), null);
-                    } catch (IOException ex) {
+                    } catch (Throwable ex) {
                         throw new RuntimeException(ex);
                     }
                 });
@@ -177,22 +189,64 @@ public class Remote {
     }
 
     /**
-     * Get the location data for a package.
+     * Get the data for a version of a package.
      *
-     * @param pkg     The package to get the location data of.
-     * @param version The version of the package to get the location data of.
-     * @param cb      The callback to execute after getting the location data. Run within {@link Platform#runLater(Runnable)} so that JavaFX calls can be made from within the new thread.
+     * @param packageId      The id of the package to get the version data of.
+     * @param packageVersion The version of the package to get the version data of.
+     * @return The data for the package if it works.
+     */
+    @SneakyThrows({ExecutionException.class, InterruptedException.class})
+    public VersionData getVersionData(String packageId, Version packageVersion) {
+        CompletableFuture<Remote.VersionData> res = new CompletableFuture<>();
+        Thread t = new Thread(() -> Remote.getVersionData(packageId, packageVersion, res::complete));
+        t.start();
+        return res.get();
+    }
+
+    /**
+     * Get the location data for a package asynchronously.
+     *
+     * @param packageId The id of the package to get the location data of.
+     * @param version   The version of the package to get the location data of.
+     * @param cb        The callback to execute after getting the location data. Run within {@link Platform#runLater(Runnable)} so that JavaFX calls can be made from within the new thread.
      */
     @SneakyThrows(MalformedURLException.class)
-    public synchronized void getPackageLocData(@NotNull Package pkg, @NotNull Version version, LocDataDownloadedCallback cb) {
-        URL url = new URL(String.format("http://localhost:5020/packages/%s/%s", pkg.getPackageId(), version));
+    public void getVersionData(String packageId, @NotNull Version version, VersionDataDownloadedCallback cb) {
+        URL url = new URL(String.format("http://localhost:5020/packages/%s/%s", packageId, version));
         JSONObject obj;
+
         try {
             obj = readJsonFromUrl(url);
         } catch (Throwable e) {
-            throw new RuntimeException("Could not fetch package from remote: %s".formatted(url), e);
+            throw new RuntimeException("Could not fetch the data for %s@%s from remote: %s".formatted(packageId, version, url), e);
         }
-        Platform.runLater(() -> cb.execute(new PackageLocData(obj.getString("loc"), obj.getString("hash"))));
+
+        JSONArray dependencyArr = obj.getJSONArray("dependencies");
+        JSONArray incompatibilityArr = obj.getJSONArray("incompatibilities");
+
+        List<String[]> dependencies = new LinkedList<>();
+        List<String[]> incompatibilities = new LinkedList<>();
+
+        dependencyArr.forEach(dep -> {
+            String dependencyId = (String) ((JSONArray) dep).get(0);
+            String dependencySelectionStr = (String) ((JSONArray) dep).get(1);
+            String[] depMap = new String[]{dependencyId, dependencySelectionStr};
+            dependencies.add(depMap);
+        });
+
+        incompatibilityArr.forEach(incompatibility -> {
+            String incompatibilityId = (String) ((JSONArray) incompatibility).get(0);
+            String incompatibilitySelectionStr = (String) ((JSONArray) incompatibility).get(1);
+            String[] incompatibilityMap = new String[]{incompatibilityId, incompatibilitySelectionStr};
+            incompatibilities.add(incompatibilityMap);
+        });
+
+        Platform.runLater(() -> cb.execute(new VersionData(
+                obj.getString("loc"),
+                obj.getString("hash"),
+                dependencies.toArray(String[][]::new),
+                incompatibilities.toArray(String[][]::new)
+        )));
     }
 
     /**
@@ -264,28 +318,32 @@ public class Remote {
          * @param e The error that caused the download to fail.
          * @param f The location of the downloaded file. Is null if e is not null.
          */
-        void execute(Throwable e, File f) throws IOException;
+        void execute(Throwable e, File f) throws Throwable;
     }
 
     /**
-     * Callback used to run something after getting package location data for a version of a package.
+     * Callback used to run something after getting the data for a version of a package.
      */
-    public interface LocDataDownloadedCallback {
+    public interface VersionDataDownloadedCallback {
 
         /**
-         * The callback to execute after getting the package location data for a version of a package.
+         * The callback to execute after getting the data for a version of a package.
          *
          * @param data The data returned from the server.
          */
-        void execute(PackageLocData data);
+        void execute(VersionData data);
     }
 
     /**
      * The data returned from the server when looking up a specific package and version.
      *
-     * @param loc  The location of the package, or 'NOT_PUBLISHED', if the package version is not published or approved.
-     * @param hash The SHA256 hash of the zip file of the package.
+     * @param loc               The location of the package, or 'NOT_PUBLISHED', if the package version is not published or approved.
+     * @param hash              The SHA256 hash of the zip file of the package.
+     * @param dependencies      The list of all dependencies of the package as an array of tuples, with the first value being the dependency id, and the second value being the version selection string.
+     * @param incompatibilities The list of all incompatibilities of the package as an array of tuples, with the first value being the incompatibility id, and the second value being the version selection string.
      */
-    public record PackageLocData(String loc, String hash) {
+    public record VersionData(String loc, String hash,
+                              String[][] dependencies,
+                              String[][] incompatibilities) {
     }
 }

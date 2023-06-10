@@ -22,18 +22,42 @@ import net.xpkgclient.versioning.Version;
  */
 public class PackageNotInstalledException extends Exception {
 
+    /**
+     * Create a new exception saying that the package was not installed.
+     *
+     * @param packageId The id of the package that was not installed.
+     */
     public PackageNotInstalledException(String packageId) {
         this(packageId, (Throwable) null);
     }
 
+    /**
+     * Create a new exception saying that the package was not installed, and that another exception caused this one.
+     *
+     * @param packageId The id of the package that was not installed.
+     * @param cause     The exception that caused this one.
+     */
     public PackageNotInstalledException(String packageId, Throwable cause) {
         super("No version of %s is installed".formatted(packageId), cause);
     }
 
+    /**
+     * Create a new exception saying that a package at a specific version was not installed.
+     *
+     * @param packageId The id of the package that was not installed.
+     * @param version   The version of the package that was not installed.
+     */
     public PackageNotInstalledException(String packageId, Version version) {
         this(packageId, version, null);
     }
 
+    /**
+     * Create a new exception saying that a package at a specific version was not installed, and that another exception caused this one.
+     *
+     * @param packageId The id of the package that was not installed.
+     * @param version   The version of the package that was not installed.
+     * @param cause     The exception that caused this one.
+     */
     public PackageNotInstalledException(String packageId, Version version, Throwable cause) {
         super("The package %s@%s is not installed".formatted(packageId, version), cause);
     }

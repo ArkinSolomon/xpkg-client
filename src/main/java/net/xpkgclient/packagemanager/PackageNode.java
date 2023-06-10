@@ -15,6 +15,9 @@
 
 package net.xpkgclient.packagemanager;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
 import net.xpkgclient.versioning.Version;
 
 import java.util.Objects;
@@ -22,7 +25,36 @@ import java.util.Objects;
 /**
  * A single node for a package in the dependency tree.
  */
-public record PackageNode(String packageId, Version version) {
+public final class PackageNode implements Cloneable {
+
+    /**
+     * The id of the package node.
+     *
+     * @return The id of the package node.
+     */
+    @Getter
+    private String packageId;
+
+    /**
+     * The version of the package node.
+     *
+     * @param version The new version of the package node.
+     * @return The version of the package node.
+     */
+    @Getter
+    @Setter
+    private Version version;
+
+    /**
+     * Create a new node for a package at a specific version.
+     *
+     * @param packageId The id of the package node.
+     * @param version   The version of the package node.
+     */
+    public PackageNode(String packageId, Version version) {
+        this.packageId = packageId;
+        this.version = version;
+    }
 
     /**
      * Get the hash code for this package node. Any other node with the same package id will have the same hash code.
@@ -32,5 +64,28 @@ public record PackageNode(String packageId, Version version) {
     @Override
     public int hashCode() {
         return packageId.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (PackageNode) obj;
+        return Objects.equals(this.packageId, that.packageId) &&
+                Objects.equals(this.version, that.version);
+    }
+
+    @Override
+    public String toString() {
+        return packageId + '@' + version;
+    }
+
+    @Override
+    @SneakyThrows(CloneNotSupportedException.class)
+    protected PackageNode clone() {
+        PackageNode clone = (PackageNode) super.clone();
+        clone.version = version.clone();
+        clone.packageId = packageId;
+        return clone;
     }
 }

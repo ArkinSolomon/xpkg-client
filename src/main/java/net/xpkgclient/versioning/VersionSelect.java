@@ -16,15 +16,17 @@
 package net.xpkgclient.versioning;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * This class can parse a version select string and determine if a version is within its selection.
  */
-public class VersionSelect {
+public class VersionSelect implements Cloneable {
 
     /**
      * Check if the provided version selection string was valid.
@@ -63,7 +65,7 @@ public class VersionSelect {
                     String version = versionParts[0].trim();
 
                     Version minVersion = new Version(version);
-                    Version maxVersion = minVersion.copy();
+                    Version maxVersion = minVersion.clone();
 
                     if (!minVersion.isPreRelease()) {
                         String[] singleVersionParts = version.split("\\.");
@@ -132,7 +134,7 @@ public class VersionSelect {
 
             if (!isValid)
                 return;
-            ranges = simplify(ranges);
+            ranges = VersionRange.simplify(ranges);
         } catch (InvalidVersionException e) {
             isValid = false;
             throw new RuntimeException(e);
@@ -144,33 +146,49 @@ public class VersionSelect {
      *
      * @param ranges The ranges for this version selection.
      */
-    public VersionSelect(List<VersionRange> ranges){
+    public VersionSelect(List<VersionRange> ranges) {
         this.ranges = ranges;
     }
 
     /**
-     * Simplify the list of ranges.
+     * Get a new version selections where all the version selections provided overlap, or intersect.
      *
-     * @param ranges The ranges to simplify.
-     * @return A new deep copy of the ranges simplified.
+     * @param selections The selections to perform an intersection on.
+     * @return A new version selection that is the intersection of all the provided version selections.
      */
-    public static List<VersionRange> simplify(List<VersionRange> ranges) {
+    public static VersionSelect intersection(VersionSelect[] selections) {
+        if (selections.length == 0)
+            throw new IllegalArgumentException("The length of ranges must be greater than zero");
+        else if (selections.length == 1)
+            return selections[0].clone();
 
-        // Create a deep copy of the list
-        ranges = ranges.stream().map(r -> new VersionRange(r.getMinVersion().copy(), r.getMaxVersion().copy())).sorted().toList();
+        // Clone and map all the selection ranges to a 2d array
+        VersionSelect[] selectionRanges = Arrays.stream(selections).map(VersionSelect::clone).toArray(VersionSelect[]::new);
+        VersionSelect newSelection = selectionRanges[0];
 
-        int curr = 0;
-        while (ranges.size() > 1 && curr < ranges.size() - 1) {
-            VersionRange r = VersionRange.tryMerge(ranges.get(curr), ranges.get(curr + 1));
-            if (r == null)
-                ++curr;
-            else {
-                ranges.set(curr, r);
-                ranges.remove(curr + 1);
+        for (int i = 1; i <= selectionRanges.length - 1; ++i) {
+            VersionSelect currentSelection = selectionRanges[i];
+            List<VersionRange> tempSelection = new ArrayList<>();
+
+            for (VersionRange currRange : currentSelection.ranges) {
+                for (VersionRange newRange : newSelection.ranges) {
+                    Version min = Version.max(currRange.getMinVersion(), newRange.getMinVersion());
+                    Version max = Version.min(currRange.getMaxVersion(), newRange.getMaxVersion());
+
+                    if (min.compareTo(max) > 0)
+                        continue;
+
+                    tempSelection.add(new VersionRange(min, max));
+                    break;
+                }
             }
+
+            newSelection = new VersionSelect(tempSelection);
+            if (tempSelection.size() == 0)
+                return newSelection;
         }
 
-        return ranges;
+        return newSelection;
     }
 
     /**
@@ -184,6 +202,20 @@ public class VersionSelect {
             long versionNum = version.getVersionNum();
 
             if (versionNum >= range.getMinVersionNum() && versionNum <= range.getMaxVersionNum())
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Determine if a version range is completely within one of the ranges of this version selection.
+     *
+     * @param testRange The range to check.
+     * @return True if the given range is completely within one of the ranges of this version selection.
+     */
+    public boolean containsRange(VersionRange testRange) {
+        for (VersionRange range : ranges) {
+            if (range.containsRange(testRange))
                 return true;
         }
         return false;
@@ -207,6 +239,10 @@ public class VersionSelect {
     public String toString() {
         ArrayList<String> rangeStrings = new ArrayList<>(ranges.size());
 
+        if (ranges.isEmpty()) {
+            return "<empty version select>";
+        }
+
         for (VersionRange range : ranges) {
             if (range.getMinVersionNum() == range.getMaxVersionNum())
                 rangeStrings.add(range.getMinVersion().toString());
@@ -221,5 +257,22 @@ public class VersionSelect {
         }
 
         return String.join(",", rangeStrings);
+    }
+
+    /**
+     * Create a deep copy of this selection.
+     *
+     * @return A deep copy of this selection.
+     */
+    @Override
+    @SneakyThrows(CloneNotSupportedException.class)
+    public VersionSelect clone() {
+        VersionSelect clone = (VersionSelect) super.clone();
+        if (isValid) {
+            clone.isValid = true;
+            clone.ranges = VersionRange.deepCopy(ranges);
+        } else
+            clone.isValid = false;
+        return clone;
     }
 }

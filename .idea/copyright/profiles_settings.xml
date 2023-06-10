@@ -1,7 +1,7 @@
 <component name="CopyrightManager">
   <settings>
     <module2copyright>
-      <element module="xpkg-client-source-and-tests" copyright="xpkg-client-default" />
+      <element module="Project Files" copyright="xpkg-client-default" />
     </module2copyright>
   </settings>
 </component>

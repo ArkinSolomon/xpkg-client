@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="ANALYZE_TEST_SOURCES" value="false" />
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="adf47047-baba-4090-98b9-a300e45d4f59" name="Changes" comment="Got basic dependency tree set up, but I need to run more tests,">
+      <change afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/UnablePackageInstallException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/VersionAlreadyInstalledException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/actions/InstallAction.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/actions/InstallerAction.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/actions/RemoveAction.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/actions/SetupDependencyAction.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/actions/VersionChangeAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/copyright/xpkg_client_default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copyright/xpkg_client_default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_errorprone_error_prone_annotations_2_1_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_googlecode_json_simple_json_simple_1_1_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_codec_commons_codec_1_11.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_io_commons_io_2_11_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_10.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_arkinsolomon_sakurainterpreter_1_2_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_lingala_zip4j_zip4j_2_11_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_sourceforge_argparse4j_argparse4j_0_9_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_12_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_text_1_10_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apiguardian_apiguardian_api_1_1_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jetbrains_annotations_23_0_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jgrapht_jgrapht_core_1_5_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jheaps_jheaps_0_13.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_json_json_20220924.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_9_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_9_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_base_19.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_base_mac_19.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_controls_19.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_controls_mac_19.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_fxml_19.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_fxml_mac_19.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_graphics_19.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_graphics_mac_19.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_opentest4j_opentest4j_1_2_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_projectlombok_lombok_1_18_24.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/xpkg-client.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/index-files/index-5.html" beforeDir="false" afterPath="$PROJECT_DIR$/doc/index-files/index-5.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/XPkg.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/XPkg.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/gui/DependencyTreeRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/gui/DependencyTreeRenderer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/gui/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/gui/MainController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/DependencyEdge.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/PackageDependency.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/DependencyTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/DependencyTree.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/Installer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/Installer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/PackageNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/PackageNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/PackageNotInstalledException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/PackageNotInstalledException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/Remote.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/Remote.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/versioning/Version.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/versioning/Version.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/versioning/VersionRange.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/versioning/VersionRange.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/versioning/VersionSelect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/versioning/VersionSelect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/XPkg.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/XPkg.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/DependencyTreeRenderer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/DependencyTreeRenderer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/MainController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/MainController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/MainGUI.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/MainGUI.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/DependencyEdge.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/DependencyTree$Incompatibility.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/DependencyTree.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/DependencyTree.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Installer$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Installer$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Installer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Installer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/PackageNode.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/PackageNode.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/PackageNotInstalledException.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/PackageNotInstalledException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote$FileDownloadedCallback.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote$FileDownloadedCallback.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote$LocDataDownloadedCallback.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote$PackageLocData.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/versioning/Version.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/versioning/Version.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/versioning/VersionRange.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/versioning/VersionRange.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/versioning/VersionSelect.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/versioning/VersionSelect.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="outputLevel" value="DEBUG" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="MavenRunner">
+    <option name="jreName" value="17" />
+  </component>
+  <component name="NamedScopeManager">
+    <order>
+      <scope name="xpkg-client-source-and-tests" />
+    </order>
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
+  <component name="ProjectId" id="2G0Musz3ssowqDGIr3kOZmo8TgG" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Downloaded.Files.Path.Enabled": "false",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "master",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15420929",
+    "project.structure.side.proportion": "0.2",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "vcs.Git"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="net.xpkgclient.packagemanager" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources/images" />
+      <recent name="$PROJECT_DIR$/src/main/resources" />
+      <recent name="$PROJECT_DIR$/src/main/resources/net/xpkgclient" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="net.xpkgclient.packagemanager" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Maven.xpkg-client [compile,exec:java,-U]">
+    <configuration name="VersionTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="xpkg-client" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="net.xpkgclient.versioning.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="net.xpkgclient.packagemanager" />
+      <option name="MAIN_CLASS_NAME" value="net.xpkgclient.packagemanager.VersionTests" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="VersionTests.testHashCollision" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="xpkg-client" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="net.xpkgclient.versioning.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="net.xpkgclient.packagemanager" />
+      <option name="MAIN_CLASS_NAME" value="net.xpkgclient.packagemanager.VersionTests" />
+      <option name="METHOD_NAME" value="testHashCollision" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="VersionTests.testSomething" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="xpkg-client" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="net.xpkgclient.versioning.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="net.xpkgclient.packagemanager" />
+      <option name="MAIN_CLASS_NAME" value="net.xpkgclient.packagemanager.VersionTests" />
+      <option name="METHOD_NAME" value="testSomething" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="VersionTests.testVersionCreationStringDoubleDot" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="xpkg-client" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="net.xpkgclient.versioning.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="net.xpkgclient.packagemanager" />
+      <option name="MAIN_CLASS_NAME" value="net.xpkgclient.packagemanager.VersionTests" />
+      <option name="METHOD_NAME" value="testVersionCreationStringDoubleDot" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="VersionTests.testVersionCreationStringOnlyDot" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="xpkg-client" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="net.xpkgclient.versioning.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="net.xpkgclient.packagemanager" />
+      <option name="MAIN_CLASS_NAME" value="net.xpkgclient.packagemanager.VersionTests" />
+      <option name="METHOD_NAME" value="testVersionCreationStringOnlyDot" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="xpkg-client [clean]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="clean" />
+              </list>
+            </option>
+            <option name="pomFileName" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
+    <configuration name="xpkg-client [compile,exec:java,-U]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="compile" />
+                <option value="exec:java" />
+                <option value="-U" />
+              </list>
+            </option>
+            <option name="pomFileName" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
+    <configuration name="xpkg-client [test]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="test" />
+              </list>
+            </option>
+            <option name="pomFileName" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="JUnit.VersionTests" />
+      <item itemvalue="JUnit.VersionTests.testHashCollision" />
+      <item itemvalue="JUnit.VersionTests.testSomething" />
+      <item itemvalue="JUnit.VersionTests.testVersionCreationStringDoubleDot" />
+      <item itemvalue="JUnit.VersionTests.testVersionCreationStringOnlyDot" />
+      <item itemvalue="Maven.xpkg-client [clean]" />
+      <item itemvalue="Maven.xpkg-client [compile,exec:java,-U]" />
+      <item itemvalue="Maven.xpkg-client [test]" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.VersionTests.testVersionCreationStringOnlyDot" />
+        <item itemvalue="JUnit.VersionTests.testVersionCreationStringDoubleDot" />
+        <item itemvalue="JUnit.VersionTests.testSomething" />
+        <item itemvalue="JUnit.VersionTests.testHashCollision" />
+        <item itemvalue="JUnit.VersionTests" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="adf47047-baba-4090-98b9-a300e45d4f59" name="Changes" comment="" />
+      <created>1665521274858</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1665521274858</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Move project to maven, add basic JFX window">
+      <created>1665536413288</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1665536413288</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Add package table and simulate downloading packages">
+      <created>1665544807097</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1665544807097</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Add refresh button">
+      <created>1665589748292</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1665589748292</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Parse JSON from remote">
+      <created>1665690696944</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1665690696944</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Parse JSON from remote">
+      <created>1665722420811</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1665722420811</updated>
+    </task>
+    <task id="LOCAL-00006" summary="List all versions">
+      <created>1665725537244</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1665725537244</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Download and execute install script&#10;&#10;Fixed a lot of javadoc">
+      <created>1666135357922</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1666135357922</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Show/hide the package display">
+      <created>1666187445644</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1666187445644</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Update version parsing">
+      <created>1671517216602</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1671517216602</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
+    <servers />
+  </component>
+  <component name="UpdateCopyrightCheckinHandler">
+    <option name="UPDATE_COPYRIGHT" value="true" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Move project to maven, add basic JFX window" />
+    <MESSAGE value="Add package table and simulate downloading packages" />
+    <MESSAGE value="Add refresh button" />
+    <MESSAGE value="Parse JSON from remote" />
+    <MESSAGE value="List all versions" />
+    <MESSAGE value="Download and execute install script&#10;&#10;Fixed a lot of javadoc" />
+    <MESSAGE value="Show/hide the package display" />
+    <MESSAGE value="Update version parsing" />
+    <MESSAGE value="Add version selection" />
+    <MESSAGE value="Got basic dependency tree set up, but I need to run more tests" />
+    <MESSAGE value="Got basic dependency tree set up, but I need to run more tests," />
+    <option name="LAST_COMMIT_MESSAGE" value="Got basic dependency tree set up, but I need to run more tests," />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint type="java-exception">
+          <properties class="java.lang.NullPointerException" package="java.lang" />
+          <option name="timeStamp" value="12" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="net.xpkgclient.packagemanager.Package" memberName="packageType" />
+      </pinned-members>
+    </pin-to-top-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

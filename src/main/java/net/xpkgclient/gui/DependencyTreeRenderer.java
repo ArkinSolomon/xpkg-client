@@ -16,22 +16,16 @@
 package net.xpkgclient.gui;
 
 import lombok.Getter;
-import net.xpkgclient.packagemanager.DependencyEdge;
 import net.xpkgclient.packagemanager.DependencyTree;
+import net.xpkgclient.packagemanager.PackageDependency;
 import net.xpkgclient.packagemanager.PackageNode;
-import org.jgrapht.alg.flow.EdmondsKarpMFImpl;
-import org.jgrapht.alg.interfaces.MaximumFlowAlgorithm;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This class renders the dependency tree.
@@ -52,20 +46,20 @@ public class DependencyTreeRenderer {
      * @param tree The dependency tree to display.
      */
     public DependencyTreeRenderer(DependencyTree tree) {
-        VisualizationViewer<PackageNode, DependencyEdge> vv = VisualizationViewer.builder(tree.getGraph()).build();
+        VisualizationViewer<PackageNode, PackageDependency> vv = VisualizationViewer.builder(tree.getGraph()).build();
 
-        EiglspergerLayoutAlgorithm<PackageNode, DependencyEdge> layoutAlgorithm = EiglspergerLayoutAlgorithm.<PackageNode, DependencyEdge>edgeAwareBuilder().build();
+        EiglspergerLayoutAlgorithm<PackageNode, PackageDependency> layoutAlgorithm = EiglspergerLayoutAlgorithm.<PackageNode, PackageDependency>edgeAwareBuilder().build();
 
         layoutAlgorithm.setVertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction());
         vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
         vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
         vv.getRenderContext().setVertexLabelDrawPaintFunction(v -> Color.green);
-        vv.getRenderContext().setVertexLabelFunction(PackageNode::packageId);
+        vv.getRenderContext().setVertexLabelFunction(PackageNode::getPackageId);
 
         vv.getRenderContext().setEdgeShapeFunction(new EdgeShape.QuadCurve<>());
         vv.getRenderContext()
                 .setEdgeLabelFunction(e -> e.selection().toString());
-        vv.setEdgeToolTipFunction(e -> e.selection().toString());
+        vv.setEdgeToolTipFunction(Record::toString);
 
         frame = new JFrame();
         frame.getContentPane().add(vv.getComponent());
