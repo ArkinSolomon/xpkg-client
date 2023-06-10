@@ -23,10 +23,12 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import net.xpkgclient.XPkg;
 
 import java.net.URL;
+import java.util.Objects;
 
 /**
  * The main application window.
@@ -57,6 +59,7 @@ public class MainGUI extends Application {
         Scene scene = new Scene(root, 1000, 900);
 
         stage.setTitle("X-Pkg");
+        stage.getIcons().add(new Image(Objects.requireNonNull(MainGUI.class.getResourceAsStream("/images/app-icon.png"))));
         stage.setScene(scene);
         stage.setMinHeight(585);
         stage.setMinWidth(100);

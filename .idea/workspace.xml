@@ -8,82 +8,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="adf47047-baba-4090-98b9-a300e45d4f59" name="Changes" comment="Got basic dependency tree set up, but I need to run more tests,">
-      <change afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/UnablePackageInstallException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/VersionAlreadyInstalledException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/actions/InstallAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/actions/InstallerAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/actions/RemoveAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/actions/SetupDependencyAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/actions/VersionChangeAction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/copyright/xpkg_client_default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copyright/xpkg_client_default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_errorprone_error_prone_annotations_2_1_3.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_googlecode_json_simple_json_simple_1_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_codec_commons_codec_1_11.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_io_commons_io_2_11_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_10.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_arkinsolomon_sakurainterpreter_1_2_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_lingala_zip4j_zip4j_2_11_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_sourceforge_argparse4j_argparse4j_0_9_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_12_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_text_1_10_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apiguardian_apiguardian_api_1_1_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jetbrains_annotations_23_0_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jgrapht_jgrapht_core_1_5_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jheaps_jheaps_0_13.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_json_json_20220924.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_9_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_9_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_base_19.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_base_mac_19.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_controls_19.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_controls_mac_19.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_fxml_19.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_fxml_mac_19.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_graphics_19.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_graphics_mac_19.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_opentest4j_opentest4j_1_2_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_projectlombok_lombok_1_18_24.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/xpkg-client.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/doc/index-files/index-5.html" beforeDir="false" afterPath="$PROJECT_DIR$/doc/index-files/index-5.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/XPkg.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/XPkg.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/gui/DependencyTreeRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/gui/DependencyTreeRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/gui/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/gui/MainController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/DependencyEdge.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/PackageDependency.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/DependencyTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/DependencyTree.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/Installer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/Installer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/PackageNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/PackageNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/PackageNotInstalledException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/PackageNotInstalledException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/Remote.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/Remote.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/versioning/Version.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/versioning/Version.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/versioning/VersionRange.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/versioning/VersionRange.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/versioning/VersionSelect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/versioning/VersionSelect.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/XPkg.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/XPkg.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/DependencyTreeRenderer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/DependencyTreeRenderer.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/app-icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/gui/MainGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/gui/MainGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/MainController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/MainController$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/MainController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/MainController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/MainGUI.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/MainGUI.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/DependencyEdge.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/DependencyTree$Incompatibility.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/DependencyTree.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/DependencyTree.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Installer$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Installer$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Installer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Installer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/PackageNode.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/PackageNode.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/PackageNotInstalledException.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/PackageNotInstalledException.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote$FileDownloadedCallback.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote$FileDownloadedCallback.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote$LocDataDownloadedCallback.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote$PackageLocData.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote$VersionData.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote$VersionData.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/versioning/Version.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/versioning/Version.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/versioning/VersionRange.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/versioning/VersionRange.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/versioning/VersionSelect.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/versioning/VersionSelect.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
