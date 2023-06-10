@@ -62,3 +62,4 @@ configurations:
 
 **/.DS_Store
 
+target/
