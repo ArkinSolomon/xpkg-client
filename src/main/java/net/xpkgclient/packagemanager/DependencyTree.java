@@ -84,13 +84,15 @@ public final class DependencyTree implements Cloneable {
      *
      * @param packageId  The id of the package to change.
      * @param newVersion The new version of the package.
+     * @return The reference to the {@link PackageNode} which was modified.
      * @throws PackageNotInstalledException An exception thrown if the package is not installed.
      */
-    public void changeVersion(String packageId, Version newVersion) throws PackageNotInstalledException {
+    public PackageNode changeVersion(String packageId, Version newVersion) throws PackageNotInstalledException {
         PackageNode changeNode = treeNodes.get(packageId);
         if (changeNode == null)
             throw new PackageNotInstalledException(packageId);
         changeNode.setVersion(newVersion);
+        return changeNode;
     }
 
     /**
@@ -109,6 +111,24 @@ public final class DependencyTree implements Cloneable {
      */
     public void addAutoInstalledPackage(PackageNode node) {
         autoInstalledPackages.add(node);
+    }
+
+    /**
+     * Try to remove a package from the user installation list by id.
+     *
+     * @param packageId The id of the package to try to remove.
+     */
+    public void tryRemoveUserInstalledPackage(String packageId) {
+        userInstalledPackages.removeIf(p -> p.getPackageId().equalsIgnoreCase(packageId));
+    }
+
+    /**
+     * Try to remove a package from the automatically installed list by id.
+     *
+     * @param packageId the id of the package to try to remove.
+     */
+    public void tryRemoveAutoInstalledPackage(String packageId) {
+        autoInstalledPackages.removeIf(p -> p.getPackageId().equalsIgnoreCase(packageId));
     }
 
     /**
@@ -152,6 +172,15 @@ public final class DependencyTree implements Cloneable {
      * @return An optional, which is present if the package can be installed at the specified version, otherwise it's empty.
      */
     public Optional<List<InstallerAction>> getActions(String packageId, Version packageVersion) {
+
+        // Simply set the package to user-installed if it already is installed
+        Optional<Version> currentlyInstalledVersion = getInstalledVersion(packageId);
+        if (currentlyInstalledVersion.isPresent()) {
+            List<InstallerAction> actions = new LinkedList<>();
+            actions.add(new VersionChangeAction(packageId, currentlyInstalledVersion.get(), packageVersion, true));
+            return Optional.of(actions);
+        }
+
         DependencyTree tempTree = clone();
         PackageNode newNode = tempTree.addPackageNode(packageId, packageVersion);
         tempTree.userInstalledPackages.add(newNode);
@@ -224,7 +253,7 @@ public final class DependencyTree implements Cloneable {
                             if (incompatibilityActions.isEmpty()) {
                                 incompatibilityResolved = true;
 
-                                actions.set(actions.size() - 1, new VersionChangeAction(incompatibilityId, currentIncompatibilityVersion, version));
+                                actions.set(actions.size() - 1, new VersionChangeAction(incompatibilityId, currentIncompatibilityVersion, version, false));
                                 break;
                             }
 
@@ -251,7 +280,7 @@ public final class DependencyTree implements Cloneable {
             String dependencyId = dependency.getKey();
             VersionSelect dependencySelection = dependency.getValue();
 
-            // TODO: can't resolve if it's a user-installed package
+            // TODO: can't resolve if it's a user-installed package (maybe suggest downgrades)
             // If the dependency is already installed a version selection is the intersection of all the version selections AND the installed packages
             Optional<Version> currentlyInstalledVersion = getInstalledVersion(dependencyId);
             if (currentlyInstalledVersion.isPresent()) {
@@ -303,6 +332,10 @@ public final class DependencyTree implements Cloneable {
             }
         }
 
+//        Optional<Version> currentlyInstalledVersion = getInstalledVersion(packageId);
+//        if (currentlyInstalledVersion.isPresent())
+//            actions.add(new VersionChangeAction(packageId, currentlyInstalledVersion.get(), packageVersion, manualInstall));
+//        else
         actions.add(new InstallAction(packageId, packageVersion, manualInstall));
         return Optional.of(actions);
     }

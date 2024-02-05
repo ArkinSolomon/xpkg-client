@@ -70,12 +70,12 @@ public final class Version implements Comparable<Version>, Cloneable {
     private int patch = 0;
 
     /**
-     * This char is 'a' if this is an alpha version, 'b' if it is a beta version, or null if it's a release version.
+     * This char is 'a' if this is an alpha version, 'b' if it is a beta version, 'r' if it is a release-candidate, or null if it's a release version.
      *
-     * @return A char which is 'a' if this is an alpha version, 'b' if it is a beta version, or null if it's a release version.
+     * @return A char which is 'a' if this is an alpha version, 'b' if it is a beta version, 'r' if it is a release-candidate, or null if it's a release version.
      */
     @Getter
-    private Character alphaOrBeta = null;
+    private Character preReleaseType = null;
 
     /**
      * Pre-release number. Null if {@code alphaOrBeta} is null.
@@ -100,10 +100,16 @@ public final class Version implements Comparable<Version>, Cloneable {
 
         final boolean containsA = versionStr.contains("a");
         final boolean containsB = versionStr.contains("b");
-        if (containsA || containsB) {
-            alphaOrBeta = containsA ? 'a' : 'b';
+        final boolean containsR = versionStr.contains("r");
+        if (containsA || containsB || containsR) {
+            if (containsA)
+                preReleaseType = 'a';
+            else if (containsB)
+                preReleaseType = 'b';
+            else
+                preReleaseType = 'r';
 
-            String[] parts = versionStr.split(String.valueOf(alphaOrBeta), -1);
+            String[] parts = versionStr.split(String.valueOf(preReleaseType), -1);
             if (parts.length != 2)
                 throw new InvalidVersionException(versionStr);
 
@@ -181,18 +187,18 @@ public final class Version implements Comparable<Version>, Cloneable {
     /**
      * Create a new pre-release version from the major, minor, and patch numbers.
      *
-     * @param major         The major number of the version.
-     * @param minor         The minor number of the version.
-     * @param patch         The patch number of the version.
-     * @param alphaOrBeta   Whether this version is an alpha or beta prerelease.
-     * @param preReleaseNum The pre-release version.
+     * @param major          The major number of the version.
+     * @param minor          The minor number of the version.
+     * @param patch          The patch number of the version.
+     * @param preReleaseType The type of pre-release this is.
+     * @param preReleaseNum  The pre-release version.
      * @throws InvalidVersionException Exception thrown if the version is not valid.
      */
-    public Version(int major, int minor, int patch, char alphaOrBeta, int preReleaseNum) throws InvalidVersionException {
+    public Version(int major, int minor, int patch, char preReleaseType, int preReleaseNum) throws InvalidVersionException {
         this.major = major;
         this.minor = minor;
         this.patch = patch;
-        this.alphaOrBeta = alphaOrBeta;
+        this.preReleaseType = preReleaseType;
         this.preReleaseVersion = preReleaseNum;
         checkVersionValidity();
     }
@@ -231,7 +237,7 @@ public final class Version implements Comparable<Version>, Cloneable {
     }
 
     /**
-     * Compare two versions, and pick the larger one.
+     * Compare two versions and pick the larger one.
      *
      * @param v1 The first version to compare.
      * @param v2 The second version to compare.
@@ -244,7 +250,7 @@ public final class Version implements Comparable<Version>, Cloneable {
     }
 
     /**
-     * Compare two versions, and pick the smaller one.
+     * Compare two versions and pick the smaller one.
      *
      * @param v1 The first version to compare.
      * @param v2 The second version to compare.
@@ -257,28 +263,27 @@ public final class Version implements Comparable<Version>, Cloneable {
     }
 
     /**
-     * Change the pre-release number. Only update if {@link Version#alphaOrBeta} is set.
+     * Set the new alpha or beta version. Use 'a' for alpha, 'b' for beta, 'r' for a release candidate, or null if it's a release version. Sets {@link Version#preReleaseVersion} to 1 if it is zero or not set.
+     *
+     * @param preReleaseType The new alpha or beta version.
+     */
+    public void setPreReleaseType(Character preReleaseType) throws InvalidVersionException {
+        if (preReleaseType != null && preReleaseType != 'a' && preReleaseType != 'b' && preReleaseType != 'r')
+            throw new InvalidVersionException("Alpha or beta version must be set by either \"a\", \"b\", \"r\", or must be null, not \"%c\"".formatted(preReleaseType));
+
+        this.preReleaseType = preReleaseType;
+        if (this.preReleaseVersion == null || this.preReleaseVersion == 0)
+            this.preReleaseVersion = 1;
+    }
+
+    /**
+     * Change the pre-release number. Only updated if {@link Version#preReleaseType} is set.
      *
      * @param preReleaseVersion The new pre-release version number.
      */
     private void setPreReleaseVersion(Integer preReleaseVersion) {
         if (isPreRelease())
             this.preReleaseVersion = preReleaseVersion;
-
-    }
-
-    /**
-     * Set the new alpha or beta version. Use 'a' for alpha, or 'b' for beta, or null if it's a release version. Sets {@link Version#preReleaseVersion} to 1 if it is zero or not set.
-     *
-     * @param alphaOrBeta The new alpha or beta version.
-     */
-    public void setAlphaOrBeta(Character alphaOrBeta) throws InvalidVersionException {
-        if (alphaOrBeta != null && alphaOrBeta != 'a' && alphaOrBeta != 'b')
-            throw new InvalidVersionException("Alpha or beta version must be set by either \"a\" or \"b\" or must be null, not \"%c\"".formatted(alphaOrBeta));
-
-        this.alphaOrBeta = alphaOrBeta;
-        if (this.preReleaseVersion == null || this.preReleaseVersion == 0)
-            this.preReleaseVersion = 1;
     }
 
     /**
@@ -287,7 +292,7 @@ public final class Version implements Comparable<Version>, Cloneable {
      * @return True if this version represents a pre-release version.
      */
     public boolean isPreRelease() {
-        return alphaOrBeta != null;
+        return preReleaseType != null;
     }
 
     /**
@@ -325,7 +330,7 @@ public final class Version implements Comparable<Version>, Cloneable {
     @Override
     public String toString() {
         if (isPreRelease())
-            return String.format("%d.%d.%d%c%d", major, minor, patch, alphaOrBeta, preReleaseVersion);
+            return String.format("%d.%d.%d%c%d", major, minor, patch, preReleaseType, preReleaseVersion);
         return String.format("%d.%d.%d", major, minor, patch);
     }
 
@@ -341,8 +346,8 @@ public final class Version implements Comparable<Version>, Cloneable {
         if (o == null || getClass() != o.getClass()) return false;
         Version version = (Version) o;
 
-        if (alphaOrBeta != null &&
-                (!alphaOrBeta.equals(version.alphaOrBeta) ||
+        if (preReleaseType != null &&
+                (!preReleaseType.equals(version.preReleaseType) ||
                         !preReleaseVersion.equals(version.preReleaseVersion))) {
             return false;
         }
@@ -359,7 +364,7 @@ public final class Version implements Comparable<Version>, Cloneable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(major, minor, patch, alphaOrBeta, preReleaseVersion);
+        return Objects.hash(major, minor, patch, preReleaseType, preReleaseVersion);
     }
 
     /**
@@ -375,7 +380,7 @@ public final class Version implements Comparable<Version>, Cloneable {
         clone.setMinor(minor);
         clone.setPatch(patch);
         if (isPreRelease()) {
-            clone.setAlphaOrBeta(alphaOrBeta);
+            clone.setPreReleaseType(preReleaseType);
             clone.setPreReleaseVersion(preReleaseVersion);
         }
         return clone;
@@ -387,7 +392,7 @@ public final class Version implements Comparable<Version>, Cloneable {
      * @return The number representation of this version.
      */
     public long getVersionNum() {
-        String longStr = "%s%s%s000000".formatted(major, toThreeDigits(minor), toThreeDigits(patch));
+        String longStr = "%s%s%s000000000".formatted(major, toThreeDigits(minor), toThreeDigits(patch));
 
         long semverNum = Long.parseLong(longStr);
         if (!isPreRelease()) {
@@ -396,12 +401,14 @@ public final class Version implements Comparable<Version>, Cloneable {
 
         int preReleaseNum = 999 - preReleaseVersion;
         String preReleaseFloatStr;
-        if (alphaOrBeta == 'a')
-            preReleaseFloatStr = "999%s".formatted(toThreeDigits(preReleaseNum));
+        if (preReleaseType == 'a')
+            preReleaseFloatStr = "999999%s".formatted(toThreeDigits(preReleaseNum));
+        else if (preReleaseType == 'b')
+            preReleaseFloatStr = "999%s999".formatted(toThreeDigits(preReleaseNum));
         else
-            preReleaseFloatStr = "%s999".formatted(toThreeDigits(preReleaseNum));
-        long preReleaseFloat = Long.parseLong(preReleaseFloatStr);
+            preReleaseFloatStr = "%s999999".formatted(toThreeDigits(preReleaseNum));
 
+        long preReleaseFloat = Long.parseLong(preReleaseFloatStr);
         return semverNum - preReleaseFloat;
     }
 

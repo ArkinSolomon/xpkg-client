@@ -8,15 +8,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="adf47047-baba-4090-98b9-a300e45d4f59" name="Changes" comment="Got basic dependency tree set up, but I need to run more tests,">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/images/app-icon.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/gui/MainGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/gui/MainGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/MainController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/MainController$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/MainController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/MainController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/MainGUI.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/gui/MainGUI.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote$VersionData.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote$VersionData.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/packagemanager/Remote.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/net/xpkgclient/versioning/VersionRange.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/net/xpkgclient/versioning/VersionRange.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/gui/DependencyTreeRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/gui/DependencyTreeRenderer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/DependencyTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/DependencyTree.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/Installer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/Installer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/actions/InstallAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/actions/InstallAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/actions/VersionChangeAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/packagemanager/actions/VersionChangeAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/versioning/Version.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/versioning/Version.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/net/xpkgclient/versioning/VersionSelect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/net/xpkgclient/versioning/VersionSelect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/xpkg-client.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/xpkg-client.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,23 +63,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Downloaded.Files.Path.Enabled": "false",
-    "Repository.Attach.Annotations": "false",
-    "Repository.Attach.JavaDocs": "false",
-    "Repository.Attach.Sources": "false",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15420929",
-    "project.structure.side.proportion": "0.2",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "vcs.Git"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15420929&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="net.xpkgclient.packagemanager" />

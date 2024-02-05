@@ -30,7 +30,7 @@ import java.awt.*;
 /**
  * This class renders the dependency tree.
  */
-public class DependencyTreeRenderer {
+final class DependencyTreeRenderer {
 
     /**
      * The displayed frame.
@@ -54,7 +54,7 @@ public class DependencyTreeRenderer {
         vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
         vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
         vv.getRenderContext().setVertexLabelDrawPaintFunction(v -> Color.green);
-        vv.getRenderContext().setVertexLabelFunction(PackageNode::getPackageId);
+        vv.getRenderContext().setVertexLabelFunction(p -> p.getPackageId() + '@' + p.getVersion());
 
         vv.getRenderContext().setEdgeShapeFunction(new EdgeShape.QuadCurve<>());
         vv.getRenderContext()

@@ -15,10 +15,15 @@
 
 package net.xpkgclient.packagemanager.actions;
 
+import lombok.SneakyThrows;
 import net.xpkgclient.Configuration;
 import net.xpkgclient.packagemanager.DependencyTree;
+import net.xpkgclient.packagemanager.Installer;
 import net.xpkgclient.packagemanager.PackageNode;
+import net.xpkgclient.packagemanager.Remote;
 import net.xpkgclient.versioning.Version;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * Create an action to install a brand-new package.
@@ -29,8 +34,11 @@ import net.xpkgclient.versioning.Version;
  */
 public record InstallAction(String packageId,
                             Version packageVersion, boolean manualInstallation) implements InstallerAction {
+    @SneakyThrows({InterruptedException.class, ExecutionException.class})
     @Override
     public void perform() {
+        Installer.runInstallScript(Remote.getPackage(packageId), packageVersion, Remote.getVersionData(packageId, packageVersion)).get();
+
         DependencyTree tree = Configuration.getDependencyTree();
         PackageNode newNode = tree.addPackageNode(packageId, packageVersion);
         if (manualInstallation)

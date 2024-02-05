@@ -69,7 +69,7 @@ public class Installer {
      * @param packageVersionData The data for a package version.
      * @return A future which completes when the installation script is done running.
      */
-    private CompletableFuture<Void> runInstallScript(Package pkg, Version version, Remote.VersionData packageVersionData) {
+    public CompletableFuture<Void> runInstallScript(Package pkg, Version version, Remote.VersionData packageVersionData) {
         CompletableFuture<Void> future = new CompletableFuture<>();
 
         Remote.downloadPackage(pkg, version, packageVersionData, (err, loc) -> {

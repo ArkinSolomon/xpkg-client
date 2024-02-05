@@ -77,7 +77,7 @@ public class VersionSelect implements Cloneable {
                             maxVersion.setPatch(999);
 
                         if (singleVersionParts.length <= 3)
-                            minVersion.setAlphaOrBeta('a');
+                            minVersion.setPreReleaseType('a');
                     }
 
                     ranges.add(new VersionRange(minVersion, maxVersion));
@@ -114,7 +114,7 @@ public class VersionSelect implements Cloneable {
                     // Similarly, since (for instance) 2 really means everything up to 2.999.999, we can use this hack
                     int partLen = upperVersionStr.split("\\.").length;
 
-                    boolean hasPre = upperVersionStr.contains("a") || upperVersionStr.contains("b");
+                    boolean hasPre = upperVersionStr.contains("a") || upperVersionStr.contains("b") || upperVersionStr.contains("r");
 
                     if (!hasPre) {
                         if (partLen < 2)
